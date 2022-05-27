@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"git.keelakay.com/keelakay/utils/errors"
 	"github.com/rs/xid"
+	"gitlab.keelakay.com/keelakay/utils/errors"
 	"gopkg.in/yaml.v3"
 )
 

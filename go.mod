@@ -1,4 +1,4 @@
-module git.keelakay.com/keelakay/utils
+module gitlab.keelakay.com/keelakay/utils
 
 go 1.18
 

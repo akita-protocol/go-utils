@@ -4,13 +4,13 @@ import (
 	"os"
 	"time"
 
-	"git.keelakay.com/keelakay/utils/db"
-	"git.keelakay.com/keelakay/utils/errors"
-	"git.keelakay.com/keelakay/utils/uuid"
 	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"gitlab.keelakay.com/keelakay/utils/db"
+	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.keelakay.com/keelakay/utils/uuid"
 )
 
 const (
