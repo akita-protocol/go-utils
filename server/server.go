@@ -29,17 +29,21 @@ func New() *GenericServer {
 		Engine: gin.Default(),
 	}
 
-	s.Sentry, err = s.SentryInit(sentry.ClientOptions{
-		Dsn:         os.Getenv("SENTRY_DSN"),
-		Environment: s.Getenv(),
-	})
-	if err != nil {
-		panic(err.Error())
+	sentryDSN := os.Getenv("SENTRY_DSN")
+	if sentryDSN != "" {
+		s.Sentry, err = s.SentryInit(sentry.ClientOptions{
+			Dsn:         os.Getenv("SENTRY_DSN"),
+			Environment: s.Getenv(),
+		})
+		if err != nil {
+			panic(err.Error())
+		}
+
+		s.Use(sentrygin.New(sentrygin.Options{
+			Repanic: true,
+		}))
 	}
 
-	s.Use(sentrygin.New(sentrygin.Options{
-		Repanic: true,
-	}))
 	s.Use(RequestID())
 	s.Use(CORSMiddleware())
 
