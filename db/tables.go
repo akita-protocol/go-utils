@@ -8,6 +8,8 @@ func getTable(obj interface{}) string {
 		return "nfd_json"
 	case NFDWallet, *NFDWallet:
 		return "nfd_wallet"
+	case SessionToken, *SessionToken:
+		return "session_token"
 	case Transaction, *Transaction:
 		return "txn"
 	case User, *User:
