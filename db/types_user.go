@@ -34,7 +34,7 @@ func GetUserByID[H DBStruct](h H, id string) (*User, error) {
 	return &u, nil
 }
 
-func GetUserByDiscordID[H DBStruct](h H, did string) (*User, error) {
+func GetUserByDiscordID[H DBStruct](h H, did uint64) (*User, error) {
 	const op errors.Op = "GetUserByDiscordID"
 
 	const query = "select id, discord_id from user where discord_id = ?"
