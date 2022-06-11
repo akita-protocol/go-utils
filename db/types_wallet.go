@@ -38,20 +38,20 @@ func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 	return &w, nil
 }
 
-func GetWalletByUserID[H DBStruct](h H, userID string) error {
+func GetWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
 	const op errors.Op = "Get"
 
 	const query = " select id, user_id, label, address, verified, main from wallet where user_id = ?"
-	var r Wallet
+	var w Wallet
 
-	err := h.Get(&r, query, userID)
+	err := h.Get(&w, query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
 		}
-		return errors.E(pkg, op, err)
+		return nil, errors.E(pkg, op, err)
 	}
-	return nil
+	return &w, nil
 }
 
 type WalletToken struct {
