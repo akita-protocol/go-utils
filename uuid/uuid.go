@@ -19,8 +19,11 @@ type Prefix int
 // uuid object constants
 const (
 	Request Prefix = iota + 1
-	Entry
-	Asset
+	User
+	Wallet
+	Transaction
+	NFD
+	Token
 )
 
 func (p Prefix) String() string {
@@ -28,15 +31,21 @@ func (p Prefix) String() string {
 }
 
 var prefixToString = map[Prefix]string{
-	Request: "req",
-	Entry:   "ent",
-	Asset:   "ass",
+	Request:     "req",
+	User:        "usr",
+	Wallet:      "wal",
+	Transaction: "txn",
+	NFD:         "nfd",
+	Token:       "tok",
 }
 
 var prefixToID = map[string]Prefix{
 	"req": Request,
-	"ent": Entry,
-	"ass": Asset,
+	"usr": User,
+	"wal": Wallet,
+	"txn": Transaction,
+	"nfd": NFD,
+	"tok": Token,
 }
 
 // UnmarshalYAML checks to see if its type is valid

@@ -25,6 +25,7 @@ const (
 	Database               Kind = "Database"
 	DatabaseResultNotFound Kind = "Database Result Not Found"
 	Network                Kind = "Network"
+	Type                   Kind = "Type"
 )
 
 // IsKind unwraps an *Error and checks if its top level kind matches
