@@ -38,10 +38,10 @@ func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 	return &w, nil
 }
 
-func GetWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
+func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
 	const op errors.Op = "Get"
 
-	const query = " select id, user_id, label, address, verified, main from wallet where user_id = ?"
+	const query = " select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
 	var w Wallet
 
 	err := h.Get(&w, query, userID)
