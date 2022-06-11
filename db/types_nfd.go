@@ -1,7 +1,5 @@
 package db
 
-import "gitlab.keelakay.com/keelakay/utils/uuid"
-
 type NFD struct {
 	ID               string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	State            string  `structs:"state,omitempty" db:"state" json:"state,omitempty"`
@@ -20,31 +18,12 @@ type NFD struct {
 	TelegramID       *uint64 `structs:"telegram_id,omitempty" db:"telegram_id" json:"telegram_id,omitempty"`
 }
 
-func NewNFD() *NFD {
-	return &NFD{
-		ID: uuid.New(uuid.NFD),
-	}
-}
-
 type NFDWallet struct {
 	NFDID    string `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
 	WalletID string `structs:"wallet_id,omitempty" db:"wallet_id" json:"wallet_id,omitempty"`
 }
 
-func NewNFDWallet(nfdID, walletID string) *NFDWallet {
-	return &NFDWallet{
-		NFDID:    nfdID,
-		WalletID: walletID,
-	}
-}
-
 type NFDJson struct {
 	NFDID string `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
 	Data  string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
-}
-
-func NewNFDJson(nfdID string) *NFDJson {
-	return &NFDJson{
-		NFDID: nfdID,
-	}
 }

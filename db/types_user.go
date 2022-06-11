@@ -4,18 +4,11 @@ import (
 	"database/sql"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
-	"gitlab.keelakay.com/keelakay/utils/uuid"
 )
 
 type User struct {
 	ID        string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	DiscordID uint64 `structs:"discord_id,omitempty"`
-}
-
-func NewUser() *User {
-	return &User{
-		ID: uuid.New(uuid.User),
-	}
 }
 
 func GetUserByID[H DBStruct](h H, id string) (*User, error) {
@@ -53,13 +46,6 @@ func GetUserByDiscordID[H DBStruct](h H, did uint64) (*User, error) {
 type UserNFD struct {
 	UserID string `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
 	NFDID  string `structs:"nfd_id" db:"nfd_id" json:"nfd_id,omitempty"`
-}
-
-func NewUserNFD(userID, nfdID string) *UserNFD {
-	return &UserNFD{
-		UserID: userID,
-		NFDID:  nfdID,
-	}
 }
 
 func GetUserNFDS[H DBStruct](h H, userID string) (*[]UserNFD, error) {

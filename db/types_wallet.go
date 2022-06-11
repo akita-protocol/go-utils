@@ -4,7 +4,6 @@ import (
 	"database/sql"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
-	"gitlab.keelakay.com/keelakay/utils/uuid"
 )
 
 type Wallet struct {
@@ -14,12 +13,6 @@ type Wallet struct {
 	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
 	Main     *bool  `structs:"main,omitempty" db:"main" json:"main,omitempty"`
-}
-
-func NewWallet() *Wallet {
-	return &Wallet{
-		ID: uuid.New(uuid.Wallet),
-	}
 }
 
 func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
@@ -57,13 +50,6 @@ func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) 
 type WalletToken struct {
 	WalletID string `structs:"wallet_id,omitempty" db:"wallet_id" json:"wallet_id,omitempty"`
 	Token    string `structs:"token,omitempty" db:"token" json:"token,omitempty"`
-}
-
-func NewWalletToken(walletID string) *WalletToken {
-	return &WalletToken{
-		WalletID: walletID,
-		Token:    uuid.New(uuid.Token),
-	}
 }
 
 func GetWalletToken[H DBStruct](h H, id string) error {
