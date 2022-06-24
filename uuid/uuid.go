@@ -24,6 +24,7 @@ const (
 	Transaction
 	NFD
 	Token
+	PrivateChannel
 )
 
 func (p Prefix) String() string {
@@ -31,12 +32,13 @@ func (p Prefix) String() string {
 }
 
 var prefixToString = map[Prefix]string{
-	Request:     "req",
-	User:        "usr",
-	Wallet:      "wal",
-	Transaction: "txn",
-	NFD:         "nfd",
-	Token:       "tok",
+	Request:        "req",
+	User:           "usr",
+	Wallet:         "wal",
+	Transaction:    "txn",
+	NFD:            "nfd",
+	Token:          "tok",
+	PrivateChannel: "pvc",
 }
 
 var prefixToID = map[string]Prefix{
@@ -46,6 +48,7 @@ var prefixToID = map[string]Prefix{
 	"txn": Transaction,
 	"nfd": NFD,
 	"tok": Token,
+	"pvc": PrivateChannel,
 }
 
 // UnmarshalYAML checks to see if its type is valid
