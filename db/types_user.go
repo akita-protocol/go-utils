@@ -8,7 +8,7 @@ import (
 
 type User struct {
 	ID        string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	DiscordID uint64 `structs:"discord_id,omitempty" db:"discord_id" json:"discord_id,omitempty"`
+	DiscordID string `structs:"discord_id,omitempty" db:"discord_id" json:"discord_id,omitempty"`
 }
 
 func GetUserByID[H DBStruct](h H, id string) (*User, error) {
