@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
 
@@ -58,6 +59,32 @@ func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) 
 		return nil, errors.E(pkg, op, err)
 	}
 	return &w, nil
+}
+
+func DeleteWalletByAddress[H DBStruct](h H, address string) error {
+	const op errors.Op = "DeleteWalletByAddress"
+	const query = "delete from wallet where address = ?"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(address)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, address)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }
 
 type WalletToken struct {

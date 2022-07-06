@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
 
@@ -64,6 +65,32 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
 		return nil, errors.E(pkg, op, err)
 	}
 	return &list, nil
+}
+
+func DeleteNFDWalletByWalletID[H DBStruct](h H, walletID string) error {
+	const op errors.Op = "DeleteWalletByAddress"
+	const query = "delete from nfd_wallet where wallet_id = ?"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(walletID)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, walletID)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }
 
 type NFDJson struct {
