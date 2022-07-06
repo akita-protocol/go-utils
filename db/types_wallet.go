@@ -16,9 +16,23 @@ type Wallet struct {
 }
 
 func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
-	const op errors.Op = "Get"
+	const op errors.Op = "GetWalletByID"
+	const query = "select id, user_id, label, address, verified, main from wallet where id = ?"
+	var w Wallet
 
-	const query = " select id, user_id, label, address, verified, main from wallet where id = ?"
+	err := h.Get(&w, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &w, nil
+}
+
+func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
+	const op errors.Op = "GetWalletByAddress"
+	const query = "select id, user_id, label, address, verified, main from wallet where address = ?"
 	var w Wallet
 
 	err := h.Get(&w, query, id)
@@ -32,9 +46,8 @@ func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 }
 
 func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
-	const op errors.Op = "Get"
-
-	const query = " select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
+	const op errors.Op = "GetVerifiedWalletByUserID"
+	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
 	var w Wallet
 
 	err := h.Get(&w, query, userID)
@@ -55,7 +68,7 @@ type WalletToken struct {
 func GetWalletToken[H DBStruct](h H, id string) error {
 	const op errors.Op = "Get"
 
-	const query = " select wallet_id, token from wallet_token where wallet_id = ?"
+	const query = "select wallet_id, token from wallet_token where wallet_id = ?"
 	var r Wallet
 
 	err := h.Get(&r, query, id)

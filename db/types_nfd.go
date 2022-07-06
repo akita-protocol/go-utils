@@ -51,6 +51,21 @@ type NFDWallet struct {
 	WalletID string `structs:"wallet_id,omitempty" db:"wallet_id" json:"wallet_id,omitempty"`
 }
 
+func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
+	const op errors.Op = "GetWalletByID"
+	const query = "select id, user_id, label, address, verified, main from wallet where id in (select wallet_id from nfd_wallet where nfd_id = ?)"
+	var list []Wallet
+
+	err := h.Select(&list, query, nfdID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallets Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &list, nil
+}
+
 type NFDJson struct {
 	NFDID string `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
 	Data  string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
