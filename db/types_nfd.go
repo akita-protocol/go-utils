@@ -1,5 +1,7 @@
 package db
 
+var NFDStates = []string{"available", "minting", "reserved", "forSale", "owned"}
+
 type NFD struct {
 	ID               string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	State            string  `structs:"state,omitempty" db:"state" json:"state,omitempty"`
@@ -18,6 +20,7 @@ type NFD struct {
 	TwitterID        *string `structs:"twitter_id,omitempty" db:"twitter_id" json:"twitter_id,omitempty"`
 	TelegramID       *uint64 `structs:"telegram_id,omitempty" db:"telegram_id" json:"telegram_id,omitempty"`
 	Domain           *string `structs:"domain,omitempty" db:"domain" json:"domain,omitempty"`
+	LastChangedBlock uint64  `structs:"last_changed_block" db:"last_changed_block" json:"last_changed_block,omitempty"`
 	CreatedBlock     uint64  `structs:"created_block,omitempty" db:"created_block" json:"created_block,omitempty"`
 	PurchasedBlock   uint64  `structs:"purchased_block,omitempty" db:"purchased_block" json:"purchased_block,omitempty"`
 }
