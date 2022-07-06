@@ -41,3 +41,7 @@ func SliceEqual[T comparable](a, b []T) bool {
 func Pointer[T constraints.Ordered](v T) *T {
 	return &v
 }
+
+func PointerBool(v bool) *bool {
+	return &v
+}
