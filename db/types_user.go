@@ -42,24 +42,3 @@ func GetUserByDiscordID[H DBStruct](h H, did string) (*User, error) {
 	}
 	return &u, nil
 }
-
-type UserNFD struct {
-	UserID string `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
-	NFDID  string `structs:"nfd_id" db:"nfd_id" json:"nfd_id,omitempty"`
-}
-
-func GetUserNFDS[H DBStruct](h H, userID string) (*[]UserNFD, error) {
-	const op errors.Op = "GetUserNFDS"
-
-	const query = "select user_id, nfd_id from user_nfd where user_id = ?"
-	var list []UserNFD
-
-	err := h.Select(&list, query, userID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "User NFD Not Found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-	return &list, nil
-}

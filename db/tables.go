@@ -14,8 +14,6 @@ func getTable(obj interface{}) string {
 		return "txn"
 	case User, *User:
 		return "user"
-	case UserNFD, *UserNFD:
-		return "user_nfd"
 	case Wallet, *Wallet:
 		return "wallet"
 	case WalletToken, *WalletToken:

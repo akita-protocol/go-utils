@@ -11,5 +11,5 @@ type DBStruct interface {
 }
 
 type DBObject interface {
-	NFD | NFDWallet | NFDJson | SessionToken | Wallet | WalletToken | User | UserNFD | Transaction
+	NFD | NFDWallet | NFDJson | SessionToken | Wallet | WalletToken | User | Transaction
 }
