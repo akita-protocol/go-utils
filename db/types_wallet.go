@@ -7,12 +7,12 @@ import (
 )
 
 type Wallet struct {
-	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	UserID   string `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
-	Label    string `structs:"label,omitempty" db:"label" json:"label,omitempty"`
-	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
-	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
-	Main     *bool  `structs:"main,omitempty" db:"main" json:"main,omitempty"`
+	ID       string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	UserID   *string `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
+	Label    *string `structs:"label,omitempty" db:"label" json:"label,omitempty"`
+	Address  string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	Verified *bool   `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
+	Main     *bool   `structs:"main,omitempty" db:"main" json:"main,omitempty"`
 }
 
 func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {

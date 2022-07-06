@@ -1,5 +1,11 @@
 package db
 
+import (
+	"database/sql"
+
+	"gitlab.keelakay.com/keelakay/utils/errors"
+)
+
 var NFDStates = []string{"available", "minting", "reserved", "forSale", "owned"}
 
 type NFD struct {
@@ -23,6 +29,21 @@ type NFD struct {
 	LastChangedBlock uint64  `structs:"last_changed_block" db:"last_changed_block" json:"last_changed_block,omitempty"`
 	CreatedBlock     uint64  `structs:"created_block,omitempty" db:"created_block" json:"created_block,omitempty"`
 	PurchasedBlock   uint64  `structs:"purchased_block,omitempty" db:"purchased_block" json:"purchased_block,omitempty"`
+}
+
+func GetNFDIDByAppID[H DBStruct](h H, appID uint64) (string, error) {
+	const op errors.Op = "GetNFDIDByAppID"
+	const query = "select id from nfd where app_id = ?"
+	var id string
+
+	err := h.Get(&id, query, appID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD ID Not Found")
+		}
+		return "", errors.E(pkg, op, err)
+	}
+	return id, nil
 }
 
 type NFDWallet struct {
