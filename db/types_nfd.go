@@ -54,8 +54,8 @@ type NFDWallet struct {
 }
 
 func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
-	const op errors.Op = "GetWalletByID"
-	const query = "select id, user_id, label, address, verified, main from wallet where id in (select wallet_id from nfd_wallet where nfd_id = ?)"
+	const op errors.Op = "GetNFDWallets"
+	const query = "select id, user_id, label, address, verified, main from wallet where id in (select wallet_id from nfd_wallet where id = ?)"
 	var list []Wallet
 
 	err := h.Select(&list, query, nfdID)
@@ -69,7 +69,7 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
 }
 
 func DeleteNFDWalletByWalletID[H DBStruct](h H, walletID string) error {
-	const op errors.Op = "DeleteWalletByAddress"
+	const op errors.Op = "DeleteNFDWalletByWalletID"
 	const query = "delete from nfd_wallet where wallet_id = ?"
 	var err error
 
