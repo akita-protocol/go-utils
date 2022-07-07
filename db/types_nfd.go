@@ -95,6 +95,7 @@ func DeleteNFDWalletByWalletID[H DBStruct](h H, walletID string) error {
 }
 
 type NFDJson struct {
-	NFDID string `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
-	Data  string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
+	// ID is the same as NFD id
+	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Data string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
 }
