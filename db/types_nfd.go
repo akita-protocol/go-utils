@@ -68,6 +68,33 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
 	return &list, nil
 }
 
+func GetNFDWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
+	const op errors.Op = "GetNFDWalletByUserID"
+	// check if discordID is attached to any NFD's
+	var id string
+	const query = "select id from nfd where discord_id = (select discord_id from user where id = ?)"
+	err := h.Get(&id, query, userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	// fetch wallets via nfdID
+	const walletQuery = "select id, user_id, label, address, verified, main from wallet where id = (select wallet_id from nfd_wallet where id = ? limit 1) "
+	var w Wallet
+
+	err = h.Get(&w, walletQuery, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &w, nil
+}
+
 func GetNFDWalletByDiscordID[H DBStruct](h H, discordID string) (*Wallet, error) {
 	const op errors.Op = "GetNFDWalletByDiscordID"
 	// check if discordID is attached to any NFD's
