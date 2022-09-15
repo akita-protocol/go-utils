@@ -116,9 +116,9 @@ func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, 
 	return &list, nil
 }
 
-func DeleteNFDWalletsByAddress[H DBStruct](h H, address string) error {
-	const op errors.Op = "DeleteNFDWalletsByAddress"
-	const query = "delete from nfd_wallet where address = ?"
+func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) error {
+	const op errors.Op = "DeleteNFDWalletsByIDAndAddress"
+	const query = "delete from nfd_wallet where id = ? and address = ?"
 	var err error
 
 	switch h := any(h).(type) {
@@ -128,12 +128,12 @@ func DeleteNFDWalletsByAddress[H DBStruct](h H, address string) error {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
 		}
 
-		_, err = stmt.Exec(address)
+		_, err = stmt.Exec(id, address)
 		if err != nil {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
 		}
 	case *sqlx.DB:
-		_, err = h.Exec(query, address)
+		_, err = h.Exec(query, id, address)
 		if err != nil {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
 		}
