@@ -47,16 +47,32 @@ func GetNFDIDByAppID[H DBStruct](h H, appID uint64) (string, error) {
 	return id, nil
 }
 
+func GetNFDsByAddress[H DBStruct](h H, address string) (*[]NFD, error) {
+	const op errors.Op = "GetNFDsByAddress"
+	const query = "select id, state, current_as_of_block, app_id, asa_id, name, version, username, email, avatar, avatar_id, banner, banner_id, discord_id, twitter_id, telegram_id, domain, last_changed_block, created_block, purchased_block from nfd where id = (select id from nfd_wallet where wallet_id = (select id from wallet where address = ?))"
+	var list []NFD
+
+	err := h.Select(&list, query, address)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &list, nil
+}
+
 type NFDWallet struct {
 	// ID is the same as NFD id
 	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	WalletID string `structs:"wallet_id,omitempty" db:"wallet_id" json:"wallet_id,omitempty"`
+	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
 }
 
-func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
+func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
-	const query = "select id, user_id, label, address, verified, main from wallet where id in (select wallet_id from nfd_wallet where id = ?)"
-	var list []Wallet
+	const query = "select id, address, verified from nfd_wallet where id = ?"
+	var list []NFDWallet
 
 	err := h.Select(&list, query, nfdID)
 	if err != nil {
@@ -68,63 +84,41 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]Wallet, error) {
 	return &list, nil
 }
 
-func GetNFDWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
-	const op errors.Op = "GetNFDWalletByUserID"
-	// check if discordID is attached to any NFD's
-	var id string
-	const query = "select id from nfd where discord_id = (select discord_id from user where id = ?)"
-	err := h.Get(&id, query, userID)
+func GetNFDWalletsByUserID[H DBStruct](h H, userID string) (*[]NFDWallet, error) {
+	const op errors.Op = "GetNFDWalletsByUserID"
+
+	var list []NFDWallet
+	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = (select discord_id from user where id = ?) limit 1)"
+	err := h.Select(&list, wallet_query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFDWallet Not Found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
 
-	// fetch wallets via nfdID
-	const walletQuery = "select id, user_id, label, address, verified, main from wallet where id = (select wallet_id from nfd_wallet where id = ? limit 1) "
-	var w Wallet
+	return &list, nil
+}
 
-	err = h.Get(&w, walletQuery, id)
+func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, error) {
+	const op errors.Op = "GetNFDWalletsByDiscordID"
+
+	var list []NFDWallet
+	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = ? limit 1)"
+	err := h.Get(&list, wallet_query, discordID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return &w, nil
+
+	return &list, nil
 }
 
-func GetNFDWalletByDiscordID[H DBStruct](h H, discordID string) (*Wallet, error) {
-	const op errors.Op = "GetNFDWalletByDiscordID"
-	// check if discordID is attached to any NFD's
-	var id string
-	const query = "select id from nfd where discord_id = ?"
-	err := h.Get(&id, query, discordID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-
-	// fetch wallets via nfdID
-	const walletQuery = "select id, user_id, label, address, verified, main from wallet where id = (select wallet_id from nfd_wallet where id = ? limit 1) "
-	var w Wallet
-
-	err = h.Get(&w, walletQuery, id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-	return &w, nil
-}
-
-func DeleteNFDWalletByWalletID[H DBStruct](h H, walletID string) error {
-	const op errors.Op = "DeleteNFDWalletByWalletID"
-	const query = "delete from nfd_wallet where wallet_id = ?"
+func DeleteNFDWalletsByAddress[H DBStruct](h H, address string) error {
+	const op errors.Op = "DeleteNFDWalletsByAddress"
+	const query = "delete from nfd_wallet where address = ?"
 	var err error
 
 	switch h := any(h).(type) {
@@ -134,12 +128,12 @@ func DeleteNFDWalletByWalletID[H DBStruct](h H, walletID string) error {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
 		}
 
-		_, err = stmt.Exec(walletID)
+		_, err = stmt.Exec(address)
 		if err != nil {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
 		}
 	case *sqlx.DB:
-		_, err = h.Exec(query, walletID)
+		_, err = h.Exec(query, address)
 		if err != nil {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
 		}
