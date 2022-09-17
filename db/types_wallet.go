@@ -48,7 +48,7 @@ func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
 
 func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
+	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1 limit 1"
 	var w Wallet
 
 	err := h.Get(&w, query, userID)
@@ -59,6 +59,21 @@ func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) 
 		return nil, errors.E(pkg, op, err)
 	}
 	return &w, nil
+}
+
+func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, error) {
+	const op errors.Op = "GetVerifiedWalletByUserID"
+	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
+	var list []Wallet
+
+	err := h.Select(&list, query, userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &list, nil
 }
 
 func DeleteWalletByAddress[H DBStruct](h H, address string) error {
