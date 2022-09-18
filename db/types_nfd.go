@@ -62,6 +62,21 @@ func GetNFDsByAddress[H DBStruct](h H, address string) (*[]NFD, error) {
 	return &list, nil
 }
 
+func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
+	const op errors.Op = "GetAllNFDAppIDs"
+	const query = "select app_id from nfd"
+	var list []uint64
+
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD App IDs Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &list, nil
+}
+
 type NFDWallet struct {
 	// ID is the same as NFD id
 	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
