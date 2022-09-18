@@ -13,19 +13,19 @@ type RoleReq struct {
 	LessThan    uint64 `structs:"less_than,omitempty" db:"less_than" json:"less_than,omitempty"`
 }
 
-func GetRoleReqsByRoleID[H DBStruct](h H, roleID string) (*[]RoleReq, error) {
-	const op errors.Op = "GetRoleReqsByRoleID"
+func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
+	const op errors.Op = "GetRoleReqByRoleID"
 	const query = "select role_id, group_id, greater_than, less_than from role_req where role_id = ?"
-	var list []RoleReq
+	var r RoleReq
 
-	err := h.Select(&list, query, roleID)
+	err := h.Select(&r, query, roleID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "GetRoleReqs Not Found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return &list, nil
+	return &r, nil
 }
 
 func GetRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]RoleReq, error) {
