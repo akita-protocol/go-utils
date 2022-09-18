@@ -18,7 +18,7 @@ func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 	const query = "select role_id, group_id, greater_than, less_than from role_req where role_id = ?"
 	var r RoleReq
 
-	err := h.Select(&r, query, roleID)
+	err := h.Get(&r, query, roleID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "GetRoleReqs Not Found")
