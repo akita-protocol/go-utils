@@ -3,7 +3,7 @@ module gitlab.keelakay.com/keelakay/utils
 go 1.18
 
 require (
-	github.com/algorand/go-algorand-sdk v1.20.0
+	github.com/algorand/go-algorand-sdk v1.18.0
 	github.com/fatih/structs v1.1.0
 	github.com/getsentry/sentry-go v0.13.0
 	github.com/gin-gonic/gin v1.7.7
