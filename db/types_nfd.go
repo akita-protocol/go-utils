@@ -135,7 +135,7 @@ func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, 
 
 	var list []NFDWallet
 	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = ? limit 1)"
-	err := h.Get(&list, wallet_query, discordID)
+	err := h.Select(&list, wallet_query, discordID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
