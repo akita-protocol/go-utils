@@ -77,6 +77,21 @@ func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
 	return &list, nil
 }
 
+func GetLatestNFDUpdateBlock[H DBStruct](h H) (uint64, error) {
+	const op errors.Op = "GetLatestNFDUpdateBlock"
+	const query = "select max(current_as_of_block) from nfd"
+	var block uint64
+
+	err := h.Get(&block, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Block Not Found")
+		}
+		return 0, errors.E(pkg, op, err)
+	}
+	return block, nil
+}
+
 type NFDWallet struct {
 	// ID is the same as NFD id
 	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
