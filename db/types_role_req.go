@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
@@ -21,7 +22,7 @@ func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 	err := h.Get(&r, query, roleID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "GetRoleReqs Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "role_req not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
@@ -36,9 +37,14 @@ func GetRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]RoleReq, error) {
 	err := h.Select(&list, query, groupID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "GetRoleReqs Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "role_reqs not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("role_reqs not found"))
+	}
+
 	return &list, nil
 }

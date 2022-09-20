@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.keelakay.com/keelakay/utils/errors"
@@ -55,10 +56,15 @@ func GetNFDsByAddress[H DBStruct](h H, address string) (*[]NFD, error) {
 	err := h.Select(&list, query, address)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfd not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfd not found"))
+	}
+
 	return &list, nil
 }
 
@@ -70,10 +76,15 @@ func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
 	err := h.Select(&list, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD App IDs Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfd app ids not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfd app ids not found"))
+	}
+
 	return &list, nil
 }
 
@@ -107,24 +118,33 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
 	err := h.Select(&list, query, nfdID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallets Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
+	}
+
 	return &list, nil
 }
 
 func GetNFDWalletsByUserID[H DBStruct](h H, userID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWalletsByUserID"
-
-	var list []NFDWallet
 	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = (select discord_id from user where id = ?) limit 1)"
+	var list []NFDWallet
+
 	err := h.Select(&list, wallet_query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFDWallet Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfdwallets not found")
 		}
 		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfdwallets not found"))
 	}
 
 	return &list, nil
@@ -132,15 +152,19 @@ func GetNFDWalletsByUserID[H DBStruct](h H, userID string) (*[]NFDWallet, error)
 
 func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWalletsByDiscordID"
-
-	var list []NFDWallet
 	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = ? limit 1)"
+	var list []NFDWallet
+
 	err := h.Select(&list, wallet_query, discordID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfdwallets not found")
 		}
 		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfdwallets not found"))
 	}
 
 	return &list, nil

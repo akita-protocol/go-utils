@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
@@ -23,5 +24,10 @@ func GetAssetGroup[H DBStruct](h H, id string) (*[]uint64, error) {
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("AssetGroup Not Found"))
+	}
+
 	return &list, nil
 }

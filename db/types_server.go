@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
@@ -34,9 +35,14 @@ func GetServers[H DBStruct](h H) (*[]Server, error) {
 	err := h.Select(&list, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Servers Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "servers not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("servers not found"))
+	}
+
 	return &list, nil
 }

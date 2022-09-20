@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.keelakay.com/keelakay/utils/errors"
 )
@@ -21,9 +22,14 @@ func GetServerRoles[H DBStruct](h H, serverID string) (*[]ServerRole, error) {
 	err := h.Select(&list, query, serverID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "ServerRole Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "server_role not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("server_role not found"))
+	}
+
 	return &list, nil
 }

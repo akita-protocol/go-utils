@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.keelakay.com/keelakay/utils/errors"
@@ -69,10 +70,15 @@ func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, erro
 	err := h.Select(&list, query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
+	}
+
 	return &list, nil
 }
 
