@@ -1,0 +1,70 @@
+package ipfs
+
+import (
+	baseErrors "errors"
+	"fmt"
+	"regexp"
+	"strings"
+
+	"github.com/algorand/go-algorand-sdk/types"
+	"github.com/ipfs/go-cid"
+	"github.com/multiformats/go-multicodec"
+	"github.com/multiformats/go-multihash"
+	"gitlab.keelakay.com/keelakay/utils/errors"
+)
+
+var (
+	ErrUnknownSpec      = baseErrors.New("unsupported template-ipfs spec")
+	ErrUnsupportedField = baseErrors.New("unsupported ipfscid field, only reserve is currently supported")
+	ErrUnsupportedCodec = baseErrors.New("unknown multicodec type in ipfscid spec")
+	ErrUnsupportedHash  = baseErrors.New("unknown hash type in ipfscid spec")
+	ErrInvalidV0        = baseErrors.New("cid v0 must always be dag-pb and sha2-256 codec/hash type")
+	ErrHashEncoding     = baseErrors.New("error encoding new hash")
+	templateIPFSRegexp  = regexp.MustCompile(`template-ipfs://{ipfscid:(?P<version>[01]):(?P<codec>[a-z0-9\-]+):(?P<field>[a-z0-9\-]+):(?P<hash>[a-z0-9\-]+)}`)
+)
+
+func ParseASAUrl(asaUrl string, reserveAddress types.Address) (string, error) {
+	const op errors.Op = "ParseASAUrl"
+
+	matches := templateIPFSRegexp.FindStringSubmatch(asaUrl)
+	if matches == nil {
+		if strings.HasPrefix(asaUrl, "template-ipfs://") {
+			return "", errors.E(op, ErrUnknownSpec)
+		}
+		return asaUrl, nil
+	}
+	if matches[templateIPFSRegexp.SubexpIndex("field")] != "reserve" {
+		return "", errors.E(op, ErrUnsupportedField)
+	}
+	var (
+		codec         multicodec.Code
+		multihashType uint64
+		hash          []byte
+		err           error
+		cidResult     cid.Cid
+	)
+	if err = codec.Set(matches[templateIPFSRegexp.SubexpIndex("codec")]); err != nil {
+		return "", errors.E(op, ErrUnsupportedCodec)
+	}
+	multihashType = multihash.Names[matches[templateIPFSRegexp.SubexpIndex("hash")]]
+	if multihashType == 0 {
+		return "", errors.E(op, ErrUnsupportedHash)
+	}
+
+	hash, err = multihash.Encode(reserveAddress[:], multihashType)
+	if err != nil {
+		return "", errors.E(op, ErrHashEncoding)
+	}
+	if matches[templateIPFSRegexp.SubexpIndex("version")] == "0" {
+		if codec != multicodec.DagPb {
+			return "", errors.E(op, ErrInvalidV0)
+		}
+		if multihashType != multihash.SHA2_256 {
+			return "", errors.E(op, ErrInvalidV0)
+		}
+		cidResult = cid.NewCidV0(hash)
+	} else {
+		cidResult = cid.NewCidV1(uint64(codec), hash)
+	}
+	return fmt.Sprintf("ipfs://%s", strings.ReplaceAll(asaUrl, matches[0], cidResult.String())), nil
+}
