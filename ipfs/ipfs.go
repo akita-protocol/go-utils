@@ -3,6 +3,8 @@ package ipfs
 import (
 	baseErrors "errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -67,4 +69,29 @@ func ParseASAUrl(asaUrl string, reserveAddress types.Address) (string, error) {
 		cidResult = cid.NewCidV1(uint64(codec), hash)
 	}
 	return fmt.Sprintf("ipfs://%s", strings.ReplaceAll(asaUrl, matches[0], cidResult.String())), nil
+}
+
+func GetIPFSData(url string) ([]byte, error) {
+	const op errors.Op = "GetIPFSData"
+	if !strings.HasPrefix(url, "ipfs://") {
+		return nil, errors.E(op, fmt.Errorf("invalid ipfs url: %s", url))
+	}
+
+	url = strings.Replace(url, "ipfs://", "https://ipfs.algonft.tools/", 1)
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.E(op, fmt.Errorf("ipfs request failed: %s", resp.Status))
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	return body, nil
 }
