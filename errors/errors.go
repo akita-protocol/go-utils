@@ -59,7 +59,7 @@ func Sentry(hub *sentry.Hub, err error) {
 			return
 		}
 
-		sentry.WithScope(func(scope *sentry.Scope) {
+		hub.WithScope(func(scope *sentry.Scope) {
 			scope.AddEventProcessor(func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
 				if e.Kind != "" && e.Msg != "" {
 					event.Exception[0].Type = fmt.Sprintf("%v: %v", e.Kind, e.Msg)
@@ -73,7 +73,7 @@ func Sentry(hub *sentry.Hub, err error) {
 				}
 				return event
 			})
-			sentry.CaptureException(e)
+			hub.CaptureException(e)
 		})
 	}
 }
