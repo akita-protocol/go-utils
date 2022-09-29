@@ -89,7 +89,7 @@ func GetIPFSData(url string) ([]byte, error) {
 		return nil, errors.E(op, err)
 	}
 
-	if resp.StatusCode != http.StatusOK && len(body) != 0 {
+	if resp.StatusCode != http.StatusOK || len(body) == 0 {
 		return nil, errors.E(op, fmt.Errorf("ipfs request failed: %s", resp.Status))
 	}
 
