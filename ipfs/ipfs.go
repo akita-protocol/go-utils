@@ -77,7 +77,7 @@ func GetIPFSData(url string) ([]byte, error) {
 		return nil, errors.E(op, fmt.Errorf("invalid ipfs url: %s", url))
 	}
 
-	url = strings.Replace(url, "ipfs://", "https://cloudflare-ipfs.com/ipfs/", 1)
+	url = strings.Replace(url, "ipfs://", "https://ipfs.algonft.tools/ipfs/", 1)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, errors.E(op, err)
