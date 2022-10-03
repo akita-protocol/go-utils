@@ -74,7 +74,8 @@ func ParseASAUrl(asaUrl string, reserveAddress types.Address) (string, error) {
 func GetIPFSData(url string) ([]byte, error) {
 	const op errors.Op = "GetIPFSData"
 	if !strings.HasPrefix(url, "ipfs://") {
-		return nil, errors.E(op, fmt.Errorf("invalid ipfs url: %s", url))
+		fmt.Printf("invalid ipfs url: %s\n", url)
+		// return nil, errors.E(op, fmt.Errorf("invalid ipfs url: %s", url))
 	}
 
 	url = strings.Replace(url, "ipfs://", "https://ipfs.algonft.tools/ipfs/", 1)
