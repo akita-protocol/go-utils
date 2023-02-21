@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
-	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type Wallet struct {

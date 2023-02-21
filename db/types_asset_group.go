@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type AssetGroup struct {

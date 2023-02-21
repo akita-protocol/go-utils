@@ -12,7 +12,7 @@ import (
 	"github.com/ipfs/go-cid"
 	"github.com/multiformats/go-multicodec"
 	"github.com/multiformats/go-multihash"
-	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 var (

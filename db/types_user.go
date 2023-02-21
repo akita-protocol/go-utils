@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type User struct {

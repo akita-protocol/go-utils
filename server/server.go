@@ -8,9 +8,9 @@ import (
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
-	"gitlab.keelakay.com/keelakay/utils/db"
-	"gitlab.keelakay.com/keelakay/utils/errors"
-	"gitlab.keelakay.com/keelakay/utils/uuid"
+	"gitlab.algotoolchain.com/keelakay/utils/db"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
 const (

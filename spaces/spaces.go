@@ -40,6 +40,31 @@ func New() *Manager {
 	}
 }
 
+// func NewDownloader() {
+// 	key := os.Getenv("SPACES_KEY")
+// 	secret := os.Getenv("SPACES_SECRET")
+
+// 	s3Config := &aws.Config{
+// 		Credentials: credentials.NewStaticCredentials(key, secret, ""),
+// 		Endpoint:    aws.String("https://sfo3.digitaloceanspaces.com"),
+// 		Region:      aws.String("us-east-1"),
+// 	}
+
+// 	newSession, err := session.NewSession(s3Config)
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
+
+// 	// downloader := s3.NewDownloader(newSession)
+
+// 	s3Client := s3.New(newSession)
+
+// 	return &Manager{
+// 		S3:        s3Client,
+// 		spaceName: "akita",
+// 	}
+// }
+
 func (fm *Manager) AddFile(name string, file []byte, public bool) (string, error) {
 
 	fType, err := filetype.Get(file)

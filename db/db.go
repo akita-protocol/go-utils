@@ -10,7 +10,7 @@ import (
 	"github.com/fatih/structs"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"gitlab.keelakay.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 const pkg errors.Pkg = "db"

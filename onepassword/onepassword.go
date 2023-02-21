@@ -11,8 +11,8 @@ import (
 	"github.com/1Password/connect-sdk-go/onepassword"
 	"github.com/algorand/go-algorand-sdk/crypto"
 	"github.com/algorand/go-algorand-sdk/mnemonic"
-	"gitlab.keelakay.com/keelakay/utils/errors"
-	"gitlab.keelakay.com/keelakay/utils/misc"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 var (
