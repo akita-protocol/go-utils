@@ -15,6 +15,14 @@ import (
 
 const pkg errors.Pkg = "db"
 
+type TableKeySlice string
+
+const (
+	Tiny  TableKeySlice = "tiny"
+	Small TableKeySlice = "small"
+	Full  TableKeySlice = "full"
+)
+
 // Connect connects to a mysql database
 func Connect() (*sqlx.DB, error) {
 	const op errors.Op = "Connect"
@@ -32,12 +40,16 @@ func Connect() (*sqlx.DB, error) {
 	return db, nil
 }
 
-type ConnectionHandle interface {
+type Handle interface {
 	*sqlx.DB | *sqlx.Tx
+	Get(dest interface{}, query string, args ...interface{}) error
+	Select(dest interface{}, query string, args ...interface{}) error
+	Preparex(query string) (*sqlx.Stmt, error)
+	Exec(query string, args ...any) (sql.Result, error)
 }
 
 // Insert inserts an object into the database
-func Insert[H ConnectionHandle, S DBObject](h H, s S) (int64, error) {
+func Insert[H Handle, S DBObject](h H, s S) (int64, error) {
 	const op errors.Op = "Insert"
 	var (
 		res    sql.Result
@@ -88,7 +100,7 @@ func Insert[H ConnectionHandle, S DBObject](h H, s S) (int64, error) {
 }
 
 // Update updates an object in the database
-func Update[H ConnectionHandle, S DBObject](h H, s S, where map[string]interface{}) (*sql.Result, error) {
+func Update[H Handle, S DBObject](h H, s S, where map[string]interface{}) (*sql.Result, error) {
 	const op errors.Op = "Update"
 	var (
 		res    sql.Result
@@ -140,7 +152,7 @@ func Update[H ConnectionHandle, S DBObject](h H, s S, where map[string]interface
 }
 
 // Upsert inserts into or updates an object in the database
-func Upsert[H ConnectionHandle, S DBObject](h H, s S) (int64, error) {
+func Upsert[H Handle, S DBObject](h H, s S) (int64, error) {
 	const op errors.Op = "Upsert"
 	var (
 		res    sql.Result
@@ -199,7 +211,7 @@ func Upsert[H ConnectionHandle, S DBObject](h H, s S) (int64, error) {
 }
 
 // Delete removes an object from the database
-func Delete[H ConnectionHandle, S DBObject](h H, s S) (*sql.Result, error) {
+func Delete[H Handle, S DBObject](h H, s S) (*sql.Result, error) {
 	const op errors.Op = "Delete"
 	var (
 		res   sql.Result

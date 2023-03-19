@@ -18,6 +18,18 @@ func getTable(obj interface{}) string {
 		return "wallet"
 	case WalletToken, *WalletToken:
 		return "wallet_token"
+	case Subscription, *Subscription:
+		return "subscription"
+	case SubscriptionFactory, *SubscriptionFactory:
+		return "subscription_factory"
+	case SubscriptionBlacklist, *SubscriptionBlacklist:
+		return "subscription_blacklist"
+	case SubscriptionOffering, *SubscriptionOffering:
+		return "subscription_offering"
+	case SubscriptionPass, *SubscriptionPass:
+		return "subscription_pass"
+	case SubscriptionPayment, *SubscriptionPayment:
+		return "subscription_payment"
 	default:
 		return ""
 	}
