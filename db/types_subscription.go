@@ -13,7 +13,7 @@ type Subscription struct {
 	ID               uint64     `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	StartDate        time.Time  `structs:"start_date,omitempty" db:"start_date" json:"start_date,omitempty"`
 	BoxIndex         *uint64    `structs:"box_index,omitempty" db:"box_index" json:"box_index,omitempty"`
-	Interval         uint64     `structs:"interval,omitempty" db:"intervl" json:"interval,omitempty"`
+	Interval         uint64     `structs:"intervl,omitempty" db:"intervl" json:"interval,omitempty"`
 	LastPayment      time.Time  `structs:"last_payment,omitempty" db:"last_payment" json:"last_payment,omitempty"`
 	Subscriber       string     `structs:"subscriber,omitempty" db:"subscriber" json:"subscriber,omitempty"`
 	Recipient        string     `structs:"recipient,omitempty" db:"recipient" json:"recipient,omitempty"`
