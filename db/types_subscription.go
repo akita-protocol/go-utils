@@ -12,17 +12,17 @@ import (
 type Subscription struct {
 	ID               uint64     `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	StartDate        time.Time  `structs:"start_date,omitempty" db:"start_date" json:"start_date,omitempty"`
-	BoxIndex         uint64     `structs:"box_index,omitempty" db:"box_index" json:"box_index,omitempty"`
+	BoxIndex         *uint64    `structs:"box_index,omitempty" db:"box_index" json:"box_index,omitempty"`
 	Interval         uint64     `structs:"interval,omitempty" db:"intervl" json:"interval,omitempty"`
 	LastPayment      time.Time  `structs:"last_payment,omitempty" db:"last_payment" json:"last_payment,omitempty"`
 	Subscriber       string     `structs:"subscriber,omitempty" db:"subscriber" json:"subscriber,omitempty"`
 	Recipient        string     `structs:"recipient,omitempty" db:"recipient" json:"recipient,omitempty"`
-	ASA              uint64     `structs:"asa,omitempty" db:"asa" json:"asa,omitempty"`
+	ASA              *uint64    `structs:"asa,omitempty" db:"asa" json:"asa,omitempty"`
 	Amount           uint64     `structs:"amount,omitempty" db:"amount" json:"amount,omitempty"`
-	PassCount        uint64     `structs:"pass_count,omitempty" db:"pass_count" json:"pass_count,omitempty"`
+	PassCount        *uint64    `structs:"pass_count,omitempty" db:"pass_count" json:"pass_count,omitempty"`
 	LPA              *time.Time `structs:"lpa,omitempty" db:"lpa" json:"lpa,omitempty"`
 	CurrentAsOfBlock uint64     `structs:"current_as_of_block,omitempty" db:"current_as_of_block" json:"current_as_of_block,omitempty"`
-	Deleted          bool       `structs:"deleted,omitempty" db:"deleted" json:"deleted,omitempty"`
+	Deleted          *bool      `structs:"deleted,omitempty" db:"deleted" json:"deleted,omitempty"`
 	DeletedDate      *time.Time `structs:"deleted_date,omitempty" db:"deleted_date" json:"deleted_date,omitempty"`
 }
 
