@@ -96,12 +96,12 @@ func GetSubscriptionsByRecipientOffering[H Handle](h H, recipient string, boxInd
 	return list, nil
 }
 
-func GetSubscriptionsBySubscriber[H Handle](h H, subscriber string, st TableKeySlice) ([]*Subscription, error) {
-	const op errors.Op = "GetSubscriptionsBySubscriber"
-	query := fmt.Sprintf("select %s from subscription where subscriber = ?", strings.Join(SubscriptionTableKeys(st), ","))
+func GetSubscriptionsBySubscriber[H Handle](h H, subscriber string, st TableKeySlice, start uint64, limit uint64) ([]*Subscription, error) {
+	const op errors.Op = "GetSubscriptionsBySubscriberPaginated"
+	query := fmt.Sprintf("select %s from subscription where subscriber = ? limit ?, ?", strings.Join(SubscriptionTableKeys(st), ","))
 	var list []*Subscription
 
-	err := h.Select(&list, query, subscriber)
+	err := h.Select(&list, query, subscriber, start, limit)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Subscription Pass Not Found")
