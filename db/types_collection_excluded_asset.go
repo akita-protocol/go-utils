@@ -9,20 +9,20 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type CollectionExcludedAssets struct {
+type CollectionExcludedAsset struct {
 	ID    string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	AsaID uint64 `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id"`
 }
 
-func CollectionExcludedAssetsTableKeys() []string {
+func CollectionExcludedAssetTableKeys() []string {
 	return []string{"id", "asa_id"}
 }
 
-func GetCollectionExcludedAssets[H Handle](h H, id string) (*[]CollectionExcludedAssets, error) {
+func GetCollectionExcludedAssets[H Handle](h H, id string) (*[]CollectionExcludedAsset, error) {
 	const op errors.Op = "GetCollectionExcludedAssets"
-	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where id = ?", strings.Join(CollectionExcludedAssetsTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
 
-	var assets []CollectionExcludedAssets
+	var assets []CollectionExcludedAsset
 	err := h.Select(&assets, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -34,11 +34,11 @@ func GetCollectionExcludedAssets[H Handle](h H, id string) (*[]CollectionExclude
 	return &assets, nil
 }
 
-func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]CollectionExcludedAssets, error) {
+func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]CollectionExcludedAsset, error) {
 	const op errors.Op = "GetCollectionExcludedAssetByAsaID"
-	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where asa_id = ?", strings.Join(CollectionExcludedAssetsTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where asa_id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
 
-	var assets []CollectionExcludedAssets
+	var assets []CollectionExcludedAsset
 	err := h.Select(&assets, query, asaID)
 	if err != nil {
 		if err == sql.ErrNoRows {
