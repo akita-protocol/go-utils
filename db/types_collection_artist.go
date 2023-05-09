@@ -48,12 +48,12 @@ func GetCollectionArtistByCollection[H Handle](h H, collectionID string) ([]*Col
 	return ccs, nil
 }
 
-// DeletCollectionArtistsNotIn deletes collection artists that are not included in a list for a given collection
-func DeletCollectionArtistsNotIn[H Handle](h H, id string, addresses ...interface{}) error {
-	const op errors.Op = "DeletCollectionArtistsNotIn"
+// DeleteCollectionArtistsNotIn deletes collection artists that are not included in a list for a given collection
+func DeleteCollectionArtistsNotIn[H Handle](h H, id string, addresses ...interface{}) error {
+	const op errors.Op = "DeleteCollectionArtistsNotIn"
 	data := append([]interface{}{id}, addresses...)
 	qMarks := []rune(strings.Repeat("?, ", (len(addresses) - 1)))
-	query := "delete from %s.collection_creator where id = ? and address not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	query := fmt.Sprintf("delete from %s.collection_creator where id = ? and address not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
 
 	switch h := any(h).(type) {

@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -73,6 +74,35 @@ func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) 
 		}
 	case *sqlx.DB:
 		_, err = h.Exec(query, id, address)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
+// DeleteNFDWalletNotIn deletes collections that are not included in a list for a given NFD
+func DeleteNFDWalletNotIn[H Handle](h H, id string, addresses ...interface{}) error {
+	const op errors.Op = "DeleteNFDWalletNotIn"
+	data := append([]interface{}{id}, addresses...)
+	qMarks := []rune(strings.Repeat("?, ", (len(addresses) - 1)))
+	query := fmt.Sprintf("delete from %s.nfd_wallet where id = ? and address not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, data...)
 		if err != nil {
 			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
 		}

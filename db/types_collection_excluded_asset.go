@@ -50,12 +50,12 @@ func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]Collecti
 	return &assets, nil
 }
 
-// DeletCollectionExcludedAssetsNotIn deletes collection excluded assets that are not included in a list for a given collection
-func DeletCollectionExcludedAssetsNotIn[H Handle](h H, id string, asaIDs ...interface{}) error {
-	const op errors.Op = "DeletCollectionExcludedAssetsNotIn"
+// DeleteCollectionExcludedAssetsNotIn deletes collection excluded assets that are not included in a list for a given collection
+func DeleteCollectionExcludedAssetsNotIn[H Handle](h H, id string, asaIDs ...interface{}) error {
+	const op errors.Op = "DeleteCollectionExcludedAssetsNotIn"
 	data := append([]interface{}{id}, asaIDs...)
 	qMarks := []rune(strings.Repeat("?, ", (len(asaIDs) - 1)))
-	query := "delete from %s.collection_excluded_assets where id = ? and asa_id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	query := fmt.Sprintf("delete from %s.collection_excluded_assets where id = ? and asa_id not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
 
 	switch h := any(h).(type) {
