@@ -20,13 +20,13 @@ type SubscriptionOffering struct {
 	Shutdown  bool   `structs:"shutdown,omitempty" db:"shutdown" json:"shutdown,omitempty"`
 }
 
-func SubscriptionOfferingTableKeys(st TableKeySlice) []string {
+func SubscriptionOfferingTableKeys() []string {
 	return []string{"recipient", "box_index", "interval", "asa", "amount", "pass_count", "cid", "active", "shutdown"}
 }
 
-func GetSubscriptionOfferingByRecipientAndBoxIndex[H Handle](h H, recipient string, boxIndex uint64, st TableKeySlice) (*SubscriptionOffering, error) {
+func GetSubscriptionOfferingByRecipientAndBoxIndex[H Handle](h H, recipient string, boxIndex uint64) (*SubscriptionOffering, error) {
 	const op errors.Op = "GetSubscriptionOfferingByRecipientAndBoxIndex"
-	query := fmt.Sprintf("select %s from subscription_offering where recipient = ? and box_index = ?", strings.Join(SubscriptionOfferingTableKeys(st), ","))
+	query := fmt.Sprintf("select %s from %s.subscription_offering where recipient = ? and box_index = ?", strings.Join(SubscriptionOfferingTableKeys(), ","), SubscriptionDatabase())
 
 	var offering SubscriptionOffering
 	err := h.Get(&offering, query, recipient, boxIndex)
@@ -39,9 +39,9 @@ func GetSubscriptionOfferingByRecipientAndBoxIndex[H Handle](h H, recipient stri
 	return &offering, nil
 }
 
-func GetSubscriptionOfferingsByRecipient[H Handle](h H, recipient string, st TableKeySlice) ([]*SubscriptionOffering, error) {
+func GetSubscriptionOfferingsByRecipient[H Handle](h H, recipient string) ([]*SubscriptionOffering, error) {
 	const op errors.Op = "GetSubscriptionOfferingsByRecipient"
-	query := fmt.Sprintf("select %s from subscription_offering where recipient = ?", strings.Join(SubscriptionOfferingTableKeys(st), ","))
+	query := fmt.Sprintf("select %s from %s.subscription_offering where recipient = ?", strings.Join(SubscriptionOfferingTableKeys(), ","), SubscriptionDatabase())
 
 	var offerings []*SubscriptionOffering
 	err := h.Select(&offerings, query, recipient)

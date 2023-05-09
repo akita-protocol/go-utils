@@ -15,9 +15,13 @@ type RoleReq struct {
 	DistinctAssets *bool  `structs:"distinct_assets,omitempty" db:"distinct_assets" json:"distinct_assets,omitempty"`
 }
 
+func RoleReqTableKeys() []string {
+	return []string{"role_id", "group_id", "greater_than", "less_than", "distinct_assets"}
+}
+
 func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 	const op errors.Op = "GetRoleReqByRoleID"
-	const query = "select role_id, group_id, greater_than, less_than, distinct_assets from role_req where role_id = ?"
+	query := fmt.Sprintf("select %s from %s.role_req where role_id = ?", RoleReqTableKeys(), DiscordBotDatabase())
 	var r RoleReq
 
 	err := h.Get(&r, query, roleID)
@@ -32,7 +36,7 @@ func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 
 func GetRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]RoleReq, error) {
 	const op errors.Op = "GetRoleReqsByGroupID"
-	const query = "select role_id, group_id, greater_than, less_than, distinct_assets from role_req where group_id = ?"
+	query := fmt.Sprintf("select %s from %s.role_req where group_id = ?", RoleReqTableKeys(), DiscordBotDatabase())
 	var list []RoleReq
 
 	err := h.Select(&list, query, groupID)

@@ -14,7 +14,7 @@ type Server struct {
 
 func GetServer[H DBStruct](h H, id string) (*Server, error) {
 	const op errors.Op = "GetServer"
-	const query = "select id, name from server where id = ?"
+	query := fmt.Sprintf("select id, name from %s.server where id = ?", DiscordBotDatabase())
 	var s Server
 
 	err := h.Get(&s, query, id)
@@ -29,7 +29,7 @@ func GetServer[H DBStruct](h H, id string) (*Server, error) {
 
 func GetServers[H DBStruct](h H) (*[]Server, error) {
 	const op errors.Op = "GetServers"
-	const query = "select id, name from server"
+	query := fmt.Sprintf("select id, name from %s.server", DiscordBotDatabase())
 	var list []Server
 
 	err := h.Select(&list, query)

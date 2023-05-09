@@ -38,9 +38,9 @@ func SubscriptionTableKeys(st TableKeySlice) []string {
 
 func GetLeastSubscriptionUpdateBlock[H Handle](h H) (uint64, error) {
 	const op errors.Op = "GetLatestUpdateBlock"
-	const query = "select min(current_as_of_block) from subscription where deleted = 0"
-
+	query := fmt.Sprintf("select min(current_as_of_block) from %s.subscription where deleted = 0", SubscriptionDatabase())
 	var block uint64
+
 	err := h.Get(&block, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -53,9 +53,9 @@ func GetLeastSubscriptionUpdateBlock[H Handle](h H) (uint64, error) {
 
 func GetSubscriptionByID[H Handle](h H, st TableKeySlice) (*Subscription, error) {
 	const op errors.Op = "GetSubscriptionByID"
-	query := fmt.Sprintf("select %s from subscription where id = ?", strings.Join(SubscriptionTableKeys(st), ","))
-
+	query := fmt.Sprintf("select %s from %s.subscription where id = ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
 	var s Subscription
+
 	err := h.Get(&s, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -68,7 +68,7 @@ func GetSubscriptionByID[H Handle](h H, st TableKeySlice) (*Subscription, error)
 
 func GetSubscriptionsByRecipient[H Handle](h H, recipient string, st TableKeySlice) ([]*Subscription, error) {
 	const op errors.Op = "GetSubscriptionsByRecipient"
-	query := fmt.Sprintf("select %s from subscription where recipient = ?", strings.Join(SubscriptionTableKeys(st), ","))
+	query := fmt.Sprintf("select %s from %s.subscription where recipient = ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
 	var list []*Subscription
 
 	err := h.Select(&list, query, recipient)
@@ -83,7 +83,7 @@ func GetSubscriptionsByRecipient[H Handle](h H, recipient string, st TableKeySli
 
 func GetSubscriptionsByRecipientOffering[H Handle](h H, recipient string, boxIndex uint64, st TableKeySlice) ([]*Subscription, error) {
 	const op errors.Op = "GetSubscriptionsByRecipientOffering"
-	query := fmt.Sprintf("select %s from subscription where recipient = ? and box_index = ?", strings.Join(SubscriptionTableKeys(st), ","))
+	query := fmt.Sprintf("select %s from %s.subscription where recipient = ? and box_index = ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
 	var list []*Subscription
 
 	err := h.Select(&list, query, recipient, boxIndex)
@@ -98,7 +98,7 @@ func GetSubscriptionsByRecipientOffering[H Handle](h H, recipient string, boxInd
 
 func GetSubscriptionsBySubscriber[H Handle](h H, subscriber string, st TableKeySlice, start uint64, limit uint64) ([]*Subscription, error) {
 	const op errors.Op = "GetSubscriptionsBySubscriberPaginated"
-	query := fmt.Sprintf("select %s from subscription where subscriber = ? limit ?, ?", strings.Join(SubscriptionTableKeys(st), ","))
+	query := fmt.Sprintf("select %s from %s.subscription where subscriber = ? limit ?, ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
 	var list []*Subscription
 
 	err := h.Select(&list, query, subscriber, start, limit)

@@ -19,7 +19,7 @@ func SubscriptionPaymentTableKeys() []string {
 
 func GetSubscriptionPaymentByTxID[H Handle](h H, txID string) (*SubscriptionPayment, error) {
 	const op errors.Op = "GetSubscriptionPaymentByTxID"
-	query := fmt.Sprintf("select %s from subscription_payment where id = ?", strings.Join(SubscriptionPaymentTableKeys(), ","))
+	query := fmt.Sprintf("select %s from %s.subscription_payment where id = ?", strings.Join(SubscriptionPaymentTableKeys(), ","), SubscriptionDatabase())
 
 	var sp SubscriptionPayment
 	err := h.Get(&sp, query, txID)
@@ -34,7 +34,7 @@ func GetSubscriptionPaymentByTxID[H Handle](h H, txID string) (*SubscriptionPaym
 
 func GetSubscriptionPaymentsBySubID[H Handle](h H, subID uint64) ([]*SubscriptionPayment, error) {
 	const op errors.Op = "GetSubscriptionPaymentsBySubID"
-	query := fmt.Sprintf("select %s from subscription_payment where sub_id = ?", strings.Join(SubscriptionPaymentTableKeys(), ","))
+	query := fmt.Sprintf("select %s from %s.subscription_payment where sub_id = ?", strings.Join(SubscriptionPaymentTableKeys(), ","), SubscriptionDatabase())
 
 	var list []*SubscriptionPayment
 	err := h.Select(&list, query, subID)

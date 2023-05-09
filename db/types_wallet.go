@@ -19,7 +19,7 @@ type Wallet struct {
 
 func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 	const op errors.Op = "GetWalletByID"
-	const query = "select id, user_id, label, address, verified, main from wallet where id = ?"
+	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where id = ?", DiscordBotDatabase())
 	var w Wallet
 
 	err := h.Get(&w, query, id)
@@ -34,7 +34,7 @@ func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 
 func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
 	const op errors.Op = "GetWalletByAddress"
-	const query = "select id, user_id, label, address, verified, main from wallet where address = ?"
+	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where address = ?", DiscordBotDatabase())
 	var w Wallet
 
 	err := h.Get(&w, query, id)
@@ -49,7 +49,7 @@ func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
 
 func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1 limit 1"
+	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1 limit 1", DiscordBotDatabase())
 	var w Wallet
 
 	err := h.Get(&w, query, userID)
@@ -64,7 +64,7 @@ func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) 
 
 func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	const query = "select id, user_id, label, address, verified, main from wallet where user_id = ? and verified = 1"
+	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1", DiscordBotDatabase())
 	var list []Wallet
 
 	err := h.Select(&list, query, userID)
@@ -84,7 +84,7 @@ func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, erro
 
 func DeleteWalletByAddress[H DBStruct](h H, address string) error {
 	const op errors.Op = "DeleteWalletByAddress"
-	const query = "delete from wallet where address = ?"
+	query := fmt.Sprintf("delete from %s.wallet where address = ?", DiscordBotDatabase())
 	var err error
 
 	switch h := any(h).(type) {
@@ -115,8 +115,7 @@ type WalletToken struct {
 
 func GetWalletToken[H DBStruct](h H, id string) error {
 	const op errors.Op = "Get"
-
-	const query = "select wallet_id, token from wallet_token where wallet_id = ?"
+	query := fmt.Sprintf("select wallet_id, token from %s.wallet_token where wallet_id = ?", DiscordBotDatabase())
 	var r Wallet
 
 	err := h.Get(&r, query, id)

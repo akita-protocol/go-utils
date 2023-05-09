@@ -14,7 +14,7 @@ type AssetGroup struct {
 
 func GetAssetGroup[H DBStruct](h H, id string) (*[]uint64, error) {
 	const op errors.Op = "GetAssetGroup"
-	const query = "select asset_id from asset_group where id = ?"
+	query := fmt.Sprintf("select asset_id from %s.asset_group where id = ?", DiscordBotDatabase())
 	var list []uint64
 
 	err := h.Select(&list, query, id)

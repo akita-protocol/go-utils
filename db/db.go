@@ -253,3 +253,29 @@ func Delete[H Handle, S DBObject](h H, s S) (*sql.Result, error) {
 
 	return &res, nil
 }
+
+// IsProduction returns a boolean for whether the request wants to use product or not
+func IsProduction() bool {
+	return os.Getenv("GITLAB_ENVIRONMENT_NAME") == "production"
+}
+
+func NFDDatabase() string {
+	if IsProduction() {
+		return "nfd"
+	}
+	return "nfd_test"
+}
+
+func DiscordBotDatabase() string {
+	if IsProduction() {
+		return "discord_bot"
+	}
+	return "discord_bot_test"
+}
+
+func SubscriptionDatabase() string {
+	if IsProduction() {
+		return "subscription"
+	}
+	return "subscription_test"
+}

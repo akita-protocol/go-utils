@@ -16,7 +16,7 @@ type ServerRole struct {
 
 func GetServerRoles[H DBStruct](h H, serverID string) (*[]ServerRole, error) {
 	const op errors.Op = "GetServerRoles"
-	const query = "select id, server_id, role_id, name from server_role where server_id = ?"
+	query := fmt.Sprintf("select id, server_id, role_id, name from %s.server_role where server_id = ?", DiscordBotDatabase())
 	var list []ServerRole
 
 	err := h.Select(&list, query, serverID)

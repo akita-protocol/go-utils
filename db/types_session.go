@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -13,8 +14,7 @@ type SessionToken struct {
 
 func GetSessionTokenByUserID[H DBStruct](h H, userID string) (*SessionToken, error) {
 	const op errors.Op = "GetSessionTokenByUserID"
-
-	const query = "select user_id, token from user where user_id = ?"
+	query := fmt.Sprintf("select user_id, token from %s.user where user_id = ?", DiscordBotDatabase())
 	var s SessionToken
 
 	err := h.Get(&s, query, userID)
@@ -29,8 +29,7 @@ func GetSessionTokenByUserID[H DBStruct](h H, userID string) (*SessionToken, err
 
 func GetSessionTokenByToken[H DBStruct](h H, token string) (*SessionToken, error) {
 	const op errors.Op = "GetSessionTokenByToken"
-
-	const query = "select user_id, token from user where token = ?"
+	query := fmt.Sprintf("select user_id, token from %s.user where token = ?", DiscordBotDatabase())
 	var s SessionToken
 
 	err := h.Get(&s, query, token)

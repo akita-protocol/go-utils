@@ -91,3 +91,129 @@ func GetAccountFromOnePassword(client connect.Client) (*crypto.Account, error) {
 
 	return &account, nil
 }
+
+func NewAccountInOnePassword(client connect.Client) (*crypto.Account, error) {
+	const op errors.Op = "GetAccountFromOnePassword"
+
+	account := crypto.GenerateAccount()
+
+	mnemonics, err := mnemonic.FromPrivateKey(account.PrivateKey)
+	if err != nil {
+		return nil, errors.E(op, err, "failed to convert private key to mnemonic")
+	}
+
+	mnemonic := strings.Split(mnemonics, " ")
+
+	item := &onepassword.Item{
+		Title: fmt.Sprintf("Algorand Wallet - %s", account.Address.String()),
+		Fields: []*onepassword.ItemField{
+			{
+				Label: "1",
+				Value: string(mnemonic[0]),
+			},
+			{
+				Label: "2",
+				Value: string(mnemonic[1]),
+			},
+			{
+				Label: "3",
+				Value: string(mnemonic[2]),
+			},
+			{
+				Label: "4",
+				Value: string(mnemonic[3]),
+			},
+			{
+				Label: "5",
+				Value: string(mnemonic[4]),
+			},
+			{
+				Label: "6",
+				Value: string(mnemonic[5]),
+			},
+			{
+				Label: "7",
+				Value: string(mnemonic[6]),
+			},
+			{
+				Label: "8",
+				Value: string(mnemonic[7]),
+			},
+			{
+				Label: "9",
+				Value: string(mnemonic[8]),
+			},
+			{
+				Label: "10",
+				Value: string(mnemonic[9]),
+			},
+			{
+				Label: "11",
+				Value: string(mnemonic[10]),
+			},
+			{
+				Label: "12",
+				Value: string(mnemonic[11]),
+			},
+			{
+				Label: "13",
+				Value: string(mnemonic[12]),
+			},
+			{
+				Label: "14",
+				Value: string(mnemonic[13]),
+			},
+			{
+				Label: "15",
+				Value: string(mnemonic[14]),
+			},
+			{
+				Label: "16",
+				Value: string(mnemonic[15]),
+			},
+			{
+				Label: "17",
+				Value: string(mnemonic[16]),
+			},
+			{
+				Label: "18",
+				Value: string(mnemonic[17]),
+			},
+			{
+				Label: "19",
+				Value: string(mnemonic[18]),
+			},
+			{
+				Label: "20",
+				Value: string(mnemonic[19]),
+			},
+			{
+				Label: "21",
+				Value: string(mnemonic[20]),
+			},
+			{
+				Label: "22",
+				Value: string(mnemonic[21]),
+			},
+			{
+				Label: "23",
+				Value: string(mnemonic[22]),
+			},
+			{
+				Label: "24",
+				Value: string(mnemonic[23]),
+			},
+			{
+				Label: "25",
+				Value: string(mnemonic[24]),
+			},
+		},
+	}
+
+	_, err = client.CreateItem(item, OnePasswordVaultID)
+	if err != nil {
+		return nil, errors.E(op, err, "failed to convert private key to mnemonic")
+	}
+
+	return &account, nil
+}

@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -13,8 +14,7 @@ type User struct {
 
 func GetUserByID[H DBStruct](h H, id string) (*User, error) {
 	const op errors.Op = "GetUserByID"
-
-	const query = "select id, discord_id from user where id = ?"
+	query := fmt.Sprintf("select id, discord_id from %s.user where id = ?", DiscordBotDatabase())
 	var u User
 
 	err := h.Get(&u, query, id)
@@ -29,8 +29,7 @@ func GetUserByID[H DBStruct](h H, id string) (*User, error) {
 
 func GetUserByDiscordID[H DBStruct](h H, did string) (*User, error) {
 	const op errors.Op = "GetUserByDiscordID"
-
-	const query = "select id, discord_id from user where discord_id = ?"
+	query := fmt.Sprintf("select id, discord_id from %s.user where discord_id = ?", DiscordBotDatabase())
 	var u User
 
 	err := h.Get(&u, query, did)

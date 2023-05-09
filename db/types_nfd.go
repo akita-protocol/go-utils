@@ -3,8 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
-	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
@@ -19,6 +19,7 @@ type NFD struct {
 	Name             string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 	Version          string  `structs:"version,omitempty" db:"version" json:"version,omitempty"`
 	UserName         *string `structs:"username,omitempty" db:"username" json:"username,omitempty"`
+	Bio              *string `structs:"bio,omitempty" db:"bio" json:"bio,omitempty"`
 	Email            *string `structs:"email,omitempty" db:"email" json:"email,omitempty"`
 	Avatar           *string `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
 	AvatarID         *uint64 `structs:"avatar_id,omitempty" db:"avatar_id" json:"avatar_id,omitempty"`
@@ -33,9 +34,19 @@ type NFD struct {
 	PurchasedBlock   uint64  `structs:"purchased_block,omitempty" db:"purchased_block" json:"purchased_block,omitempty"`
 }
 
-func GetNFDIDByAppID[H DBStruct](h H, appID uint64) (string, error) {
+var NFDTableKeySlices = map[TableKeySlice][]string{
+	Tiny:  {"id", "app_id", "name", "username", "avatar", "avatar_id", "banner", "banner_id"},
+	Small: {"id", "app_id", "name", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain"},
+	Full:  {"id", "state", "current_as_of_block", "app_id", "asa_id", "name", "version", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain", "last_changed_block", "created_block", "purchased_block"},
+}
+
+func NFDTableKeys(st TableKeySlice) []string {
+	return NFDTableKeySlices[st]
+}
+
+func GetNFDIDByAppID[H DBStruct](h H, appID uint64, st TableKeySlice) (string, error) {
 	const op errors.Op = "GetNFDIDByAppID"
-	const query = "select id from nfd where app_id = ?"
+	query := fmt.Sprintf("select %s from %s.nfd where app_id = ?", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
 	var id string
 
 	err := h.Get(&id, query, appID)
@@ -48,9 +59,9 @@ func GetNFDIDByAppID[H DBStruct](h H, appID uint64) (string, error) {
 	return id, nil
 }
 
-func GetNFDsByAddress[H DBStruct](h H, address string) (*[]NFD, error) {
+func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
 	const op errors.Op = "GetNFDsByAddress"
-	const query = "select id, state, current_as_of_block, app_id, asa_id, name, version, username, email, avatar, avatar_id, banner, banner_id, discord_id, twitter_id, telegram_id, domain, last_changed_block, created_block, purchased_block from nfd where id = (select id from nfd_wallet where wallet_id = (select id from wallet where address = ?))"
+	query := fmt.Sprintf("select %s from %s.nfd where id = (select id from nfd.nfd_wallet where address = ?)", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
 	var list []NFD
 
 	err := h.Select(&list, query, address)
@@ -70,7 +81,7 @@ func GetNFDsByAddress[H DBStruct](h H, address string) (*[]NFD, error) {
 
 func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
 	const op errors.Op = "GetAllNFDAppIDs"
-	const query = "select app_id from nfd"
+	query := fmt.Sprintf("select app_id from %s.nfd", NFDDatabase())
 	var list []uint64
 
 	err := h.Select(&list, query)
@@ -90,7 +101,7 @@ func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
 
 func GetLatestNFDUpdateBlock[H DBStruct](h H) (uint64, error) {
 	const op errors.Op = "GetLatestNFDUpdateBlock"
-	const query = "select max(current_as_of_block) from nfd"
+	query := fmt.Sprintf("select max(current_as_of_block) from %s.nfd", NFDDatabase())
 	var block uint64
 
 	err := h.Get(&block, query)
@@ -101,103 +112,4 @@ func GetLatestNFDUpdateBlock[H DBStruct](h H) (uint64, error) {
 		return 0, errors.E(pkg, op, err)
 	}
 	return block, nil
-}
-
-type NFDWallet struct {
-	// ID is the same as NFD id
-	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
-	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
-}
-
-func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
-	const op errors.Op = "GetNFDWallets"
-	const query = "select id, address, verified from nfd_wallet where id = ?"
-	var list []NFDWallet
-
-	err := h.Select(&list, query, nfdID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-
-	if !(len(list) > 0) {
-		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
-	}
-
-	return &list, nil
-}
-
-func GetNFDWalletsByUserID[H DBStruct](h H, userID string) (*[]NFDWallet, error) {
-	const op errors.Op = "GetNFDWalletsByUserID"
-	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = (select discord_id from user where id = ?) limit 1)"
-	var list []NFDWallet
-
-	err := h.Select(&list, wallet_query, userID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfdwallets not found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-
-	if !(len(list) > 0) {
-		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfdwallets not found"))
-	}
-
-	return &list, nil
-}
-
-func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, error) {
-	const op errors.Op = "GetNFDWalletsByDiscordID"
-	const wallet_query = "select id, address, verified from nfd_wallet where id = (select id from nfd where discord_id = ? limit 1)"
-	var list []NFDWallet
-
-	err := h.Select(&list, wallet_query, discordID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfdwallets not found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-
-	if !(len(list) > 0) {
-		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfdwallets not found"))
-	}
-
-	return &list, nil
-}
-
-func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) error {
-	const op errors.Op = "DeleteNFDWalletsByIDAndAddress"
-	const query = "delete from nfd_wallet where id = ? and address = ?"
-	var err error
-
-	switch h := any(h).(type) {
-	case *sqlx.Tx:
-		stmt, err := h.Prepare(query)
-		if err != nil {
-			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
-		}
-
-		_, err = stmt.Exec(id, address)
-		if err != nil {
-			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
-		}
-	case *sqlx.DB:
-		_, err = h.Exec(query, id, address)
-		if err != nil {
-			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
-		}
-	}
-
-	return nil
-}
-
-type NFDJson struct {
-	// ID is the same as NFD id
-	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Data string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
 }

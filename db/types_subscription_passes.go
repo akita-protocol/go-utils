@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -11,9 +12,9 @@ type SubscriptionPass struct {
 	Address string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
-func GetSubscriptionPassesBySubscriptionID[H Handle](h H, id uint64, st TableKeySlice) ([]*SubscriptionPass, error) {
+func GetSubscriptionPassesBySubscriptionID[H Handle](h H, id uint64) ([]*SubscriptionPass, error) {
 	const op errors.Op = "GetSubscriptionPassesBySubscriptionID"
-	const query = "select id, address from subscription_passes where subscription_id = ?"
+	query := fmt.Sprintf("select id, address from %s.subscription_passes where subscription_id = ?", SubscriptionDatabase())
 
 	var passes []*SubscriptionPass
 	err := h.Select(&passes, query, id)

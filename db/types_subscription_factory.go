@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -12,11 +13,11 @@ type SubscriptionFactory struct {
 	CurrentAsOfBlock uint64 `structs:"current_as_of_block,omitempty" db:"current_as_of_block" json:"current_as_of_block,omitempty"`
 }
 
-func GetSubscriptionFactoryByID[H Handle](h H, id uint64, st TableKeySlice) (*SubscriptionFactory, error) {
+func GetSubscriptionFactoryByID[H Handle](h H, id uint64) (*SubscriptionFactory, error) {
 	const op errors.Op = "GetSubscriptionFactory"
-	const query = "select id, version, current_as_of_block from subscription_factory where id = ?"
-
+	query := fmt.Sprintf("select id, version, current_as_of_block from %s.subscription_factory where id = ?", SubscriptionDatabase())
 	var sf SubscriptionFactory
+
 	err := h.Get(&sf, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -29,9 +30,9 @@ func GetSubscriptionFactoryByID[H Handle](h H, id uint64, st TableKeySlice) (*Su
 
 func GetLeastFactoryUpdateBlock[H Handle](h H) (uint64, error) {
 	const op errors.Op = "GetLatestUpdateBlock"
-	const query = "select min(current_as_of_block) from subscription_factory"
-
+	query := fmt.Sprintf("select min(current_as_of_block) from %s.subscription_factory", SubscriptionDatabase())
 	var block uint64
+
 	err := h.Get(&block, query)
 	if err != nil {
 		if err == sql.ErrNoRows {

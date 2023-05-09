@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -11,11 +12,11 @@ type SubscriptionBlacklist struct {
 	Address   string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
-func GetSubscriptionBlacklistByRecipient[H Handle](h H, recipient string, st TableKeySlice) ([]*SubscriptionBlacklist, error) {
+func GetSubscriptionBlacklistByRecipient[H Handle](h H, recipient string) ([]*SubscriptionBlacklist, error) {
 	const op errors.Op = "GetSubscriptionBlacklistByRecipient"
-	const query = "select recipient, address from subscription_blacklist where recipient = ?"
-
+	query := fmt.Sprintf("select recipient, address from %s.subscription_blacklist where recipient = ?", SubscriptionDatabase())
 	var blacklist []*SubscriptionBlacklist
+
 	err := h.Select(&blacklist, query, recipient)
 	if err != nil {
 		if err == sql.ErrNoRows {
