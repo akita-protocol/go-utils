@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type PropertyValue struct {
+	// ID is the id of the property
 	ID                    string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Name                  string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 	Image                 *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
@@ -37,4 +39,33 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 	}
 
 	return &propertyValues, nil
+}
+
+// DeletPropertyValueNotIn deletes properties that are not included in a list for a given NFD
+func DeletPropertyValueNotIn[H Handle](h H, id string, names ...interface{}) error {
+	const op errors.Op = "DeletPropertyValueNotIn"
+	data := append([]interface{}{id}, names...)
+	qMarks := []rune(strings.Repeat("?, ", (len(names) - 1)))
+	query := "delete from %s.property_value where id = ? and name not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }

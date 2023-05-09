@@ -35,10 +35,11 @@ func GetCollectionPrefixes[H Handle](h H, id string) (*[]CollectionPrefix, error
 }
 
 // DeletCollectionPrefixesNotIn deletes collection prefixes that are not included in a list for a given collection
-func DeletCollectionPrefixesNotIn[H Handle](h H, data ...interface{}) error {
+func DeletCollectionPrefixesNotIn[H Handle](h H, id string, prefixes ...interface{}) error {
 	const op errors.Op = "DeletCollectionPrefixesNotIn"
-	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
-	query := "delete from %s.collection_prefix where id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	data := append([]interface{}{id}, prefixes...)
+	qMarks := []rune(strings.Repeat("?, ", (len(prefixes) - 1)))
+	query := "delete from %s.collection_prefix where id = ? and prefix not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
 	var err error
 
 	switch h := any(h).(type) {

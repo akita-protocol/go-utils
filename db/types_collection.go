@@ -71,9 +71,10 @@ func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection,
 }
 
 // DeletCollectionNotIn deletes collections that are not included in a list for a given NFD
-func DeletCollectionNotIn[H Handle](h H, data ...interface{}) error {
+func DeletCollectionNotIn[H Handle](h H, nfdID string, ids ...interface{}) error {
 	const op errors.Op = "DeletCollectionNotIn"
-	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
+	data := append([]interface{}{nfdID}, ids...)
+	qMarks := []rune(strings.Repeat("?, ", (len(ids) - 1)))
 	query := "delete from %s.collection where nfd_id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
 	var err error
 

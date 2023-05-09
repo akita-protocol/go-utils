@@ -52,10 +52,11 @@ func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*Collecti
 }
 
 // DeletCollectionExtrasNotIn deletes collection extras that are not included in a list for a given collection
-func DeletCollectionExtrasNotIn[H Handle](h H, data ...interface{}) error {
+func DeletCollectionExtrasNotIn[H Handle](h H, id string, keys ...interface{}) error {
 	const op errors.Op = "DeletCollectionExtrasNotIn"
-	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
-	query := "delete from %s.collection_extras where id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	data := append([]interface{}{id}, keys...)
+	qMarks := []rune(strings.Repeat("?, ", (len(keys) - 1)))
+	query := "delete from %s.collection_extras where id = ? and key not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
 	var err error
 
 	switch h := any(h).(type) {

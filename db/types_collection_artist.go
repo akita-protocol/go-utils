@@ -49,10 +49,11 @@ func GetCollectionArtistByCollection[H Handle](h H, collectionID string) ([]*Col
 }
 
 // DeletCollectionArtistsNotIn deletes collection artists that are not included in a list for a given collection
-func DeletCollectionArtistsNotIn[H Handle](h H, data ...interface{}) error {
+func DeletCollectionArtistsNotIn[H Handle](h H, id string, addresses ...interface{}) error {
 	const op errors.Op = "DeletCollectionArtistsNotIn"
-	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
-	query := "delete from %s.collection_creator where id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	data := append([]interface{}{id}, addresses...)
+	qMarks := []rune(strings.Repeat("?, ", (len(addresses) - 1)))
+	query := "delete from %s.collection_creator where id = ? and address not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
 	var err error
 
 	switch h := any(h).(type) {
