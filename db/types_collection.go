@@ -37,6 +37,22 @@ func GetCollection[H Handle](h H, id string) (*Collection, error) {
 	return &c, nil
 }
 
+func GetCollectionsByNFDID[H Handle](h H, nfdID string) (*[]Collection, error) {
+	const op errors.Op = "GetCollectionsPaginated"
+	query := fmt.Sprintf("select %s from %s.collection where nfd_id = ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
+
+	var collections []Collection
+	err := h.Select(&collections, query, nfdID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Collections Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &collections, nil
+}
+
 func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection, error) {
 	const op errors.Op = "GetCollectionsPaginated"
 	query := fmt.Sprintf("select %s from %s.collection limit ?, ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
