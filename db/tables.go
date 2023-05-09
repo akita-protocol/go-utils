@@ -18,7 +18,7 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.collection_prefix", NFDDatabase())
 	case CollectionAsset, *CollectionAsset:
 		return fmt.Sprintf("%s.collection_asset", NFDDatabase())
-	case CollectionExcludedAssets, *CollectionExcludedAssets:
+	case CollectionExcludedAsset, *CollectionExcludedAsset:
 		return fmt.Sprintf("%s.collection_excluded_asset", NFDDatabase())
 	case CollectionArtist, *CollectionArtist:
 		return fmt.Sprintf("%s.collection_artist", NFDDatabase())
