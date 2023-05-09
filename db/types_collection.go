@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
@@ -67,4 +68,32 @@ func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection,
 	}
 
 	return &collections, nil
+}
+
+// DeletCollectionNotIn deletes collections that are not included in a list for a given NFD
+func DeletCollectionNotIn[H Handle](h H, data ...interface{}) error {
+	const op errors.Op = "DeletCollectionNotIn"
+	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
+	query := "delete from %s.collection where nfd_id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }

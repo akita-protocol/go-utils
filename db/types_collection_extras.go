@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
@@ -48,4 +49,32 @@ func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*Collecti
 	}
 
 	return &extra, nil
+}
+
+// DeletCollectionExtrasNotIn deletes collection extras that are not included in a list for a given collection
+func DeletCollectionExtrasNotIn[H Handle](h H, data ...interface{}) error {
+	const op errors.Op = "DeletCollectionExtrasNotIn"
+	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
+	query := "delete from %s.collection_extras where id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }

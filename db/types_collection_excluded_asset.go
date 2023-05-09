@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
@@ -47,4 +48,32 @@ func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]Collecti
 	}
 
 	return &assets, nil
+}
+
+// DeletCollectionExcludedAssetsNotIn deletes collection excluded assets that are not included in a list for a given collection
+func DeletCollectionExcludedAssetsNotIn[H Handle](h H, data ...interface{}) error {
+	const op errors.Op = "DeletCollectionExcludedAssetsNotIn"
+	qMarks := []rune(strings.Repeat("?, ", (len(data) - 1)))
+	query := "delete from %s.collection_excluded_assets where id = ? and id not in (" + string(qMarks[0:len(qMarks)-2]) + ")"
+	var err error
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err = h.Exec(query, data...)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }
