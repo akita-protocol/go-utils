@@ -26,6 +26,7 @@ const (
 	Token
 	PrivateChannel
 	Collection
+	Property
 )
 
 func (p Prefix) String() string {
@@ -41,6 +42,7 @@ var prefixToString = map[Prefix]string{
 	Token:          "tok",
 	PrivateChannel: "pvc",
 	Collection:     "col",
+	Property:       "prp",
 }
 
 var prefixToID = map[string]Prefix{
@@ -52,6 +54,7 @@ var prefixToID = map[string]Prefix{
 	"tok": Token,
 	"pvc": PrivateChannel,
 	"col": Collection,
+	"prp": Property,
 }
 
 // UnmarshalYAML checks to see if its type is valid
