@@ -14,11 +14,16 @@ type NFDWallet struct {
 	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
+	Deposit  *bool  `structs:"deposit,omitempty" db:"deposit" json:"deposit,omitempty"`
+}
+
+func NFDWalletTableKeys() []string {
+	return []string{"id", "address", "verified", "deposit"}
 }
 
 func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
-	query := fmt.Sprintf("select id, address, verified from %s.nfd_wallet where id = ?", NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ?", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
 	var list []NFDWallet
 
 	err := h.Select(&list, query, nfdID)
@@ -38,7 +43,7 @@ func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
 
 func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWalletsByUserID"
-	query := fmt.Sprintf("select id, address, verified from %s.nfd_wallet where id = (select id from %s.nfd where discord_id = ? limit 1)", NFDDatabase(), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select id from %s.nfd where discord_id = ? limit 1)", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
 	var list []NFDWallet
 
 	err := h.Select(&list, query, discordID)
