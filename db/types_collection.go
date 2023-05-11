@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type Collection struct {
@@ -71,10 +72,10 @@ func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection,
 }
 
 // DeleteCollectionNotIn deletes collections that are not included in a list for a given NFD
-func DeleteCollectionNotIn[H Handle](h H, nfdID string, ids ...interface{}) error {
+func DeleteCollectionNotIn[H Handle](h H, nfdID string, ids ...string) error {
 	const op errors.Op = "DeleteCollectionNotIn"
 	var err error
-	data := append([]interface{}{nfdID}, ids...)
+	data := append([]interface{}{nfdID}, misc.ToInterfaceSlice(ids)...)
 	query := fmt.Sprintf("delete from %s.collection where nfd_id = ?", NFDDatabase())
 
 	if len(ids) > 0 {

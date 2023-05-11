@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type NFDWallet struct {
@@ -88,10 +89,10 @@ func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) 
 }
 
 // DeleteNFDWalletNotIn deletes collections that are not included in a list for a given NFD
-func DeleteNFDWalletNotIn[H Handle](h H, id string, addresses ...interface{}) error {
+func DeleteNFDWalletNotIn[H Handle](h H, id string, addresses ...string) error {
 	const op errors.Op = "DeleteNFDWalletNotIn"
 	var err error
-	data := append([]interface{}{id}, addresses...)
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(addresses)...)
 	fmt.Println(data)
 	query := fmt.Sprintf("delete from %s.nfd_wallet where id = ?", NFDDatabase())
 

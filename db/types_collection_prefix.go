@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type CollectionPrefix struct {
@@ -35,10 +36,10 @@ func GetCollectionPrefixes[H Handle](h H, id string) (*[]CollectionPrefix, error
 }
 
 // DeleteCollectionPrefixesNotIn deletes collection prefixes that are not included in a list for a given collection
-func DeleteCollectionPrefixesNotIn[H Handle](h H, id string, prefixes ...interface{}) error {
+func DeleteCollectionPrefixesNotIn[H Handle](h H, id string, prefixes ...string) error {
 	const op errors.Op = "DeleteCollectionPrefixesNotIn"
 	var err error
-	data := append([]interface{}{id}, prefixes...)
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(prefixes)...)
 	query := fmt.Sprintf("delete from %s.collection_prefix where id = ?", NFDDatabase())
 
 	if len(prefixes) > 0 {

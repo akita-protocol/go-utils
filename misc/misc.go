@@ -38,6 +38,14 @@ func SliceEqual[T comparable](a, b []T) bool {
 	return true
 }
 
+func ToInterfaceSlice[T any](arr []T) []interface{} {
+	items := []interface{}{}
+	for _, item := range arr {
+		items = append(items, item)
+	}
+	return items
+}
+
 func Pointer[T constraints.Ordered](v T) *T {
 	return &v
 }

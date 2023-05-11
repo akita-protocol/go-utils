@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type CollectionExcludedAsset struct {
@@ -51,10 +52,10 @@ func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]Collecti
 }
 
 // DeleteCollectionExcludedAssetsNotIn deletes collection excluded assets that are not included in a list for a given collection
-func DeleteCollectionExcludedAssetsNotIn[H Handle](h H, id string, asaIDs ...interface{}) error {
+func DeleteCollectionExcludedAssetsNotIn[H Handle](h H, id string, asaIDs ...uint64) error {
 	const op errors.Op = "DeleteCollectionExcludedAssetsNotIn"
 	var err error
-	data := append([]interface{}{id}, asaIDs...)
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(asaIDs)...)
 	query := fmt.Sprintf("delete from %s.collection_excluded_assets where id = ?", NFDDatabase())
 
 	if len(asaIDs) > 0 {

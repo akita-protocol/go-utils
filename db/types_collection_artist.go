@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type CollectionArtist struct {
@@ -49,10 +50,10 @@ func GetCollectionArtistByCollection[H Handle](h H, collectionID string) ([]*Col
 }
 
 // DeleteCollectionArtistsNotIn deletes collection artists that are not included in a list for a given collection
-func DeleteCollectionArtistsNotIn[H Handle](h H, id string, addresses ...interface{}) error {
+func DeleteCollectionArtistsNotIn[H Handle](h H, id string, addresses ...string) error {
 	const op errors.Op = "DeleteCollectionArtistsNotIn"
 	var err error
-	data := append([]interface{}{id}, addresses...)
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(addresses)...)
 	query := fmt.Sprintf("delete from %s.collection_creator where id = ?", NFDDatabase())
 
 	if len(addresses) > 0 {

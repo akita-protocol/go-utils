@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type Property struct {
@@ -52,10 +53,10 @@ func GetPropertiesByName[H Handle](h H, collectionID string, name string) (*[]Pr
 }
 
 // DeletePropertyNotIn deletes properties that are not included in a list for a given NFD
-func DeletePropertyNotIn[H Handle](h H, collectionID string, ids ...interface{}) error {
+func DeletePropertyNotIn[H Handle](h H, collectionID string, ids ...string) error {
 	const op errors.Op = "DeletePropertyNotIn"
 	var err error
-	data := append([]interface{}{collectionID}, ids...)
+	data := append([]interface{}{collectionID}, misc.ToInterfaceSlice(ids)...)
 	query := fmt.Sprintf("delete from %s.property where collection_id = ?", NFDDatabase())
 
 	if len(ids) > 0 {

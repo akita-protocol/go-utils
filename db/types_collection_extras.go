@@ -7,6 +7,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type CollectionExtras struct {
@@ -52,10 +53,10 @@ func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*Collecti
 }
 
 // DeleteCollectionExtrasNotIn deletes collection extras that are not included in a list for a given collection
-func DeleteCollectionExtrasNotIn[H Handle](h H, id string, keys ...interface{}) error {
+func DeleteCollectionExtrasNotIn[H Handle](h H, id string, keys ...string) error {
 	const op errors.Op = "DeleteCollectionExtrasNotIn"
 	var err error
-	data := append([]interface{}{id}, keys...)
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(keys)...)
 	query := fmt.Sprintf("delete from %s.collection_extras where id = ?", NFDDatabase())
 
 	if len(keys) > 0 {
