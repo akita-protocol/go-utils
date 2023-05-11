@@ -10,7 +10,11 @@ import (
 
 type Property struct {
 	*db.Property
-	Values []db.PropertyValue       `json:"values,omitempty"`
+	Values []PropertyValue `json:"values,omitempty"`
+}
+
+type PropertyValue struct {
+	*db.PropertyValue
 	Extras []db.PropertyValueExtras `json:"extras,omitempty"`
 }
 
@@ -60,6 +64,8 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 			}()
 		}
 
+		var propertyValues *[]db.PropertyValue
+		var propertyValueExtras []db.PropertyValueExtras
 		var errs []error
 		for i := 0; i < buffer; i++ {
 			data := <-rChan
@@ -67,9 +73,9 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 			case error:
 				errs = append(errs, result)
 			case *[]db.PropertyValue:
-				compProperty.Values = *result
+				propertyValues = result
 			case *[]db.PropertyValueExtras:
-				compProperty.Extras = *result
+				propertyValueExtras = *result
 			}
 		}
 
@@ -80,6 +86,20 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 			}
 
 			return nil, errors.E(op, fmt.Errorf(msg))
+		}
+
+		for _, value := range *propertyValues {
+			compPropertyValue := PropertyValue{
+				PropertyValue: &value,
+			}
+
+			for _, extra := range propertyValueExtras {
+				if extra.Name == value.Name {
+					compPropertyValue.Extras = append(compPropertyValue.Extras, extra)
+				}
+			}
+
+			compProperty.Values = append(compProperty.Values, compPropertyValue)
 		}
 
 		properties = append(properties, compProperty)
