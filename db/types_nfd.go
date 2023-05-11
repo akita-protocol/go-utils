@@ -46,7 +46,7 @@ func NFDTableKeys(st TableKeySlice) []string {
 
 func GetNFDIDByAppID[H DBStruct](h H, appID uint64, st TableKeySlice) (string, error) {
 	const op errors.Op = "GetNFDIDByAppID"
-	query := fmt.Sprintf("select %s from %s.nfd where app_id = ?", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
+	query := fmt.Sprintf("select id from %s.nfd where app_id = ?", NFDDatabase())
 	var id string
 
 	err := h.Get(&id, query, appID)
