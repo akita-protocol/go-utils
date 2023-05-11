@@ -11,13 +11,13 @@ import (
 )
 
 type Collection struct {
-	ID          string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	NFDID       string `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
-	Name        string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
-	Description string `structs:"description,omitempty" db:"description" json:"description,omitempty"`
-	Banner      uint64 `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
-	Avatar      uint64 `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
-	Explicit    bool   `structs:"explicit,omitempty" db:"explicit" json:"explicit,omitempty"`
+	ID          string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	NFDID       string  `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
+	Name        string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
+	Description string  `structs:"description,omitempty" db:"description" json:"description,omitempty"`
+	Banner      *uint64 `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
+	Avatar      *uint64 `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
+	Explicit    bool    `structs:"explicit,omitempty" db:"explicit" json:"explicit,omitempty"`
 }
 
 func CollectionTableKeys() []string {

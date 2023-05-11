@@ -9,12 +9,13 @@ import (
 )
 
 type CollectionJson struct {
-	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Data string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
+	ID        string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Data      string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
+	Malformed *bool  `structs:"malformed,omitempty" db:"malformed" json:"malformed,omitempty"`
 }
 
 func CollectionJsonTableKeys() []string {
-	return []string{"id", "data"}
+	return []string{"id", "data", "malformed"}
 }
 
 func GetCollectionJson[H Handle](h H, id string) (*CollectionJson, error) {
