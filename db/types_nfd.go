@@ -101,7 +101,7 @@ func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
 
 func GetLatestNFDUpdateBlock[H DBStruct](h H) (uint64, error) {
 	const op errors.Op = "GetLatestNFDUpdateBlock"
-	query := fmt.Sprintf("select max(current_as_of_block) from %s.nfd", NFDDatabase())
+	query := fmt.Sprintf("select coalesce(max(current_as_of_block),0) from %s.nfd", NFDDatabase())
 	var block uint64
 
 	err := h.Get(&block, query)
