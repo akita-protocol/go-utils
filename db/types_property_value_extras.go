@@ -39,10 +39,14 @@ func GetPropertyValueExtras[H Handle](h H, id string) (*[]PropertyValueExtras, e
 // DeletePropertyValueExtrasNotIn deletes properties that are not included in a list for a given NFD
 func DeletePropertyValueExtrasNotIn[H Handle](h H, id string, name string, keys ...interface{}) error {
 	const op errors.Op = "DeletePropertyValueExtrasNotIn"
-	data := append([]interface{}{id, name}, keys...)
-	qMarks := []rune(strings.Repeat("?, ", (len(keys) - 1)))
-	query := fmt.Sprintf("delete from %s.property_value_extras where id = ? and name = ? and key not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
+	data := append([]interface{}{id, name}, keys...)
+	query := fmt.Sprintf("delete from %s.property_value_extras where id = ? and name = ?", NFDDatabase())
+
+	if len(keys) > 0 {
+		qMarks := []rune(strings.Repeat("?, ", len(keys)))
+		query += fmt.Sprintf(" and key not in (%s)", string(qMarks[0:len(qMarks)-2]))
+	}
 
 	switch h := any(h).(type) {
 	case *sqlx.Tx:

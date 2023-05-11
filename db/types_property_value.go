@@ -44,10 +44,14 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 // DeletePropertyValueNotIn deletes properties that are not included in a list for a given NFD
 func DeletePropertyValueNotIn[H Handle](h H, id string, names ...interface{}) error {
 	const op errors.Op = "DeletePropertyValueNotIn"
-	data := append([]interface{}{id}, names...)
-	qMarks := []rune(strings.Repeat("?, ", (len(names) - 1)))
-	query := fmt.Sprintf("delete from %s.property_value where id = ? and name not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
+	data := append([]interface{}{id}, names...)
+	query := fmt.Sprintf("delete from %s.property_value where id = ?", NFDDatabase())
+
+	if len(names) > 0 {
+		qMarks := []rune(strings.Repeat("?, ", len(names)))
+		query += fmt.Sprintf(" and name not in (%s)", string(qMarks[0:len(qMarks)-2]))
+	}
 
 	switch h := any(h).(type) {
 	case *sqlx.Tx:

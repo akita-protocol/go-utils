@@ -54,10 +54,14 @@ func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*Collecti
 // DeleteCollectionExtrasNotIn deletes collection extras that are not included in a list for a given collection
 func DeleteCollectionExtrasNotIn[H Handle](h H, id string, keys ...interface{}) error {
 	const op errors.Op = "DeleteCollectionExtrasNotIn"
-	data := append([]interface{}{id}, keys...)
-	qMarks := []rune(strings.Repeat("?, ", (len(keys) - 1)))
-	query := fmt.Sprintf("delete from %s.collection_extras where id = ? and key not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
+	data := append([]interface{}{id}, keys...)
+	query := fmt.Sprintf("delete from %s.collection_extras where id = ?", NFDDatabase())
+
+	if len(keys) > 0 {
+		qMarks := []rune(strings.Repeat("?, ", len(keys)))
+		query += fmt.Sprintf(" and key not in (%s)", string(qMarks[0:len(qMarks)-2]))
+	}
 
 	switch h := any(h).(type) {
 	case *sqlx.Tx:

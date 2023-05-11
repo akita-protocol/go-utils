@@ -53,10 +53,14 @@ func GetCollectionAssetByAsaID[H Handle](h H, asaID uint64) (*[]CollectionAsset,
 // DeleteCollectionAssetsNotIn deletes collection assets that are not included in a list for a given collection
 func DeleteCollectionAssetsNotIn[H Handle](h H, id string, asaIDs ...interface{}) error {
 	const op errors.Op = "DeleteCollectionAssetsNotIn"
-	data := append([]interface{}{id}, asaIDs...)
-	qMarks := []rune(strings.Repeat("?, ", (len(asaIDs) - 1)))
-	query := fmt.Sprintf("delete from %s.collection_asset where id = ? and asa_id not in (%s)", NFDDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var err error
+	data := append([]interface{}{id}, asaIDs...)
+	query := fmt.Sprintf("delete from %s.collection_asset where id = ?", NFDDatabase())
+
+	if len(asaIDs) > 0 {
+		qMarks := []rune(strings.Repeat("?, ", len(asaIDs)))
+		query += fmt.Sprintf(" and asa_id not in (%s)", string(qMarks[0:len(qMarks)-2]))
+	}
 
 	switch h := any(h).(type) {
 	case *sqlx.Tx:
