@@ -92,6 +92,7 @@ func DeleteNFDWalletNotIn[H Handle](h H, id string, addresses ...interface{}) er
 	const op errors.Op = "DeleteNFDWalletNotIn"
 	var err error
 	data := append([]interface{}{id}, addresses...)
+	fmt.Println(data)
 	query := fmt.Sprintf("delete from %s.nfd_wallet where id = ?", NFDDatabase())
 
 	if len(addresses) > 0 {
