@@ -268,9 +268,9 @@ func NFDDatabase() string {
 
 func DiscordBotDatabase() string {
 	if IsProduction() {
-		return "discord_bot"
+		return "toolchain"
 	}
-	return "discord_bot_test"
+	return "toolchain_test"
 }
 
 func SubscriptionDatabase() string {
