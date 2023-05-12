@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -21,7 +22,7 @@ func RoleReqTableKeys() []string {
 
 func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 	const op errors.Op = "GetRoleReqByRoleID"
-	query := fmt.Sprintf("select %s from %s.role_req where role_id = ?", RoleReqTableKeys(), DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.role_req where role_id = ?", strings.Join(RoleReqTableKeys(), ","), DiscordBotDatabase())
 	var r RoleReq
 
 	err := h.Get(&r, query, roleID)
@@ -36,7 +37,7 @@ func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 
 func GetRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]RoleReq, error) {
 	const op errors.Op = "GetRoleReqsByGroupID"
-	query := fmt.Sprintf("select %s from %s.role_req where group_id = ?", RoleReqTableKeys(), DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.role_req where group_id = ?", strings.Join(RoleReqTableKeys(), ","), DiscordBotDatabase())
 	var list []RoleReq
 
 	err := h.Select(&list, query, groupID)

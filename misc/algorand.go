@@ -47,7 +47,13 @@ func CheckSignature(stx types.SignedTxn) error {
 
 	fmt.Println("Auth Address: ", stx.AuthAddr.String())
 
-	pk := AddrToED25519PublicKey(stx.Txn.Sender)
+	var pk ed25519.PublicKey
+	if stx.AuthAddr.String() != types.ZeroAddress.String() {
+		pk = AddrToED25519PublicKey(stx.AuthAddr)
+	} else {
+		pk = AddrToED25519PublicKey(stx.Txn.Sender)
+	}
+
 	if !VerifySignature(stx.Txn, pk, stx.Sig) {
 		return errors.New("signature is invalid")
 	}
