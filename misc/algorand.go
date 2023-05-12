@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/ed25519"
 	"errors"
+	"fmt"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
@@ -43,6 +44,8 @@ func CheckSignature(stx types.SignedTxn) error {
 	if !stx.Lsig.Blank() {
 		return errors.New("tx has both a sig and lsig")
 	}
+
+	fmt.Println("Auth Address: ", stx.AuthAddr.String())
 
 	pk := AddrToED25519PublicKey(stx.Txn.Sender)
 	if !VerifySignature(stx.Txn, pk, stx.Sig) {
