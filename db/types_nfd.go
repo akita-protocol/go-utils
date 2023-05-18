@@ -11,13 +11,14 @@ import (
 var NFDStates = []string{"available", "minting", "reserved", "forSale", "owned"}
 
 type NFD struct {
-	ID               string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	// ID is the app id of the NFD
+	ID               uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	AsaID            uint64  `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id,omitempty"`
 	State            string  `structs:"state,omitempty" db:"state" json:"state,omitempty"`
 	CurrentAsOfBlock uint64  `structs:"current_as_of_block,omitempty" db:"current_as_of_block" json:"current_as_of_block,omitempty"`
-	AppID            uint64  `structs:"app_id,omitempty" db:"app_id" json:"app_id,omitempty"`
-	AsaID            uint64  `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id,omitempty"`
 	Name             string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 	Version          string  `structs:"version,omitempty" db:"version" json:"version,omitempty"`
+	VaultLocked      *bool   `structs:"vault_locked,omitempty" db:"vault_locked" json:"vault_locked,omitempty"`
 	UserName         *string `structs:"username,omitempty" db:"username" json:"username,omitempty"`
 	Bio              *string `structs:"bio,omitempty" db:"bio" json:"bio,omitempty"`
 	Email            *string `structs:"email,omitempty" db:"email" json:"email,omitempty"`
@@ -35,28 +36,13 @@ type NFD struct {
 }
 
 var NFDTableKeySlices = map[TableKeySlice][]string{
-	Tiny:  {"id", "app_id", "name", "username", "avatar", "avatar_id", "banner", "banner_id"},
-	Small: {"id", "app_id", "name", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain"},
-	Full:  {"id", "state", "current_as_of_block", "app_id", "asa_id", "name", "version", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain", "last_changed_block", "created_block", "purchased_block"},
+	Tiny:  {"id", "name", "vault_locked", "username", "avatar", "avatar_id", "banner", "banner_id"},
+	Small: {"id", "name", "vault_locked", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain"},
+	Full:  {"id", "state", "current_as_of_block", "asa_id", "name", "vault_locked", "version", "username", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain", "last_changed_block", "created_block", "purchased_block"},
 }
 
 func NFDTableKeys(st TableKeySlice) []string {
 	return NFDTableKeySlices[st]
-}
-
-func GetNFDIDByAppID[H DBStruct](h H, appID uint64, st TableKeySlice) (string, error) {
-	const op errors.Op = "GetNFDIDByAppID"
-	query := fmt.Sprintf("select id from %s.nfd where app_id = ?", NFDDatabase())
-	var id string
-
-	err := h.Get(&id, query, appID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return "", errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD ID Not Found")
-		}
-		return "", errors.E(pkg, op, err)
-	}
-	return id, nil
 }
 
 func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {

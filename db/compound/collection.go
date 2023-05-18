@@ -29,7 +29,7 @@ const (
 	CollectionGetExcludeExtras         CollectionGetExclude = "extras"
 )
 
-func GetCollectionsByNFDID[H db.Handle](h H, nfdID string, exclude ...CollectionGetExclude) (*[]Collection, error) {
+func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...CollectionGetExclude) (*[]Collection, error) {
 	const op errors.Op = "GetCollectionsByNFDID"
 
 	var collections []Collection

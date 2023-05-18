@@ -8,8 +8,8 @@ import (
 )
 
 type NFDJson struct {
-	// ID is the same as NFD id
-	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	// ID is the app id of the NFD
+	ID   uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Data string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
 }
 

@@ -8,21 +8,21 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type CollectionJson struct {
-	ID        string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+type CommunityJson struct {
+	ID        uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Data      string `structs:"data,omitempty" db:"data" json:"data,omitempty"`
 	Malformed *bool  `structs:"malformed,omitempty" db:"malformed" json:"malformed,omitempty"`
 }
 
-func CollectionJsonTableKeys() []string {
+func CommunityJsonTableKeys() []string {
 	return []string{"id", "data", "malformed"}
 }
 
-func GetCollectionJson[H Handle](h H, id string) (*CollectionJson, error) {
+func GetCommunityJson[H Handle](h H, id string) (*CommunityJson, error) {
 	const op errors.Op = "GetCollectionJson"
-	query := fmt.Sprintf("select %s from %s.collection_json where id = ?", strings.Join(CollectionJsonTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.community_json where id = ?", strings.Join(CommunityJsonTableKeys(), ","), NFDDatabase())
 
-	var json CollectionJson
+	var json CommunityJson
 	err := h.Get(&json, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {

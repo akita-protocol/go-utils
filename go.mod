@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/1Password/connect-sdk-go v1.5.0
 	github.com/algorand/go-algorand-sdk v1.24.0
+	github.com/algorand/go-algorand-sdk/v2 v2.1.0
 	github.com/aws/aws-sdk-go v1.44.205
 	github.com/fatih/structs v1.1.0
 	github.com/getsentry/sentry-go v0.18.0
@@ -13,6 +14,7 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/ipfs/go-cid v0.3.2
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/mailgun/holster/v4 v4.12.3
 	github.com/multiformats/go-multicodec v0.8.1
 	github.com/multiformats/go-multihash v0.2.1
 	github.com/rs/xid v1.4.0
@@ -29,6 +31,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect

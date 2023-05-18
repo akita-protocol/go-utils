@@ -14,6 +14,7 @@ import (
 )
 
 const pkg errors.Pkg = "db"
+const TimeFormat = "2006-01-02 15:04:05"
 
 type TableKeySlice string
 
@@ -254,9 +255,27 @@ func Delete[H Handle, S DBObject](h H, s S) (*sql.Result, error) {
 	return &res, nil
 }
 
+func ErrNoRows(err error) bool {
+	return err == sql.ErrNoRows || err.(*errors.Error).Kind == errors.DatabaseResultNotFound
+}
+
 // IsProduction returns a boolean for whether the request wants to use product or not
 func IsProduction() bool {
 	return os.Getenv("GITLAB_ENVIRONMENT_NAME") == "production"
+}
+
+func StakingDatabase() string {
+	if IsProduction() {
+		return "staking"
+	}
+	return "staking_test"
+}
+
+func AssetDatabase() string {
+	if IsProduction() {
+		return "asset"
+	}
+	return "asset_test"
 }
 
 func NFDDatabase() string {

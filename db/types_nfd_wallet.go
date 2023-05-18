@@ -11,8 +11,8 @@ import (
 )
 
 type NFDWallet struct {
-	// ID is the same as NFD id
-	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	// ID is the app id of the NFD
+	ID       uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
 	Deposit  *bool  `structs:"deposit,omitempty" db:"deposit" json:"deposit,omitempty"`

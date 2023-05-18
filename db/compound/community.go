@@ -1,0 +1,104 @@
+package compound
+
+import (
+	"fmt"
+
+	"gitlab.algotoolchain.com/keelakay/utils/db"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
+)
+
+type Community struct {
+	*db.Community
+	Collections []Collection      `json:"collections,omitempty"`
+	FAQ         []db.CommunityFaq `json:"faq,omitempty"`
+	// Staking     []db.Staking         `json:"staking,omitempty"`
+	Extras []db.CommunityExtras `json:"extras,omitempty"`
+}
+
+type CommunityGetExclude string
+
+const (
+	CommunityGetExcludeCollections CommunityGetExclude = "collections"
+	CommunityGetExcludeFaq         CommunityGetExclude = "faq"
+	// CommunityGetExcludeStaking     CommunityGetExclude = "staking"
+	CommunityGetExcludeExtras CommunityGetExclude = "extras"
+)
+
+func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude) (*Community, error) {
+	const op errors.Op = "GetCommunitiesByNFDID"
+	var community Community
+	buffer := (3 - len(exclude))
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	go func() {
+		comm, err := db.GetCommunity(h, nfdID)
+		if err != nil {
+			rChan <- err
+			return
+		}
+		rChan <- comm
+	}()
+
+	if !misc.InSlice(CommunityGetExcludeCollections, exclude) {
+		go func() {
+			collections, err := GetCollectionsByNFDID(h, nfdID)
+			if err != nil {
+				rChan <- err
+				return
+			}
+			rChan <- collections
+		}()
+	}
+
+	if !misc.InSlice(CommunityGetExcludeFaq, exclude) {
+		go func() {
+			faq, err := db.GetCommunityFaq(h, nfdID, 0, 10)
+			if err != nil {
+				rChan <- err
+				return
+			}
+			rChan <- faq
+		}()
+	}
+
+	if !misc.InSlice(CommunityGetExcludeExtras, exclude) {
+		go func() {
+			extras, err := db.GetCommunityExtras(h, nfdID)
+			if err != nil {
+				rChan <- err
+				return
+			}
+			rChan <- extras
+		}()
+	}
+
+	var errs []error
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *db.Community:
+			community.Community = result
+		case *[]Collection:
+			community.Collections = *result
+		case *[]db.CommunityFaq:
+			community.FAQ = *result
+		case *[]db.CommunityExtras:
+			community.Extras = *result
+		case error:
+			errs = append(errs, result)
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	return &community, nil
+}
