@@ -22,7 +22,7 @@ func NFDWalletTableKeys() []string {
 	return []string{"id", "address", "verified", "deposit"}
 }
 
-func GetNFDWallets[H DBStruct](h H, nfdID string) (*[]NFDWallet, error) {
+func GetNFDWallets[H DBStruct](h H, nfdID uint64) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
 	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ?", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
 	var list []NFDWallet
