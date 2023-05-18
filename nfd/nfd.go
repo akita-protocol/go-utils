@@ -7,9 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"log"
 	"reflect"
 	"sort"
 	"strconv"
@@ -22,35 +20,39 @@ import (
 	"github.com/algorand/go-algorand-sdk/v2/crypto"
 	"github.com/algorand/go-algorand-sdk/v2/types"
 	"github.com/mailgun/holster/v4/syncutil"
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type NFDProperties struct {
+	AppID       uint64            `json:"appID"`
 	Internal    map[string]string `json:"internal"`
 	UserDefined map[string]string `json:"userDefined"`
 	Verified    map[string]string `json:"verified"`
 }
 
-func PrintNFD(algoClient *algod.Client, ctx context.Context, appID uint64) {
-	fmt.Println("NFD AppID:", appID)
+func GetNFDData(algoClient *algod.Client, ctx context.Context, appID uint64) (*NFDProperties, error) {
+	const op errors.Op = "GetNFDData"
 
-	// Load the global state of this NFD
 	appData, err := algoClient.GetApplicationByID(appID).Do(ctx)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, errors.E(op, err)
 	}
+
 	// Now load all the box data (V2) in parallel
 	boxData, err := GetApplicationBoxes(algoClient, ctx, appID)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, errors.E(op, err)
 	}
-	fmt.Println("Byte-code hash:", crypto.AddressFromProgram(appData.Params.ApprovalProgram).String())
 
-	// Fetch everything into key/value map...
 	properties := FetchAllStateAsNFDProperties(appData.Params.GlobalState, boxData)
-	// ...then merge properties like bio_00, bio_01, into 'bio'
+	properties.AppID = appID
 	properties.UserDefined = MergeNFDProperties(properties.UserDefined)
-	prettyJson, _ := json.MarshalIndent(properties, "", "  ")
+	return &properties, nil
+}
 
+func PrintNFD(properties *NFDProperties) {
+	fmt.Println("NFD AppID:", properties.AppID)
+	prettyJson, _ := json.MarshalIndent(properties, "", "  ")
 	fmt.Println(string(prettyJson))
 }
 
@@ -115,7 +117,7 @@ func FindNFDAppIDByName(algoClient *algod.Client, ctx context.Context, registryA
 	// We found our registry contract in the local state of the account
 	nfdAppID, _ := FetchBToIFromState(account.AppLocalState.KeyValue, "i.appid")
 	if nfdAppID == 0 {
-		return 0, errors.New("no NFD found by that name")
+		return 0, fmt.Errorf("no NFD found by that name")
 	}
 	fmt.Println("Found as V1 name")
 	return nfdAppID, nil
@@ -216,7 +218,7 @@ func getLookupLSIG(prefixBytes, lookupBytes string, registryAppID uint64) (crypt
 	}
 	contractSlice := sigLookupByteCode[6:14]
 	if !reflect.DeepEqual(contractSlice, []byte{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08}) {
-		return crypto.LogicSigAccount{}, errors.New("Lookup template doesn't match expectation")
+		return crypto.LogicSigAccount{}, fmt.Errorf("lookup template doesn't match expectation")
 	}
 	// Bytes 6-13 [0-index] with 0x01-0x08 placeholders is where we put the Registry Contract App ID bytes in big-endian
 	binary.BigEndian.PutUint64(contractSlice, registryAppID)
