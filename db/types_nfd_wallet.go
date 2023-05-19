@@ -22,12 +22,12 @@ func NFDWalletTableKeys() []string {
 	return []string{"id", "address", "verified", "deposit"}
 }
 
-func GetNFDWallets[H DBStruct](h H, nfdID uint64) (*[]NFDWallet, error) {
+func GetNFDWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
 	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ?", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
 	var list []NFDWallet
 
-	err := h.Select(&list, query, nfdID)
+	err := h.Select(&list, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
@@ -62,7 +62,7 @@ func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, 
 	return &list, nil
 }
 
-func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) error {
+func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id uint64, address string) error {
 	const op errors.Op = "DeleteNFDWalletsByIDAndAddress"
 	query := fmt.Sprintf("delete from %s.nfd_wallet where id = ? and address = ?", NFDDatabase())
 	var err error
@@ -89,7 +89,7 @@ func DeleteNFDWalletsByIDAndAddress[H DBStruct](h H, id string, address string) 
 }
 
 // DeleteNFDWalletNotIn deletes collections that are not included in a list for a given NFD
-func DeleteNFDWalletNotIn[H Handle](h H, id string, addresses ...string) error {
+func DeleteNFDWalletNotIn[H Handle](h H, id uint64, addresses ...string) error {
 	const op errors.Op = "DeleteNFDWalletNotIn"
 	var err error
 	data := append([]interface{}{id}, misc.ToInterfaceSlice(addresses)...)
