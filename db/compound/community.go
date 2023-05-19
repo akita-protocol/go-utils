@@ -10,10 +10,10 @@ import (
 
 type Community struct {
 	*db.Community
-	Collections []Collection      `json:"collections,omitempty"`
-	FAQ         []db.CommunityFaq `json:"faq,omitempty"`
+	Collections []Collection         `json:"collections,omitempty"`
+	Faq         []db.CommunityFaq    `json:"faq,omitempty"`
+	Extras      []db.CommunityExtras `json:"extras,omitempty"`
 	// Staking     []db.Staking         `json:"staking,omitempty"`
-	Extras []db.CommunityExtras `json:"extras,omitempty"`
 }
 
 type CommunityGetExclude string
@@ -83,7 +83,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		case *[]Collection:
 			community.Collections = *result
 		case *[]db.CommunityFaq:
-			community.FAQ = *result
+			community.Faq = *result
 		case *[]db.CommunityExtras:
 			community.Extras = *result
 		case error:
