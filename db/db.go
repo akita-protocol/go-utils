@@ -64,6 +64,7 @@ func Insert[H Handle, S DBObject](h H, s S) (int64, error) {
 	if table == "" {
 		return 0, errors.E(pkg, op, errors.Database, fmt.Errorf("invalid table struct"))
 	}
+	fmt.Println("insert on table: ", table)
 
 	params := structs.Map(s)
 
@@ -116,6 +117,7 @@ func Update[H Handle, S DBObject](h H, s S, where map[string]interface{}) (*sql.
 	if table == "" {
 		return nil, errors.E(pkg, op, errors.Database, fmt.Errorf("invalid table struct"))
 	}
+	fmt.Println("update on table: ", table)
 
 	params := structs.Map(s)
 
