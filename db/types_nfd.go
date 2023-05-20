@@ -81,9 +81,9 @@ func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD
 	return &list, nil
 }
 
-func GetAllNFDAppIDs[H DBStruct](h H) (*[]uint64, error) {
+func GetAllNFDIDs[H DBStruct](h H) (*[]uint64, error) {
 	const op errors.Op = "GetAllNFDAppIDs"
-	query := fmt.Sprintf("select app_id from %s.nfd", NFDDatabase())
+	query := fmt.Sprintf("select id from %s.nfd", NFDDatabase())
 	var list []uint64
 
 	err := h.Select(&list, query)
