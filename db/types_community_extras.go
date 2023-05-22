@@ -17,7 +17,7 @@ type CommunityExtras struct {
 }
 
 func CommunityExtrasTableKeys() []string {
-	return []string{"id", "key", "value"}
+	return []string{"id", "'key'", "value"}
 }
 
 func GetCommunityExtras[H Handle](h H, id uint64) (*[]CommunityExtras, error) {
