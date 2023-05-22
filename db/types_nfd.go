@@ -32,7 +32,7 @@ type NFD struct {
 	Domain           *string `structs:"domain,omitempty" db:"domain" json:"domain,omitempty"`
 	LastChangedBlock uint64  `structs:"last_changed_block" db:"last_changed_block" json:"last_changed_block,omitempty"`
 	CreatedBlock     uint64  `structs:"created_block,omitempty" db:"created_block" json:"created_block,omitempty"`
-	PurchasedBlock   uint64  `structs:"purchased_block,omitempty" db:"purchased_block" json:"purchased_block,omitempty"`
+	PurchasedBlock   *uint64 `structs:"purchased_block,omitempty" db:"purchased_block" json:"purchased_block,omitempty"`
 }
 
 var NFDTableKeySlices = map[TableKeySlice][]string{
