@@ -258,7 +258,7 @@ func Delete[H Handle, S DBObject](h H, s S) (*sql.Result, error) {
 }
 
 func ErrNoRows(err error) bool {
-	return err == sql.ErrNoRows || err.(*errors.Error).Kind == errors.DatabaseResultNotFound
+	return err != nil && (err == sql.ErrNoRows || err.(*errors.Error).Kind == errors.DatabaseResultNotFound)
 }
 
 // IsProduction returns a boolean for whether the request wants to use product or not
