@@ -19,12 +19,12 @@ func PropertyTableKeys() []string {
 	return []string{"id", "name"}
 }
 
-func GetProperties[H Handle](h H, collectionID string) (*[]Property, error) {
+func GetProperties[H Handle](h H, id string) (*[]Property, error) {
 	const op errors.Op = "GetProperties"
-	query := fmt.Sprintf("select %s from %s.property where collection_id = ?", strings.Join(PropertyTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.property where id = ?", strings.Join(PropertyTableKeys(), ","), NFDDatabase())
 
 	var properties []Property
-	err := h.Select(&properties, query, collectionID)
+	err := h.Select(&properties, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Properties Not Found")
@@ -35,12 +35,12 @@ func GetProperties[H Handle](h H, collectionID string) (*[]Property, error) {
 	return &properties, nil
 }
 
-func GetPropertiesByName[H Handle](h H, collectionID string, name string) (*[]Property, error) {
+func GetPropertiesByName[H Handle](h H, id string, name string) (*[]Property, error) {
 	const op errors.Op = "GetProperties"
-	query := fmt.Sprintf("select %s from %s.property where collection_id = ? and name = ?", strings.Join(PropertyTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.property where id = ? and name = ?", strings.Join(PropertyTableKeys(), ","), NFDDatabase())
 
 	var properties []Property
-	err := h.Select(&properties, query, collectionID, name)
+	err := h.Select(&properties, query, id, name)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Properties Not Found")
@@ -52,15 +52,15 @@ func GetPropertiesByName[H Handle](h H, collectionID string, name string) (*[]Pr
 }
 
 // DeletePropertyNotIn deletes properties that are not included in a list for a given NFD
-func DeletePropertyNotIn[H Handle](h H, collectionID string, ids ...string) error {
+func DeletePropertyNotIn[H Handle](h H, id string, names ...string) error {
 	const op errors.Op = "DeletePropertyNotIn"
 	var err error
-	data := append([]interface{}{collectionID}, misc.ToInterfaceSlice(ids)...)
-	query := fmt.Sprintf("delete from %s.property where collection_id = ?", NFDDatabase())
+	data := append([]interface{}{id}, misc.ToInterfaceSlice(names)...)
+	query := fmt.Sprintf("delete from %s.property where id = ?", NFDDatabase())
 
-	if len(ids) > 0 {
-		qMarks := []rune(strings.Repeat("?, ", len(ids)))
-		query += fmt.Sprintf(" and id not in (%s)", string(qMarks[0:len(qMarks)-2]))
+	if len(names) > 0 {
+		qMarks := []rune(strings.Repeat("?, ", len(names)))
+		query += fmt.Sprintf(" and name not in (%s)", string(qMarks[0:len(qMarks)-2]))
 	}
 
 	switch h := any(h).(type) {

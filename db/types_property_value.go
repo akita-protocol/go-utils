@@ -13,6 +13,7 @@ import (
 type PropertyValue struct {
 	// ID is the id of the property
 	ID                    string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	PropertyName          string  `structs:"property_name,omitempty" db:"property_name" json:"property_name,omitempty"`
 	Name                  string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 	Image                 *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
 	ImageIntegrity        *string `structs:"image_integrity,omitempty" db:"image_integrity" json:"image_integrity,omitempty"`
@@ -23,7 +24,7 @@ type PropertyValue struct {
 }
 
 func PropertyValueTableKeys() []string {
-	return []string{"id", "name", "image", "image_integrity", "image_mime_type", "animation_url", "animation_url_integrity", "animation_url_mime_type"}
+	return []string{"id", "property_name", "name", "image", "image_integrity", "image_mime_type", "animation_url", "animation_url_integrity", "animation_url_mime_type"}
 }
 
 func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
@@ -43,11 +44,11 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 }
 
 // DeletePropertyValueNotIn deletes properties that are not included in a list for a given NFD
-func DeletePropertyValueNotIn[H Handle](h H, id string, names ...string) error {
+func DeletePropertyValueNotIn[H Handle](h H, id string, propertyName string, names ...string) error {
 	const op errors.Op = "DeletePropertyValueNotIn"
 	var err error
-	data := append([]interface{}{id}, misc.ToInterfaceSlice(names)...)
-	query := fmt.Sprintf("delete from %s.property_value where id = ?", NFDDatabase())
+	data := append([]interface{}{id, propertyName}, misc.ToInterfaceSlice(names)...)
+	query := fmt.Sprintf("delete from %s.property_value where id = ? and property_name = ?", NFDDatabase())
 
 	if len(names) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(names)))
