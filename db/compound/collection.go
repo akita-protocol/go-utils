@@ -151,7 +151,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 
 				compCollection.Extras = extras
 			case error:
-				errs = append(errs, err)
+				errs = append(errs, result)
 			}
 		}
 

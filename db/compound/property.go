@@ -70,12 +70,12 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 		for i := 0; i < buffer; i++ {
 			data := <-rChan
 			switch result := data.(type) {
-			case error:
-				errs = append(errs, result)
 			case *[]db.PropertyValue:
 				propertyValues = result
 			case *[]db.PropertyValueExtras:
 				propertyValueExtras = *result
+			case error:
+				errs = append(errs, result)
 			}
 		}
 
