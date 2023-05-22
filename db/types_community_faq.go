@@ -10,10 +10,10 @@ import (
 )
 
 type CommunityFaq struct {
-	ID       uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Question string `structs:"q,omitempty" db:"q" json:"q,omitempty"`
-	Answer   string `structs:"a,omitempty" db:"a" json:"a,omitempty"`
-	Ordering uint64 `structs:"ordering,omitempty" db:"ordering" json:"ordering,omitempty"`
+	ID       uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Question string  `structs:"q,omitempty" db:"q" json:"q,omitempty"`
+	Answer   string  `structs:"a,omitempty" db:"a" json:"a,omitempty"`
+	Ordering *uint64 `structs:"ordering,omitempty" db:"ordering" json:"ordering,omitempty"`
 }
 
 func CommunityFaqTableKeys() []string {
