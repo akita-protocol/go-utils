@@ -21,7 +21,7 @@ func CollectionArtistTableKeys() []string {
 
 func GetCollectionArtist[H Handle](h H) ([]*CollectionArtist, error) {
 	const op errors.Op = "GetCollectionArtist"
-	query := fmt.Sprintf("select %s from %s.collection_creator", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_artist", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
 
 	var ccs []*CollectionArtist
 	err := h.Select(&ccs, query)
@@ -36,7 +36,7 @@ func GetCollectionArtist[H Handle](h H) ([]*CollectionArtist, error) {
 
 func GetCollectionArtistByCollection[H Handle](h H, collectionID string) ([]*CollectionArtist, error) {
 	const op errors.Op = "GetCollectionArtistByCollection"
-	query := fmt.Sprintf("select %s from %s.collection_creator where collection_id = ?", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_artist where collection_id = ?", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
 
 	var ccs []*CollectionArtist
 	err := h.Select(&ccs, query, collectionID)
@@ -54,7 +54,7 @@ func DeleteCollectionArtistsNotIn[H Handle](h H, id string, addresses ...string)
 	const op errors.Op = "DeleteCollectionArtistsNotIn"
 	var err error
 	data := append([]interface{}{id}, misc.ToInterfaceSlice(addresses)...)
-	query := fmt.Sprintf("delete from %s.collection_creator where id = ?", NFDDatabase())
+	query := fmt.Sprintf("delete from %s.collection_artist where id = ?", NFDDatabase())
 
 	if len(addresses) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(addresses)))
