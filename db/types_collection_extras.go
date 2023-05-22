@@ -17,7 +17,7 @@ type CollectionExtras struct {
 }
 
 func CollectionExtrasTableKeys() []string {
-	return []string{"id", "key", "value"}
+	return []string{"id", "'key'", "value"}
 }
 
 func GetCollectionExtras[H Handle](h H, id string) (*[]CollectionExtras, error) {

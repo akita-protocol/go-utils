@@ -18,7 +18,7 @@ type PropertyValueExtras struct {
 }
 
 func PropertyValueExtrasTableKeys() []string {
-	return []string{"id", "name", "key", "value"}
+	return []string{"id", "name", "'key'", "value"}
 }
 
 func GetPropertyValueExtras[H Handle](h H, id string) (*[]PropertyValueExtras, error) {
