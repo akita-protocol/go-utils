@@ -15,7 +15,7 @@ type Property struct {
 
 type PropertyValue struct {
 	*db.PropertyValue
-	Extras []db.PropertyValueExtras `json:"extras,omitempty"`
+	Extras map[string]string `json:"extras,omitempty"`
 }
 
 type PropertyGetExclude string
@@ -91,11 +91,12 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 		for _, value := range *propertyValues {
 			compPropertyValue := PropertyValue{
 				PropertyValue: &value,
+				Extras:        make(map[string]string),
 			}
 
 			for _, extra := range propertyValueExtras {
 				if extra.Name == value.Name {
-					compPropertyValue.Extras = append(compPropertyValue.Extras, extra)
+					compPropertyValue.Extras[extra.Key] = extra.Value
 				}
 			}
 

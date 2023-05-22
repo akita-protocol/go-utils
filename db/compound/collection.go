@@ -10,12 +10,12 @@ import (
 
 type Collection struct {
 	*db.Collection
-	Prefixes       []string              `json:"prefixes,omitempty"`
-	Assets         []uint64              `json:"assets,omitempty"`
-	ExcludedAssets []uint64              `json:"excluded_assets,omitempty"`
-	Artists        []string              `json:"artists,omitempty"`
-	Properties     []Property            `json:"properties,omitempty"`
-	Extras         []db.CollectionExtras `json:"extras,omitempty"`
+	Prefixes       []string          `json:"prefixes,omitempty"`
+	Assets         []uint64          `json:"assets,omitempty"`
+	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
+	Artists        []string          `json:"artists,omitempty"`
+	Properties     []Property        `json:"properties,omitempty"`
+	Extras         map[string]string `json:"extras,omitempty"`
 }
 
 type CollectionGetExclude string
@@ -143,7 +143,13 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 			case *[]Property:
 				compCollection.Properties = *result
 			case *[]db.CollectionExtras:
-				compCollection.Extras = *result
+
+				extras := map[string]string{}
+				for _, extra := range *result {
+					extras[extra.Key] = extra.Value
+				}
+
+				compCollection.Extras = extras
 			case error:
 				errs = append(errs, err)
 			}
