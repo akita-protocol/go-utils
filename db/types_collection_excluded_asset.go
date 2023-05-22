@@ -21,7 +21,7 @@ func CollectionExcludedAssetTableKeys() []string {
 
 func GetCollectionExcludedAssets[H Handle](h H, id string) (*[]CollectionExcludedAsset, error) {
 	const op errors.Op = "GetCollectionExcludedAssets"
-	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_excluded_asset where id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
 
 	var assets []CollectionExcludedAsset
 	err := h.Select(&assets, query, id)
@@ -37,7 +37,7 @@ func GetCollectionExcludedAssets[H Handle](h H, id string) (*[]CollectionExclude
 
 func GetCollectionExcludedAssetByAsaID[H Handle](h H, asaID uint64) (*[]CollectionExcludedAsset, error) {
 	const op errors.Op = "GetCollectionExcludedAssetByAsaID"
-	query := fmt.Sprintf("select %s from %s.collection_excluded_assets where asa_id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_excluded_asset where asa_id = ?", strings.Join(CollectionExcludedAssetTableKeys(), ","), NFDDatabase())
 
 	var assets []CollectionExcludedAsset
 	err := h.Select(&assets, query, asaID)
@@ -56,7 +56,7 @@ func DeleteCollectionExcludedAssetsNotIn[H Handle](h H, id string, asaIDs ...uin
 	const op errors.Op = "DeleteCollectionExcludedAssetsNotIn"
 	var err error
 	data := append([]interface{}{id}, misc.ToInterfaceSlice(asaIDs)...)
-	query := fmt.Sprintf("delete from %s.collection_excluded_assets where id = ?", NFDDatabase())
+	query := fmt.Sprintf("delete from %s.collection_excluded_asset where id = ?", NFDDatabase())
 
 	if len(asaIDs) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(asaIDs)))

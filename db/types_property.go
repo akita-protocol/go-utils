@@ -11,13 +11,12 @@ import (
 )
 
 type Property struct {
-	ID           string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	CollectionID string `structs:"collection_id,omitempty" db:"collection_id" json:"collection_id,omitempty"`
-	Name         string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
+	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Name string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 }
 
 func PropertyTableKeys() []string {
-	return []string{"id", "collection_id", "name"}
+	return []string{"id", "name"}
 }
 
 func GetProperties[H Handle](h H, collectionID string) (*[]Property, error) {
