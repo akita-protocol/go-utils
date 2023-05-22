@@ -34,12 +34,12 @@ func GetCollectionArtist[H Handle](h H) ([]*CollectionArtist, error) {
 	return ccs, nil
 }
 
-func GetCollectionArtistByCollection[H Handle](h H, collectionID string) ([]*CollectionArtist, error) {
+func GetCollectionArtistByCollection[H Handle](h H, id string) ([]*CollectionArtist, error) {
 	const op errors.Op = "GetCollectionArtistByCollection"
-	query := fmt.Sprintf("select %s from %s.collection_artist where collection_id = ?", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_artist where id = ?", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
 
 	var ccs []*CollectionArtist
-	err := h.Select(&ccs, query, collectionID)
+	err := h.Select(&ccs, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "CollectionArtist Not Found")
