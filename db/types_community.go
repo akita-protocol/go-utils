@@ -22,7 +22,7 @@ const (
 
 type Community struct {
 	ID   uint64       `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	AKTA uint64       `structs:"akta,omitempty" db:"akta" json:"akta,omitempty"`
+	AKTA *uint64      `structs:"akta,omitempty" db:"akta" json:"akta,omitempty"`
 	Tab  CommunityTab `structs:"tab,omitempty" db:"tab" json:"tab,omitempty"`
 }
 
