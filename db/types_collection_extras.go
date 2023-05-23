@@ -38,7 +38,7 @@ func GetCollectionExtras[H Handle](h H, id string) (*[]CollectionExtras, error) 
 
 func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*CollectionExtras, error) {
 	const op errors.Op = "GetCollectionExtrasWithKey"
-	query := fmt.Sprintf("select %s from %s.collection_extras where id = ? and key = ?", strings.Join(CollectionExtrasTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collection_extras where id = ? and mkey = ?", strings.Join(CollectionExtrasTableKeys(), ","), NFDDatabase())
 
 	var extra CollectionExtras
 	err := h.Get(&extra, query, id, key)
@@ -61,7 +61,7 @@ func DeleteCollectionExtrasNotIn[H Handle](h H, id string, keys ...string) error
 
 	if len(keys) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(keys)))
-		query += fmt.Sprintf(" and key not in (%s)", string(qMarks[0:len(qMarks)-2]))
+		query += fmt.Sprintf(" and mkey not in (%s)", string(qMarks[0:len(qMarks)-2]))
 	}
 
 	switch h := any(h).(type) {

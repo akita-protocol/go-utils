@@ -38,7 +38,7 @@ func GetCommunityExtras[H Handle](h H, id uint64) (*[]CommunityExtras, error) {
 
 func GetCommunityExtrasWithKey[H Handle](h H, id uint64, key string) (*CommunityExtras, error) {
 	const op errors.Op = "GetCommunityExtrasWithKey"
-	query := fmt.Sprintf("select %s from %s.community_extras where id = ? and key = ?", strings.Join(CommunityExtrasTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.community_extras where id = ? and mkey = ?", strings.Join(CommunityExtrasTableKeys(), ","), NFDDatabase())
 
 	var extra CommunityExtras
 	err := h.Get(&extra, query, id, key)
@@ -61,7 +61,7 @@ func DeleteCommunityExtrasNotIn[H Handle](h H, id uint64, keys ...string) error 
 
 	if len(keys) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(keys)))
-		query += fmt.Sprintf(" and key not in (%s)", string(qMarks[0:len(qMarks)-2]))
+		query += fmt.Sprintf(" and mkey not in (%s)", string(qMarks[0:len(qMarks)-2]))
 	}
 
 	switch h := any(h).(type) {

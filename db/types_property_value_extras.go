@@ -46,7 +46,7 @@ func DeletePropertyValueExtrasNotIn[H Handle](h H, id string, name string, keys 
 
 	if len(keys) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(keys)))
-		query += fmt.Sprintf(" and key not in (%s)", string(qMarks[0:len(qMarks)-2]))
+		query += fmt.Sprintf(" and mkey not in (%s)", string(qMarks[0:len(qMarks)-2]))
 	}
 
 	switch h := any(h).(type) {
