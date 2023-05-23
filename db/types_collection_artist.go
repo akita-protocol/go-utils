@@ -19,11 +19,11 @@ func CollectionArtistTableKeys() []string {
 	return []string{"id", "address"}
 }
 
-func GetCollectionArtist[H Handle](h H) ([]*CollectionArtist, error) {
+func GetCollectionArtist[H Handle](h H) (*[]CollectionArtist, error) {
 	const op errors.Op = "GetCollectionArtist"
 	query := fmt.Sprintf("select %s from %s.collection_artist", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
 
-	var ccs []*CollectionArtist
+	var ccs []CollectionArtist
 	err := h.Select(&ccs, query)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -31,14 +31,14 @@ func GetCollectionArtist[H Handle](h H) ([]*CollectionArtist, error) {
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return ccs, nil
+	return &ccs, nil
 }
 
-func GetCollectionArtistByCollection[H Handle](h H, id string) ([]*CollectionArtist, error) {
+func GetCollectionArtistByCollection[H Handle](h H, id string) (*[]CollectionArtist, error) {
 	const op errors.Op = "GetCollectionArtistByCollection"
 	query := fmt.Sprintf("select %s from %s.collection_artist where id = ?", strings.Join(CollectionArtistTableKeys(), ","), NFDDatabase())
 
-	var ccs []*CollectionArtist
+	var ccs []CollectionArtist
 	err := h.Select(&ccs, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -46,7 +46,7 @@ func GetCollectionArtistByCollection[H Handle](h H, id string) ([]*CollectionArt
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return ccs, nil
+	return &ccs, nil
 }
 
 // DeleteCollectionArtistsNotIn deletes collection artists that are not included in a list for a given collection
