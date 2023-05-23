@@ -38,7 +38,8 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		return nil, errors.E(op, err)
 	}
 
-	for _, col := range *cols {
+	for i := range *cols {
+		col := (*cols)[i]
 		compCollection := Collection{
 			Collection: &col,
 		}
