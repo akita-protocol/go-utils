@@ -30,6 +30,12 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.collection_artist", NFDDatabase())
 	case CollectionExtras, *CollectionExtras:
 		return fmt.Sprintf("%s.collection_extras", NFDDatabase())
+	case Property, *Property:
+		return fmt.Sprintf("%s.property", NFDDatabase())
+	case PropertyValue, *PropertyValue:
+		return fmt.Sprintf("%s.property_value", NFDDatabase())
+	case PropertyValueExtras, *PropertyValueExtras:
+		return fmt.Sprintf("%s.property_value_extras", NFDDatabase())
 	case SessionToken, *SessionToken:
 		return fmt.Sprintf("%s.session_token", DiscordBotDatabase())
 	case User, *User:
