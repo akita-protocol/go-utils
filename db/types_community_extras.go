@@ -12,12 +12,12 @@ import (
 
 type CommunityExtras struct {
 	ID    uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Key   string `structs:"key,omitempty" db:"key" json:"key,omitempty"`
-	Value string `structs:"value,omitempty" db:"value" json:"value,omitempty"`
+	Key   string `structs:"mkey,omitempty" db:"mkey" json:"key,omitempty"`
+	Value string `structs:"mvalue,omitempty" db:"mvalue" json:"value,omitempty"`
 }
 
 func CommunityExtrasTableKeys() []string {
-	return []string{"id", "'key'", "value"}
+	return []string{"id", "mkey", "mvalue"}
 }
 
 func GetCommunityExtras[H Handle](h H, id uint64) (*[]CommunityExtras, error) {

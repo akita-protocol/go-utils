@@ -12,12 +12,12 @@ import (
 
 type CollectionExtras struct {
 	ID    string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Key   string `structs:"key,omitempty" db:"key" json:"key,omitempty"`
-	Value string `structs:"value,omitempty" db:"value" json:"value,omitempty"`
+	Key   string `structs:"mkey,omitempty" db:"mkey" json:"key,omitempty"`
+	Value string `structs:"mvalue,omitempty" db:"mvalue" json:"value,omitempty"`
 }
 
 func CollectionExtrasTableKeys() []string {
-	return []string{"id", "'key'", "value"}
+	return []string{"id", "mkey", "mvalue"}
 }
 
 func GetCollectionExtras[H Handle](h H, id string) (*[]CollectionExtras, error) {

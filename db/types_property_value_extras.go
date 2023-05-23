@@ -13,12 +13,12 @@ import (
 type PropertyValueExtras struct {
 	ID    string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Name  string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
-	Key   string `structs:"key,omitempty" db:"key" json:"key,omitempty"`
-	Value string `structs:"value,omitempty" db:"value" json:"value,omitempty"`
+	Key   string `structs:"mkey,omitempty" db:"mkey" json:"key,omitempty"`
+	Value string `structs:"mvalue,omitempty" db:"mvalue" json:"value,omitempty"`
 }
 
 func PropertyValueExtrasTableKeys() []string {
-	return []string{"id", "name", "'key'", "value"}
+	return []string{"id", "name", "mkey", "mvalue"}
 }
 
 func GetPropertyValueExtras[H Handle](h H, id string) (*[]PropertyValueExtras, error) {
