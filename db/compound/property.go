@@ -44,7 +44,7 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 
 		if !misc.InSlice(PropertyGetExcludeValues, exclude) {
 			go func() {
-				values, err := db.GetPropertyValues(h, id)
+				values, err := db.GetPropertyValues(h, prop.ID)
 				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
 					rChan <- err
 					return
@@ -55,7 +55,7 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 
 		if !misc.InSlice(PropertyGetExcludeExtras, exclude) {
 			go func() {
-				extras, err := db.GetPropertyValueExtras(h, id)
+				extras, err := db.GetPropertyValueExtras(h, prop.ID)
 				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
 					rChan <- err
 					return
@@ -88,7 +88,8 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 			return nil, errors.E(op, fmt.Errorf(msg))
 		}
 
-		for _, value := range *propertyValues {
+		for i := range *propertyValues {
+			value := (*propertyValues)[i]
 			compPropertyValue := PropertyValue{
 				PropertyValue: &value,
 				Extras:        make(map[string]string),
