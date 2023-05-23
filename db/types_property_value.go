@@ -16,10 +16,10 @@ type PropertyValue struct {
 	Name                  string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 	Image                 *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
 	ImageIntegrity        *string `structs:"image_integrity,omitempty" db:"image_integrity" json:"image_integrity,omitempty"`
-	ImageMimeType         *string `structs:"image_mime_type,omitempty" db:"image_mime_type" json:"image_mime_type,omitempty"`
+	ImageMimeType         *string `structs:"image_mimetype,omitempty" db:"image_mimetype" json:"image_mimetype,omitempty"`
 	AnimationURL          *string `structs:"animation_url,omitempty" db:"animation_url" json:"animation_url,omitempty"`
 	AnimationURLIntegrity *string `structs:"animation_url_integrity,omitempty" db:"animation_url_integrity" json:"animation_url_integrity,omitempty"`
-	AnimationURLMimeType  *string `structs:"animation_url_mime_type,omitempty" db:"animation_url_mime_type" json:"animation_url_mime_type,omitempty"`
+	AnimationURLMimeType  *string `structs:"animation_url_mimetype,omitempty" db:"animation_url_mimetype" json:"animation_url_mimetype,omitempty"`
 }
 
 func PropertyValueTableKeys() []string {
