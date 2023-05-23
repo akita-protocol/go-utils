@@ -23,7 +23,7 @@ type PropertyValue struct {
 }
 
 func PropertyValueTableKeys() []string {
-	return []string{"id", "name", "image", "image_integrity", "image_mime_type", "animation_url", "animation_url_integrity", "animation_url_mime_type"}
+	return []string{"id", "name", "image", "image_integrity", "image_mimetype", "animation_url", "animation_url_integrity", "animation_url_mimetype"}
 }
 
 func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
