@@ -42,6 +42,31 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 	return &propertyValues, nil
 }
 
+func DeletePropertyValuesByID[H Handle](h H, id string) error {
+	const op errors.Op = "DeletePropertyValuesByID"
+	query := fmt.Sprintf("delete from %s.property_value where id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
 // DeletePropertyValueNotIn deletes properties that are not included in a list for a given NFD
 func DeletePropertyValueNotIn[H Handle](h H, id string, names ...string) error {
 	const op errors.Op = "DeletePropertyValueNotIn"
