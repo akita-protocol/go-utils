@@ -119,34 +119,38 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 			switch result := data.(type) {
 			case *[]db.CollectionPrefix:
 				prefixes := []string{}
-				for _, prefix := range *result {
+				for i := range *result {
+					prefix := (*result)[i]
 					prefixes = append(prefixes, prefix.Prefix)
 				}
 				compCollection.Prefixes = prefixes
 			case *[]db.CollectionAsset:
 				assets := []uint64{}
-				for _, asset := range *result {
+				for i := range *result {
+					asset := (*result)[i]
 					assets = append(assets, asset.AsaID)
 				}
 				compCollection.Assets = assets
 			case *[]db.CollectionExcludedAsset:
 				assets := []uint64{}
-				for _, asset := range *result {
+				for i := range *result {
+					asset := (*result)[i]
 					assets = append(assets, asset.AsaID)
 				}
 				compCollection.ExcludedAssets = assets
 			case *[]db.CollectionArtist:
 				artists := []string{}
-				for _, artist := range *result {
+				for i := range *result {
+					artist := (*result)[i]
 					artists = append(artists, artist.Address)
 				}
 				compCollection.Artists = artists
 			case *[]Property:
 				compCollection.Properties = *result
 			case *[]db.CollectionExtras:
-
 				extras := map[string]string{}
-				for _, extra := range *result {
+				for i := range *result {
+					extra := (*result)[i]
 					extras[extra.Key] = extra.Value
 				}
 
