@@ -96,7 +96,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		msg := ""
 		for _, err := range errs {
 			if db.ErrNoRows(err) && strings.Contains(err.Error(), "operation: GetCommunity") {
-				return nil, errors.E(op, err)
+				return nil, err
 			}
 
 			msg += err.Error() + "\n"
