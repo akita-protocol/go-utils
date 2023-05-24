@@ -168,7 +168,9 @@ func DeleteCommunity[H db.Handle](h H, nfdID uint64) error {
 			return errors.E(op, err)
 		}
 
-		for _, property := range *properties {
+		for i := range *properties {
+			property := (*properties)[i]
+
 			err = db.DeletePropertyValues(h, property.ID)
 			if err != nil {
 				return errors.E(op, err)

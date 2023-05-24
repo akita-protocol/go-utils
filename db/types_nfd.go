@@ -45,9 +45,9 @@ func NFDTableKeys(st TableKeySlice) []string {
 	return NFDTableKeySlices[st]
 }
 
-func GetNFD[H DBStruct](h H, id uint64) (*NFD, error) {
+func GetNFD[H DBStruct](h H, id uint64, st TableKeySlice) (*NFD, error) {
 	const op errors.Op = "GetNFD"
-	query := fmt.Sprintf("select %s from %s.nfd where id = ?", strings.Join(NFDTableKeys(Full), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd where id = ?", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
 	var nfd NFD
 
 	err := h.Get(&nfd, query, id)
@@ -61,9 +61,25 @@ func GetNFD[H DBStruct](h H, id uint64) (*NFD, error) {
 	return &nfd, nil
 }
 
+func GetNFDByName[H DBStruct](h H, name string, st TableKeySlice) (*NFD, error) {
+	const op errors.Op = "GetNFDByName"
+	query := fmt.Sprintf("select %s from %s.nfd where name = ?", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
+	var nfd NFD
+
+	err := h.Get(&nfd, query, name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "NFD Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &nfd, nil
+}
+
 func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
 	const op errors.Op = "GetNFDsByAddress"
-	query := fmt.Sprintf("select %s from %s.nfd where id = (select id from nfd.nfd_wallet where address = ?)", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd where id = (select id from nfd.nfd_wallet where address = ?) order by last_changed_block desc", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
 	var list []NFD
 
 	err := h.Select(&list, query, address)
