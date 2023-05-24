@@ -2,6 +2,7 @@ package compound
 
 import (
 	"fmt"
+	"strings"
 
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -94,6 +95,10 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if len(errs) > 0 {
 		msg := ""
 		for _, err := range errs {
+			if db.ErrNoRows(err) && strings.Contains(err.Error(), "operation: GetCommunity") {
+				return nil, errors.E(op, err)
+			}
+
 			msg += err.Error() + "\n"
 		}
 
