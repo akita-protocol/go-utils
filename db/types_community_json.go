@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
@@ -32,4 +33,29 @@ func GetCommunityJson[H Handle](h H, id uint64) (*CommunityJson, error) {
 	}
 
 	return &json, nil
+}
+
+func DeleteCommunityJson[H Handle](h H, id uint64) error {
+	const op errors.Op = "DeleteCommunityJson"
+	query := fmt.Sprintf("delete from %s.community_json where id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
 }

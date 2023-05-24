@@ -42,8 +42,8 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 	return &propertyValues, nil
 }
 
-func DeletePropertyValuesByID[H Handle](h H, id string) error {
-	const op errors.Op = "DeletePropertyValuesByID"
+func DeletePropertyValues[H Handle](h H, id string) error {
+	const op errors.Op = "DeletePropertyValues"
 	query := fmt.Sprintf("delete from %s.property_value where id = ?", NFDDatabase())
 
 	switch h := any(h).(type) {

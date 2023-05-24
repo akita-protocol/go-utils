@@ -37,8 +37,8 @@ func GetPropertyValueExtras[H Handle](h H, id string) (*[]PropertyValueExtras, e
 	return &extras, nil
 }
 
-func DeletePropertyValueExtrasByID[H Handle](h H, id string) error {
-	const op errors.Op = "DeletePropertyValueExtrasByID"
+func DeletePropertyValueExtras[H Handle](h H, id string) error {
+	const op errors.Op = "DeletePropertyValueExtras"
 	query := fmt.Sprintf("delete from %s.property_value_extras where id = ?", NFDDatabase())
 
 	switch h := any(h).(type) {

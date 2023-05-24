@@ -52,6 +52,31 @@ func GetCollectionExtrasWithKey[H Handle](h H, id string, key string) (*Collecti
 	return &extra, nil
 }
 
+func DeleteCollectionExtras[H Handle](h H, id string) error {
+	const op errors.Op = "DeleteCollectionExtras"
+	query := fmt.Sprintf("delete from %s.collection_extras where id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
 // DeleteCollectionExtrasNotIn deletes collection extras that are not included in a list for a given collection
 func DeleteCollectionExtrasNotIn[H Handle](h H, id string, keys ...string) error {
 	const op errors.Op = "DeleteCollectionExtrasNotIn"

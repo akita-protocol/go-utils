@@ -35,6 +35,31 @@ func GetCollectionPrefixes[H Handle](h H, id string) (*[]CollectionPrefix, error
 	return &prefixes, nil
 }
 
+func DeleteCollectionPrefixes[H Handle](h H, id string) error {
+	const op errors.Op = "DeleteCollectionPrefixes"
+	query := fmt.Sprintf("delete from %s.collection_prefix where id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
 // DeleteCollectionPrefixesNotIn deletes collection prefixes that are not included in a list for a given collection
 func DeleteCollectionPrefixesNotIn[H Handle](h H, id string, prefixes ...string) error {
 	const op errors.Op = "DeleteCollectionPrefixesNotIn"

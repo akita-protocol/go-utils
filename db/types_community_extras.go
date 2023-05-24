@@ -52,6 +52,31 @@ func GetCommunityExtrasWithKey[H Handle](h H, id uint64, key string) (*Community
 	return &extra, nil
 }
 
+func DeleteCommunityExtras[H Handle](h H, id uint64) error {
+	const op errors.Op = "DeleteCommunityExtras"
+	query := fmt.Sprintf("delete from %s.community_extras where id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, id)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
 // DeleteCommunityExtrasNotIn deletes collection extras that are not included in a list for a given collection
 func DeleteCommunityExtrasNotIn[H Handle](h H, id uint64, keys ...string) error {
 	const op errors.Op = "DeleteCommunityExtrasNotIn"

@@ -102,3 +102,94 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 
 	return &community, nil
 }
+
+func DeleteCommunity[H db.Handle](h H, nfdID uint64) error {
+	const op errors.Op = "DeleteCommunity"
+	var err error
+
+	err = db.DeleteCommunity(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	// community_json
+	err = db.DeleteCommunityJson(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	// community_faq
+	err = db.DeleteCommunityFaq(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	// community_extras
+	err = db.DeleteCommunityExtras(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	// collection
+	collections, err := db.GetCollectionsByNFDID(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	for _, collection := range *collections {
+
+		err = db.DeleteCollectionPrefixes(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		err = db.DeleteCollectionArtists(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		err = db.DeleteCollectionAssets(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		err = db.DeleteCollectionExcludedAssets(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		err = db.DeleteCollectionExtras(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		properties, err := db.GetProperties(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+
+		for _, property := range *properties {
+			err = db.DeletePropertyValues(h, property.ID)
+			if err != nil {
+				return errors.E(op, err)
+			}
+
+			err = db.DeletePropertyValueExtras(h, property.ID)
+			if err != nil {
+				return errors.E(op, err)
+			}
+		}
+
+		err = db.DeleteCollectionProperties(h, collection.ID)
+		if err != nil {
+			return errors.E(op, err)
+		}
+	}
+
+	err = db.DeleteCollectionsByNFDID(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	return nil
+}

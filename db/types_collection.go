@@ -71,6 +71,31 @@ func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection,
 	return &collections, nil
 }
 
+func DeleteCollectionsByNFDID[H Handle](h H, nfdID uint64) error {
+	const op errors.Op = "DeleteCollectionsByNFDID"
+	query := fmt.Sprintf("delete from %s.collection where nfd_id = ?", NFDDatabase())
+
+	switch h := any(h).(type) {
+	case *sqlx.Tx:
+		stmt, err := h.Prepare(query)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Prepare Query")
+		}
+
+		_, err = stmt.Exec(nfdID)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	case *sqlx.DB:
+		_, err := h.Exec(query, nfdID)
+		if err != nil {
+			return errors.E(pkg, op, errors.Database, err, "Failed to Execute Query")
+		}
+	}
+
+	return nil
+}
+
 // DeleteCollectionNotIn deletes collections that are not included in a list for a given NFD
 func DeleteCollectionNotIn[H Handle](h H, nfdID uint64, ids ...string) error {
 	const op errors.Op = "DeleteCollectionNotIn"
