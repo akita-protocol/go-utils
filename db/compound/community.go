@@ -28,7 +28,7 @@ const (
 func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude) (*Community, error) {
 	const op errors.Op = "GetCommunitiesByNFDID"
 	var community Community
-	buffer := (3 - len(exclude))
+	buffer := (4 - len(exclude))
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
