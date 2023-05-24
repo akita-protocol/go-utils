@@ -22,7 +22,7 @@ func CommunityFaqTableKeys() []string {
 
 func GetCommunityFaq[H Handle](h H, id, start, limit uint64) (*[]CommunityFaq, error) {
 	const op errors.Op = "GetCommunityFaq"
-	query := fmt.Sprintf("select %s from %s.community_faq where id = ? limit ?, ? order by ordering asc", strings.Join(CommunityFaqTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.community_faq where id = ? order by ordering asc limit ?, ?", strings.Join(CommunityFaqTableKeys(), ","), NFDDatabase())
 
 	var faq []CommunityFaq
 	err := h.Select(&faq, query, id, start, limit)
