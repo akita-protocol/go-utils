@@ -18,7 +18,7 @@ func CommunityJsonTableKeys() []string {
 	return []string{"id", "data", "malformed"}
 }
 
-func GetCommunityJson[H Handle](h H, id string) (*CommunityJson, error) {
+func GetCommunityJson[H Handle](h H, id uint64) (*CommunityJson, error) {
 	const op errors.Op = "GetCollectionJson"
 	query := fmt.Sprintf("select %s from %s.community_json where id = ?", strings.Join(CommunityJsonTableKeys(), ","), NFDDatabase())
 
