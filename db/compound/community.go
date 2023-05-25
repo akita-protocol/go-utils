@@ -11,6 +11,7 @@ import (
 
 type Community struct {
 	*db.Community
+	Tokens      []db.CommunityToken  `json:"tokens,omitempty"`
 	Collections []Collection         `json:"collections,omitempty"`
 	Faq         []db.CommunityFaq    `json:"faq,omitempty"`
 	Extras      []db.CommunityExtras `json:"extras,omitempty"`
@@ -20,6 +21,7 @@ type Community struct {
 type CommunityGetExclude string
 
 const (
+	CommunityGetExcludeTokens      CommunityGetExclude = "tokens"
 	CommunityGetExcludeCollections CommunityGetExclude = "collections"
 	CommunityGetExcludeFaq         CommunityGetExclude = "faq"
 	// CommunityGetExcludeStaking     CommunityGetExclude = "staking"
@@ -29,7 +31,7 @@ const (
 func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude) (*Community, error) {
 	const op errors.Op = "GetCommunitiesByNFDID"
 	var community Community
-	buffer := (4 - len(exclude))
+	buffer := (5 - len(exclude))
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
@@ -41,6 +43,17 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		}
 		rChan <- comm
 	}()
+
+	if !misc.InSlice(CommunityGetExcludeTokens, exclude) {
+		go func() {
+			tokens, err := db.GetCommunityTokens(h, nfdID)
+			if err != nil {
+				rChan <- err
+				return
+			}
+			rChan <- tokens
+		}()
+	}
 
 	if !misc.InSlice(CommunityGetExcludeCollections, exclude) {
 		go func() {
@@ -81,6 +94,8 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		switch result := data.(type) {
 		case *db.Community:
 			community.Community = result
+		case *[]db.CommunityToken:
+			community.Tokens = *result
 		case *[]Collection:
 			community.Collections = *result
 		case *[]db.CommunityFaq:
@@ -119,6 +134,12 @@ func DeleteCommunity[H db.Handle](h H, nfdID uint64) error {
 
 	// community_json
 	err = db.DeleteCommunityJson(h, nfdID)
+	if err != nil {
+		return errors.E(op, err)
+	}
+
+	// community_tokens
+	err = db.DeleteCommunityTokens(h, nfdID)
 	if err != nil {
 		return errors.E(op, err)
 	}

@@ -22,13 +22,14 @@ const (
 )
 
 type Community struct {
-	ID   uint64       `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	AKTA *uint64      `structs:"akta,omitempty" db:"akta" json:"akta,omitempty"`
-	Tab  CommunityTab `structs:"tab,omitempty" db:"tab" json:"tab,omitempty"`
+	ID      uint64       `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Version string       `structs:"version,omitempty" db:"version" json:"version,omitempty"`
+	AKTA    *uint64      `structs:"akta,omitempty" db:"akta" json:"akta,omitempty"`
+	Tab     CommunityTab `structs:"tab,omitempty" db:"tab" json:"tab,omitempty"`
 }
 
 func CommunityTableKeys() []string {
-	return []string{"id", "akta", "tab"}
+	return []string{"id", "version", "akta", "tab"}
 }
 
 func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
