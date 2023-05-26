@@ -10,18 +10,28 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
+type BlockchainNetwork string
+
+const (
+	Bitcoin  BlockchainNetwork = "bitcoin"
+	Ethereum BlockchainNetwork = "ethereum"
+	Algorand BlockchainNetwork = "algorand"
+	Solana   BlockchainNetwork = "solana"
+)
+
 type Collection struct {
-	ID          string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	NFDID       uint64  `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
-	Name        string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
-	Description *string `structs:"description,omitempty" db:"description" json:"description,omitempty"`
-	Banner      *uint64 `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
-	Avatar      *uint64 `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
-	Explicit    *bool   `structs:"explicit,omitempty" db:"explicit" json:"explicit,omitempty"`
+	ID          string             `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	NFDID       uint64             `structs:"nfd_id,omitempty" db:"nfd_id" json:"nfd_id,omitempty"`
+	Name        string             `structs:"name,omitempty" db:"name" json:"name,omitempty"`
+	Description *string            `structs:"description,omitempty" db:"description" json:"description,omitempty"`
+	Banner      *uint64            `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
+	Avatar      *uint64            `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
+	Network     *BlockchainNetwork `structs:"network,omitempty" db:"network" json:"network,omitempty"`
+	Explicit    *bool              `structs:"explicit,omitempty" db:"explicit" json:"explicit,omitempty"`
 }
 
 func CollectionTableKeys() []string {
-	return []string{"id", "nfd_id", "name", "description", "banner", "avatar", "explicit"}
+	return []string{"id", "nfd_id", "name", "description", "banner", "avatar", "network", "explicit"}
 }
 
 func GetCollection[H Handle](h H, id string) (*Collection, error) {

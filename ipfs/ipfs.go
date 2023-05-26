@@ -1,8 +1,11 @@
 package ipfs
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	baseErrors "errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -95,4 +98,15 @@ func GetIPFSData(url string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func MediaIntegrity(file io.Reader) (string, error) {
+	hash := sha256.New()
+	if _, err := io.Copy(hash, file); err != nil {
+		return "", err
+	}
+	hashed := hash.Sum(nil)
+	hashBase64 := base64.StdEncoding.EncodeToString(hashed)
+
+	return "sha256-" + hashBase64, nil
 }
