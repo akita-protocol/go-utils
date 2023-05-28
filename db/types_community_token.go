@@ -61,7 +61,7 @@ func GetCommunityTokens[H Handle](h H, id uint64) (*[]CommunityToken, error) {
 
 func GetCommunityTokenByAsaID[H Handle](h H, asaID uint64) (*[]CommunityToken, error) {
 	const op errors.Op = "GetCommunityTokenByAsaID"
-	query := fmt.Sprintf("select %s from %s.community_token where asa_id = ?", strings.Join(CommunityTokenTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.community_token where asset_id = ?", strings.Join(CommunityTokenTableKeys(), ","), NFDDatabase())
 
 	var assets []CommunityToken
 	err := h.Select(&assets, query, asaID)
@@ -109,7 +109,7 @@ func DeleteCommunityTokensNotIn[H Handle](h H, id uint64, asaIDs ...uint64) erro
 
 	if len(asaIDs) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(asaIDs)))
-		query += fmt.Sprintf(" and asa_id not in (%s)", string(qMarks[0:len(qMarks)-2]))
+		query += fmt.Sprintf(" and asset_id not in (%s)", string(qMarks[0:len(qMarks)-2]))
 	}
 
 	switch h := any(h).(type) {
