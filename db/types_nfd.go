@@ -79,7 +79,7 @@ func GetNFDByName[H DBStruct](h H, name string, st TableKeySlice) (*NFD, error) 
 
 func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
 	const op errors.Op = "GetNFDsByAddress"
-	query := fmt.Sprintf("select %s from %s.nfd where id = (select id from nfd.nfd_wallet where address = ?) order by last_changed_block desc", strings.Join(NFDTableKeys(st), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd where id = (select id from %s.nfd_wallet where address = ?) order by last_changed_block desc", strings.Join(NFDTableKeys(st), ","), NFDDatabase(), NFDDatabase())
 	var list []NFD
 
 	err := h.Select(&list, query, address)
