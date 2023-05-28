@@ -35,12 +35,12 @@ import (
 // ],
 
 type CommunityToken struct {
-	ID    uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	AsaID uint64 `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id"`
+	ID      uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	AssetID uint64 `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id"`
 }
 
 func CommunityTokenTableKeys() []string {
-	return []string{"id", "asa_id"}
+	return []string{"id", "asset_id"}
 }
 
 func GetCommunityTokens[H Handle](h H, id uint64) (*[]CommunityToken, error) {
