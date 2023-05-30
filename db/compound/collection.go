@@ -59,30 +59,40 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeBanner, exclude) && col.Banner != nil {
 			go func() {
 				bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
 
-				rChan <- LabeledAsset{
-					Asset: bannerAsset,
-					Label: "banner",
+				if !db.ErrNoRows(err) {
+					rChan <- LabeledAsset{
+						Asset: bannerAsset,
+						Label: "banner",
+					}
+					return
 				}
+
+				rChan <- nil
 			}()
 		}
 
 		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) && col.Avatar != nil {
 			go func() {
 				avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
 
-				rChan <- LabeledAsset{
-					Asset: avatarAsset,
-					Label: "avatar",
+				if !db.ErrNoRows(err) {
+					rChan <- LabeledAsset{
+						Asset: avatarAsset,
+						Label: "avatar",
+					}
+					return
 				}
+
+				rChan <- nil
 			}()
 		}
 
