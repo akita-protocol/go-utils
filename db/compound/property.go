@@ -34,7 +34,8 @@ func GetProperties[H db.Handle](h H, id string, exclude ...PropertyGetExclude) (
 		return nil, errors.E(op, err)
 	}
 
-	for _, prop := range *props {
+	for i := range *props {
+		prop := (*props)[i]
 		compProperty := Property{
 			Property: &prop,
 		}
