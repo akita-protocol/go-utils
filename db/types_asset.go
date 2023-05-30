@@ -1,0 +1,156 @@
+package db
+
+import (
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
+)
+
+type AssetStandard string
+
+const (
+	AssetStandardASA      AssetStandard = "asa"
+	AssetStandardNFD      AssetStandard = "nfd"
+	AssetStandardNFTArc69 AssetStandard = "nft-arc69"
+	AssetStandardNFTArc3  AssetStandard = "nft-arc3"
+	AssetStandardNFTArc19 AssetStandard = "nft-arc19"
+	AssetStandardNFTNone  AssetStandard = "nft-none"
+	AssetStandardLPToken  AssetStandard = "lp"
+)
+
+type Asset struct {
+	ID          uint64         `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id,omitempty"`
+	Name        *string        `structs:"name,omitempty" db:"name" json:"name,omitempty"`
+	URL         *string        `structs:"url,omitempty" db:"url" json:"url,omitempty"`
+	ImageURL    *string        `structs:"image_url,omitempty" db:"image_url" json:"image_url,omitempty"`
+	Standard    *AssetStandard `structs:"standard,omitempty" db:"standard" json:"standard,omitempty"`
+	Mime        *string        `structs:"mime,omitempty" db:"mime" json:"mime,omitempty"`
+	UnitName    *string        `structs:"unit_name,omitempty" db:"unit_name" json:"unit_name,omitempty"`
+	ClawBack    *string        `structs:"clawback,omitempty" db:"clawback" json:"clawback,omitempty"`
+	Freeze      *string        `structs:"freeze,omitempty" db:"freeze" json:"freeze,omitempty"`
+	Manager     *string        `structs:"manager,omitempty" db:"manager" json:"manager,omitempty"`
+	Reserve     *string        `structs:"reserve,omitempty" db:"reserve" json:"reserve,omitempty"`
+	Creator     string         `structs:"creator,omitempty" db:"creator" json:"creator,omitempty"`
+	CreatedAt   *uint64        `structs:"created_at,omitempty" db:"created_at" json:"created_at,omitempty"`
+	Deleted     bool           `structs:"deleted,omitempty" db:"deleted" json:"deleted,omitempty"`
+	DestroyedAt *uint64        `structs:"destroyed_at,omitempty" db:"destroyed_at" json:"destroyed_at,omitempty"`
+	Decimals    *uint64        `structs:"decimals,omitempty" db:"decimals" json:"decimals,omitempty"`
+	Total       uint64         `structs:"total,omitempty" db:"total" json:"total,omitempty"`
+}
+
+var AssetTableKeySlices = map[TableKeySlice][]string{
+	Tiny:  {"id", "name", "standard", "url", "image_url", "mime", "unit_name"},
+	Small: {"id", "name", "standard", "url", "image_url", "mime", "unit_name", "reserve", "creator", "total"},
+	Full:  {"id", "name", "standard", "url", "unit_name", "mime", "clawback", "freeze", "manager", "reserve", "creator", "created_at", "deleted", "destroyed_at", "decimals", "total"},
+}
+
+func AssetTableKeys(st TableKeySlice) []string {
+	return AssetTableKeySlices[st]
+}
+
+func GetAssetByInternalID[H Handle](h H, id string, st TableKeySlice) (*Asset, error) {
+	const op errors.Op = "GetAsset"
+	query := fmt.Sprintf("select %s from %s.asset where id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
+
+	var a Asset
+	err := h.Get(&a, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &a, nil
+}
+
+func GetAssetsByInternalIDS[H Handle](h H, ids []string, st TableKeySlice) ([]*Asset, error) {
+	const op errors.Op = "GetAssetsByInternalIDS"
+	query := fmt.Sprintf("select %s from %s.asset where id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
+
+	var list []*Asset
+	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}
+
+func GetAsset[H Handle](h H, id uint64, st TableKeySlice) (*Asset, error) {
+	const op errors.Op = "GetAsset"
+	query := fmt.Sprintf("select %s from asset where asset_id = ?", strings.Join(AssetTableKeys(st), ","))
+
+	var a Asset
+	err := h.Get(&a, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &a, nil
+}
+
+func GetAllAssetIDs[H Handle](h H) ([]uint64, error) {
+	const op errors.Op = "GetAllAssetIDs"
+	query := fmt.Sprintf("select asset_id from %s.asset", NFDDatabase())
+	var list []uint64
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}
+
+func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) ([]*Asset, error) {
+	const op errors.Op = "GetAssets"
+	query := fmt.Sprintf("select %s from %s.asset where asset_id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
+
+	var list []*Asset
+	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}
+
+func GetAssetsByCollectionID[H Handle](h H, collectionID string, st TableKeySlice) ([]*Asset, error) {
+	const op errors.Op = "GetAssetsByCollectionID"
+	query := fmt.Sprintf("select %s from %s.asset where collection_id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
+
+	var list []*Asset
+	err := h.Select(&list, query, collectionID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}
+
+func GetAssetsByCollectionIDAndUnitPrefix[H Handle](h H, collectionID string, prefix string, st TableKeySlice) ([]*Asset, error) {
+	const op errors.Op = "GetAssetsByCollectionID"
+	query := fmt.Sprintf("select %s from %s.asset where collection_id = ? and unit_name like ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
+
+	var list []*Asset
+	err := h.Select(&list, query, collectionID, fmt.Sprintf("%v%%", prefix))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}

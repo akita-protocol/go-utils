@@ -4,6 +4,8 @@ import "fmt"
 
 func getTable(obj interface{}) string {
 	switch obj.(type) {
+	case Asset, *Asset:
+		return fmt.Sprintf("%s.asset", NFDDatabase())
 	case NFD, *NFD:
 		return fmt.Sprintf("%s.nfd", NFDDatabase())
 	case NFDJson, *NFDJson:

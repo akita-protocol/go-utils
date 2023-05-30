@@ -10,6 +10,8 @@ import (
 
 type Collection struct {
 	*db.Collection
+	Banner         *string           `json:"banner,omitempty"`
+	Avatar         *string           `json:"avatar,omitempty"`
 	Prefixes       []string          `json:"prefixes,omitempty"`
 	Assets         []uint64          `json:"assets,omitempty"`
 	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
@@ -18,9 +20,16 @@ type Collection struct {
 	Extras         map[string]string `json:"extras,omitempty"`
 }
 
+type LabeledAsset struct {
+	Asset *db.Asset `json:"asset"`
+	Label string    `json:"label"`
+}
+
 type CollectionGetExclude string
 
 const (
+	CollectionGetExcludeBanner         CollectionGetExclude = "banner"
+	CollectionGetExcludeAvatar         CollectionGetExclude = "avatar"
 	CollectionGetExcludePrefixes       CollectionGetExclude = "prefixes"
 	CollectionGetExcludeAssets         CollectionGetExclude = "assets"
 	CollectionGetExcludeExcludedAssets CollectionGetExclude = "excluded_assets"
@@ -43,9 +52,39 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		compCollection := Collection{
 			Collection: &col,
 		}
-		buffer := (6 - len(exclude))
+		buffer := (8 - len(exclude))
 		rChan := make(chan interface{}, buffer)
 		defer close(rChan)
+
+		if !misc.InSlice(CollectionGetExcludeBanner, exclude) && col.Banner != nil {
+			go func() {
+				bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
+				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+					rChan <- err
+					return
+				}
+
+				rChan <- LabeledAsset{
+					Asset: bannerAsset,
+					Label: "banner",
+				}
+			}()
+		}
+
+		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) && col.Avatar != nil {
+			go func() {
+				avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
+				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+					rChan <- err
+					return
+				}
+
+				rChan <- LabeledAsset{
+					Asset: avatarAsset,
+					Label: "avatar",
+				}
+			}()
+		}
 
 		if !misc.InSlice(CollectionGetExcludePrefixes, exclude) {
 			go func() {
@@ -155,6 +194,13 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 				}
 
 				compCollection.Extras = extras
+			case LabeledAsset:
+				switch result.Label {
+				case "banner":
+					compCollection.Banner = result.Asset.ImageURL
+				case "avatar":
+					compCollection.Avatar = result.Asset.ImageURL
+				}
 			case error:
 				errs = append(errs, result)
 			}
