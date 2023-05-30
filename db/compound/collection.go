@@ -10,8 +10,8 @@ import (
 
 type Collection struct {
 	*db.Collection
-	BannerURL      *string           `json:"banner,omitempty"`
-	AvatarURL      *string           `json:"avatar,omitempty"`
+	BannerURL      *string           `json:"banner_url,omitempty"`
+	AvatarURL      *string           `json:"avatar_url,omitempty"`
 	Prefixes       []string          `json:"prefixes,omitempty"`
 	Assets         []uint64          `json:"assets,omitempty"`
 	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
