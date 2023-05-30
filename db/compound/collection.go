@@ -10,8 +10,8 @@ import (
 
 type Collection struct {
 	*db.Collection
-	Banner         *string           `json:"banner,omitempty"`
-	Avatar         *string           `json:"avatar,omitempty"`
+	BannerURL      *string           `json:"banner,omitempty"`
+	AvatarURL      *string           `json:"avatar,omitempty"`
 	Prefixes       []string          `json:"prefixes,omitempty"`
 	Assets         []uint64          `json:"assets,omitempty"`
 	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
@@ -207,9 +207,9 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 			case LabeledAsset:
 				switch result.Label {
 				case "banner":
-					compCollection.Banner = result.Asset.ImageURL
+					compCollection.BannerURL = result.Asset.ImageURL
 				case "avatar":
-					compCollection.Avatar = result.Asset.ImageURL
+					compCollection.AvatarURL = result.Asset.ImageURL
 				}
 			case error:
 				errs = append(errs, result)
