@@ -142,8 +142,9 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 		query += fmt.Sprintf(" and id not in(%s)", string(excludeQMarks[0:len(excludeQMarks)-2]))
 	}
 
+	query += " order by id asc"
+
 	var list []Asset
-	fmt.Println("generated query: ", query)
 	err := h.Select(&list, query, data...)
 	if err != nil {
 		if err == sql.ErrNoRows {
