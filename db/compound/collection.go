@@ -99,7 +99,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludePrefixes, exclude) {
 			go func() {
 				prefixes, err := db.GetCollectionPrefixes(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -110,7 +110,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeAssets, exclude) {
 			go func() {
 				assets, err := db.GetCollectionAssets(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -121,7 +121,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeExcludedAssets, exclude) {
 			go func() {
 				excludedAssets, err := db.GetCollectionExcludedAssets(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -132,7 +132,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeArtists, exclude) {
 			go func() {
 				artists, err := db.GetCollectionArtistByCollection(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -143,7 +143,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeProperties, exclude) {
 			go func() {
 				properties, err := GetProperties(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -154,7 +154,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeExtras, exclude) {
 			go func() {
 				extras, err := db.GetCollectionExtras(h, col.ID)
-				if err != nil && err.(*errors.Error).Kind != errors.DatabaseResultNotFound {
+				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
@@ -229,4 +229,142 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 	}
 
 	return &collections, nil
+}
+
+func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, error) {
+	const op errors.Op = "GetCollectionCriteria"
+	collection := Collection{}
+
+	buffer := 3
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	go func() {
+		prefixes, err := db.GetCollectionPrefixes(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- prefixes
+	}()
+
+	go func() {
+		assets, err := db.GetCollectionAssets(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- assets
+	}()
+
+	go func() {
+		excludedAssets, err := db.GetCollectionExcludedAssets(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- excludedAssets
+	}()
+
+	var errs []error
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *[]db.CollectionPrefix:
+			prefixes := []string{}
+			for i := range *result {
+				prefix := (*result)[i]
+				prefixes = append(prefixes, prefix.Prefix)
+			}
+			collection.Prefixes = prefixes
+		case *[]db.CollectionAsset:
+			assets := []uint64{}
+			for i := range *result {
+				asset := (*result)[i]
+				assets = append(assets, asset.AsaID)
+			}
+			collection.Assets = assets
+		case *[]db.CollectionExcludedAsset:
+			assets := []uint64{}
+			for i := range *result {
+				asset := (*result)[i]
+				assets = append(assets, asset.AsaID)
+			}
+			collection.ExcludedAssets = assets
+		case error:
+			errs = append(errs, result)
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	return &collection, nil
+}
+
+func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*[]db.Asset, error) {
+	const op errors.Op = "GetCollectionAssets"
+
+	buffer := 2
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	go func() {
+		wallets, err := db.GetNFDVerifiedWallets(h, nfdID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- wallets
+	}()
+
+	go func() {
+		col, err := GetCollectionCriteria(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- col
+	}()
+
+	creators := []string{}
+	var criteria *Collection
+	var errs []error
+
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *[]db.NFDWallet:
+			for i := range *result {
+				wallet := (*result)[i]
+				creators = append(creators, wallet.Address)
+			}
+		case *Collection:
+			criteria = result
+		case error:
+			errs = append(errs, result)
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	return assets, nil
 }

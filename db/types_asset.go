@@ -51,36 +51,6 @@ func AssetTableKeys(st TableKeySlice) []string {
 	return AssetTableKeySlices[st]
 }
 
-func GetAssetByInternalID[H Handle](h H, id string, st TableKeySlice) (*Asset, error) {
-	const op errors.Op = "GetAsset"
-	query := fmt.Sprintf("select %s from %s.asset where id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
-
-	var a Asset
-	err := h.Get(&a, query, id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-	return &a, nil
-}
-
-func GetAssetsByInternalIDS[H Handle](h H, ids []string, st TableKeySlice) ([]*Asset, error) {
-	const op errors.Op = "GetAssetsByInternalIDS"
-	query := fmt.Sprintf("select %s from %s.asset where id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
-
-	var list []*Asset
-	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
-		}
-		return nil, errors.E(pkg, op, err)
-	}
-	return list, nil
-}
-
 func GetAsset[H Handle](h H, id uint64, st TableKeySlice) (*Asset, error) {
 	const op errors.Op = "GetAsset"
 	query := fmt.Sprintf("select %s from %s.asset where id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
@@ -110,11 +80,11 @@ func GetAllAssetIDs[H Handle](h H) ([]uint64, error) {
 	return list, nil
 }
 
-func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) ([]*Asset, error) {
+func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetAssets"
 	query := fmt.Sprintf("select %s from %s.asset where id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
 
-	var list []*Asset
+	var list []Asset
 	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -122,20 +92,41 @@ func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) ([]*Asset, error) 
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return list, nil
+	return &list, nil
 }
 
-func GetAssetsByCollection[H Handle](h H, creator string, prefix string, include []uint64, exclude []uint64, st TableKeySlice) ([]*Asset, error) {
-	const op errors.Op = "GetAssets"
-	data := []interface{}{
-		creator,
-		fmt.Sprintf("%v%%", prefix),
-	}
+func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, include []uint64, exclude []uint64, st TableKeySlice) (*[]Asset, error) {
+	const op errors.Op = "GetAssetsByDetails"
+	data := []interface{}{}
 	query := fmt.Sprintf(
-		"select %s from %s.asset where creator = ? and (unit_name like ?",
+		"select %s from %s.asset where",
 		strings.Join(AssetTableKeys(st), ","),
 		NFDDatabase(),
 	)
+
+	if !(len(creators) > 0) {
+		return nil, errors.E(pkg, op, errors.Database, fmt.Errorf("no creators provided"))
+	}
+
+	data = append(data, misc.ToInterfaceSlice(creators)...)
+	// data = append(data, fmt.Sprintf("%v%%", prefix))
+	creatorsQMarks := []rune(strings.Repeat("?, ", len(creators)))
+	query += fmt.Sprintf(" creator in (%s)", string(creatorsQMarks[0:len(creatorsQMarks)-2]))
+
+	query += " and ("
+
+	if len(prefixes) > 0 {
+		wildcardPrefixes := []string{}
+		for i, prefix := range prefixes {
+			wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
+			if i == 0 {
+				query += " unit_name like ?"
+			} else {
+				query += " or unit_name like ?"
+			}
+		}
+		data = append(data, misc.ToInterfaceSlice(wildcardPrefixes)...)
+	}
 
 	if len(include) > 0 {
 		data = append(data, misc.ToInterfaceSlice(include)...)
@@ -151,8 +142,8 @@ func GetAssetsByCollection[H Handle](h H, creator string, prefix string, include
 		query += fmt.Sprintf(" and id not in(%s)", string(excludeQMarks[0:len(excludeQMarks)-2]))
 	}
 
-	var list []*Asset
-	// data := append([]interface{}{id}, misc.ToInterfaceSlice(keys)...)
+	var list []Asset
+	fmt.Println("generated query: ", query)
 	err := h.Select(&list, query, data...)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -160,23 +151,8 @@ func GetAssetsByCollection[H Handle](h H, creator string, prefix string, include
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return list, nil
+	return &list, nil
 }
-
-// func GetAssetsByCollectionID[H Handle](h H, collectionID string, st TableKeySlice) ([]*Asset, error) {
-// 	const op errors.Op = "GetAssetsByCollectionID"
-// 	query := fmt.Sprintf("select %s from %s.asset where collection_id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
-
-// 	var list []*Asset
-// 	err := h.Select(&list, query, collectionID)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
-// 		}
-// 		return nil, errors.E(pkg, op, err)
-// 	}
-// 	return list, nil
-// }
 
 // func GetAssetsByCollectionIDAndUnitPrefix[H Handle](h H, collectionID string, prefix string, st TableKeySlice) ([]*Asset, error) {
 // 	const op errors.Op = "GetAssetsByCollectionID"
