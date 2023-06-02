@@ -11,7 +11,9 @@ import (
 type Collection struct {
 	*db.Collection
 	BannerURL      *string           `json:"banner_url,omitempty"`
+	BannerMime     *string           `json:"banner_mime,omitempty"`
 	AvatarURL      *string           `json:"avatar_url,omitempty"`
+	AvatarMime     *string           `json:"avatar_mime,omitempty"`
 	Prefixes       []string          `json:"prefixes,omitempty"`
 	Assets         []uint64          `json:"assets,omitempty"`
 	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
@@ -207,9 +209,19 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 			case LabeledAsset:
 				switch result.Label {
 				case "banner":
-					compCollection.BannerURL = result.Asset.ImageURL
+					compCollection.BannerMime = result.Asset.Mime
+					if result.Asset.ImageURL != nil && *result.Asset.ImageURL != "" {
+						compCollection.BannerURL = result.Asset.ImageURL
+					} else {
+						compCollection.BannerURL = result.Asset.URL
+					}
 				case "avatar":
-					compCollection.AvatarURL = result.Asset.ImageURL
+					compCollection.AvatarMime = result.Asset.Mime
+					if result.Asset.ImageURL != nil && *result.Asset.ImageURL != "" {
+						compCollection.AvatarURL = result.Asset.ImageURL
+					} else {
+						compCollection.AvatarURL = result.Asset.URL
+					}
 				}
 			case error:
 				errs = append(errs, result)
