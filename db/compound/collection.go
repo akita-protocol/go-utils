@@ -380,3 +380,69 @@ func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*
 
 	return assets, nil
 }
+
+func GetCollectionAssetsByNFDName[H db.Handle](h H, name string, collectionID string) (*[]db.Asset, error) {
+	const op errors.Op = "GetCollectionAssetsByNFDName"
+
+	buffer := 2
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	nfdData, err := db.GetNFDByName(h, name, db.Tiny)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	go func() {
+		wallets, err := db.GetNFDVerifiedWallets(h, nfdData.ID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- wallets
+	}()
+
+	go func() {
+		col, err := GetCollectionCriteria(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- col
+	}()
+
+	creators := []string{}
+	var criteria *Collection
+	var errs []error
+
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *[]db.NFDWallet:
+			for i := range *result {
+				wallet := (*result)[i]
+				creators = append(creators, wallet.Address)
+			}
+		case *Collection:
+			criteria = result
+		case error:
+			errs = append(errs, result)
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	return assets, nil
+}
