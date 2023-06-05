@@ -27,6 +27,15 @@ const (
 	PrivateChannel
 	Collection
 	Property
+	StakingPool
+	StakingExclusion
+	StakingEntryRequirement
+	StakingPoolEntry
+	StakingSnapshot
+	StakingReward
+	StakingRewardDisbursement
+	StakingMerchant
+	StakingGroup
 )
 
 func (p Prefix) String() string {
@@ -34,15 +43,24 @@ func (p Prefix) String() string {
 }
 
 var prefixToString = map[Prefix]string{
-	Request:        "req",
-	User:           "usr",
-	Wallet:         "wal",
-	Transaction:    "txn",
-	NFD:            "nfd",
-	Token:          "tok",
-	PrivateChannel: "pvc",
-	Collection:     "col",
-	Property:       "prp",
+	Request:                   "req",
+	User:                      "usr",
+	Wallet:                    "wal",
+	Transaction:               "txn",
+	NFD:                       "nfd",
+	Token:                     "tok",
+	PrivateChannel:            "pvc",
+	Collection:                "col",
+	Property:                  "prp",
+	StakingPool:               "pol",
+	StakingExclusion:          "exc",
+	StakingEntryRequirement:   "erq",
+	StakingPoolEntry:          "pen",
+	StakingSnapshot:           "snp",
+	StakingReward:             "rwd",
+	StakingRewardDisbursement: "dis",
+	StakingMerchant:           "mer",
+	StakingGroup:              "grp",
 }
 
 var prefixToID = map[string]Prefix{
@@ -55,6 +73,15 @@ var prefixToID = map[string]Prefix{
 	"pvc": PrivateChannel,
 	"col": Collection,
 	"prp": Property,
+	"pol": StakingPool,
+	"exc": StakingExclusion,
+	"erq": StakingEntryRequirement,
+	"pen": StakingPoolEntry,
+	"snp": StakingSnapshot,
+	"rwd": StakingReward,
+	"dis": StakingRewardDisbursement,
+	"mer": StakingMerchant,
+	"grp": StakingGroup,
 }
 
 // UnmarshalYAML checks to see if its type is valid
