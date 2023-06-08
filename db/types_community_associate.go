@@ -91,8 +91,8 @@ func DeleteCommunityAssociate[H Handle](h H, id uint64, address string) error {
 }
 
 // DeleteCommunityAssociatesNotIn deletes collection associates that are not included in a list for a given community
-func DeleteCommunityAssociatesNotIn[H Handle](h H, id uint64, addresses ...uint64) error {
-	const op errors.Op = "DeleteCommunityTokensNotIn"
+func DeleteCommunityAssociatesNotIn[H Handle](h H, id uint64, addresses ...string) error {
+	const op errors.Op = "DeleteCommunityAssociatesNotIn"
 	var err error
 	data := append([]interface{}{id}, misc.ToInterfaceSlice(addresses)...)
 	query := fmt.Sprintf("delete from %s.community_associate where id = ?", NFDDatabase())
