@@ -22,7 +22,7 @@ func CommunityAssociateTableKeys() []string {
 	return []string{"id", "address", "role", "confirmed", "txn"}
 }
 
-func GetCommunityAssociates[H Handle](h H, id string) (*[]CommunityAssociate, error) {
+func GetCommunityAssociates[H Handle](h H, id uint64) (*[]CommunityAssociate, error) {
 	const op errors.Op = "GetCommunityAssociates"
 	query := fmt.Sprintf("select %s from %s.community_associate where id = ?", strings.Join(CommunityAssociateTableKeys(), ","), NFDDatabase())
 
@@ -38,7 +38,7 @@ func GetCommunityAssociates[H Handle](h H, id string) (*[]CommunityAssociate, er
 	return &associates, nil
 }
 
-func GetCommunityAssociate[H Handle](h H, id string, address string) (*CommunityAssociate, error) {
+func GetCommunityAssociate[H Handle](h H, id uint64, address string) (*CommunityAssociate, error) {
 	const op errors.Op = "GetCommunityAssociate"
 	query := fmt.Sprintf("select %s from %s.community_associate where id = ? and address = ?", strings.Join(CommunityAssociateTableKeys(), ","), NFDDatabase())
 
@@ -70,7 +70,7 @@ func GetCommunityAssociateByAddress[H Handle](h H, address string) (*[]Community
 	return &associates, nil
 }
 
-func DeleteCommunityAssociate[H Handle](h H, id string, address string) error {
+func DeleteCommunityAssociate[H Handle](h H, id uint64, address string) error {
 	const op errors.Op = "DeleteCommunityAssociate"
 	query := fmt.Sprintf("delete from %s.community_associate where id = ? and address = ?", NFDDatabase())
 
