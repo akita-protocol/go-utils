@@ -11,10 +11,11 @@ import (
 
 type Community struct {
 	*db.Community
-	Tokens      []db.CommunityToken  `json:"tokens,omitempty"`
-	Collections []Collection         `json:"collections,omitempty"`
-	Faq         []db.CommunityFaq    `json:"faq,omitempty"`
-	Extras      []db.CommunityExtras `json:"extras,omitempty"`
+	Tokens      []db.CommunityToken     `json:"tokens,omitempty"`
+	Associates  []db.CommunityAssociate `json:"associates,omitempty"`
+	Collections []Collection            `json:"collections,omitempty"`
+	Faq         []db.CommunityFaq       `json:"faq,omitempty"`
+	Extras      []db.CommunityExtras    `json:"extras,omitempty"`
 	// Staking     []db.Staking         `json:"staking,omitempty"`
 }
 
