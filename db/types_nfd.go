@@ -47,10 +47,11 @@ func NFDTableKeys(st TableKeySlice) []string {
 
 func NFDTableKeysWithStrictTableReference(st TableKeySlice) []string {
 	keys := NFDTableKeySlices[st]
+	nkeys := make([]string, len(keys))
 	for i, key := range keys {
-		keys[i] = fmt.Sprintf("%s.nfd.%s", NFDDatabase(), key)
+		nkeys[i] = fmt.Sprintf("%s.nfd.%s", NFDDatabase(), key)
 	}
-	return keys
+	return nkeys
 }
 
 func GetNFD[H DBStruct](h H, id uint64, st TableKeySlice) (*NFD, error) {
