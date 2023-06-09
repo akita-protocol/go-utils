@@ -44,7 +44,7 @@ type Asset struct {
 var AssetTableKeySlices = map[TableKeySlice][]string{
 	Tiny:  {"id", "name", "standard", "url", "image_url", "mime", "unit_name"},
 	Small: {"id", "name", "standard", "url", "image_url", "mime", "unit_name", "reserve", "creator", "total"},
-	Full:  {"id", "name", "standard", "url", "unit_name", "mime", "clawback", "freeze", "manager", "reserve", "creator", "created_at", "deleted", "destroyed_at", "decimals", "total"},
+	Full:  {"id", "name", "standard", "url", "image_url", "mime", "unit_name", "clawback", "freeze", "manager", "reserve", "creator", "created_at", "deleted", "destroyed_at", "decimals", "total"},
 }
 
 func AssetTableKeys(st TableKeySlice) []string {
