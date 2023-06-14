@@ -29,6 +29,7 @@ type NFD struct {
 	DiscordID        *string `structs:"discord_id,omitempty" db:"discord_id" json:"discord_id,omitempty"`
 	TwitterID        *string `structs:"twitter_id,omitempty" db:"twitter_id" json:"twitter_id,omitempty"`
 	TelegramID       *string `structs:"telegram_id,omitempty" db:"telegram_id" json:"telegram_id,omitempty"`
+	GithubID         *string `structs:"github_id,omitempty" db:"github_id" json:"github_id,omitempty"`
 	Domain           *string `structs:"domain,omitempty" db:"domain" json:"domain,omitempty"`
 	LastChangedBlock uint64  `structs:"last_changed_block" db:"last_changed_block" json:"last_changed_block,omitempty"`
 	CreatedBlock     uint64  `structs:"created_block,omitempty" db:"created_block" json:"created_block,omitempty"`
@@ -37,8 +38,8 @@ type NFD struct {
 
 var NFDTableKeySlices = map[TableKeySlice][]string{
 	Tiny:  {"id", "name", "vault_locked", "username", "avatar", "avatar_id", "banner", "banner_id"},
-	Small: {"id", "name", "vault_locked", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain"},
-	Full:  {"id", "state", "current_as_of_block", "asa_id", "name", "vault_locked", "version", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "domain", "last_changed_block", "created_block", "purchased_block"},
+	Small: {"id", "name", "vault_locked", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain"},
+	Full:  {"id", "state", "current_as_of_block", "asa_id", "name", "vault_locked", "version", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain", "last_changed_block", "created_block", "purchased_block"},
 }
 
 func NFDTableKeys(st TableKeySlice) []string {
