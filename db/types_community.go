@@ -36,7 +36,7 @@ func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
 	const op errors.Op = "GetCommunities"
 	query := fmt.Sprintf("select %v from %v.community order by akta desc limit ?, ?", strings.Join(CommunityTableKeys(), ","), NFDDatabase())
 
-	var communities *[]Community
+	var communities []Community
 	err := h.Select(&communities, query, start, limit)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -44,7 +44,7 @@ func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return communities, nil
+	return &communities, nil
 }
 
 func GetCommunity[H Handle](h H, id uint64) (*Community, error) {
