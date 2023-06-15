@@ -105,6 +105,9 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 			community.Extras = *result
 		case error:
 			errs = append(errs, result)
+		default:
+			fmt.Println("defaulted")
+			fmt.Println(result)
 		}
 	}
 
