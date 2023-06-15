@@ -34,7 +34,7 @@ func CommunityTableKeys() []string {
 
 func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
 	const op errors.Op = "GetCommunities"
-	query := fmt.Sprintf("select %v from %v.community limit ?, ? order by akta desc", strings.Join(CommunityTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %v from %v.community order by akta desc limit ?, ?", strings.Join(CommunityTableKeys(), ","), NFDDatabase())
 
 	var communities *[]Community
 	err := h.Select(&communities, query, start, limit)
