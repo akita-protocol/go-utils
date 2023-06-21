@@ -44,7 +44,7 @@ func GetNFDWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 
 func GetNFDVerifiedWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
-	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ? and verified = 1", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ? and verified = 1 order by deposit desc", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
 	var list []NFDWallet
 
 	err := h.Select(&list, query, id)
