@@ -38,7 +38,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 
 	go func() {
 		comm, err := db.GetCommunity(h, nfdID)
-		fmt.Println("db.GetCommunity", nfdID)
 		if err != nil {
 			rChan <- err
 			return
@@ -49,7 +48,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeTokens, exclude) {
 		go func() {
 			tokens, err := db.GetCommunityTokens(h, nfdID)
-			fmt.Println("db.GetCommunityTokens", nfdID)
 			if err != nil {
 				rChan <- err
 				return
@@ -61,7 +59,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeCollections, exclude) {
 		go func() {
 			collections, err := GetCollectionsByNFDID(h, nfdID)
-			fmt.Println("GetCollectionsByNFDID", nfdID)
 			if err != nil {
 				rChan <- err
 				return
@@ -73,7 +70,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeFaq, exclude) {
 		go func() {
 			faq, err := db.GetCommunityFaq(h, nfdID, 0, 10)
-			fmt.Println("db.GetCommunityFaq", nfdID)
 			if err != nil {
 				rChan <- err
 				return
@@ -85,7 +81,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeExtras, exclude) {
 		go func() {
 			extras, err := db.GetCommunityExtras(h, nfdID)
-			fmt.Println("db.GetCommunityExtras", nfdID)
 			if err != nil {
 				rChan <- err
 				return

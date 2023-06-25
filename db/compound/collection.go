@@ -45,7 +45,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 
 	var collections []Collection
 	cols, err := db.GetCollectionsByNFDID(h, nfdID)
-	fmt.Println("db.GetCollectionsByNFDID", nfdID)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}
@@ -62,7 +61,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeBanner, exclude) && col.Banner != nil {
 			go func() {
 				bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
-				fmt.Println("banner -> db.GetAsset", *col.Banner)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -85,7 +83,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) && col.Avatar != nil {
 			go func() {
 				avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
-				fmt.Println("avatar -> db.GetAsset", *col.Avatar)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -108,7 +105,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludePrefixes, exclude) {
 			go func() {
 				prefixes, err := db.GetCollectionPrefixes(h, col.ID)
-				fmt.Println("db.GetCollectionPrefixes", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -120,7 +116,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeAssets, exclude) {
 			go func() {
 				assets, err := db.GetCollectionAssets(h, col.ID)
-				fmt.Println("db.GetCollectionAssets", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -132,7 +127,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeExcludedAssets, exclude) {
 			go func() {
 				excludedAssets, err := db.GetCollectionExcludedAssets(h, col.ID)
-				fmt.Println("db.GetCollectionExcludedAssets", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -144,7 +138,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeArtists, exclude) {
 			go func() {
 				artists, err := db.GetCollectionArtistByCollection(h, col.ID)
-				fmt.Println("db.GetCollectionArtistByCollection", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -156,7 +149,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeProperties, exclude) {
 			go func() {
 				properties, err := GetProperties(h, col.ID)
-				fmt.Println("GetProperties", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -168,7 +160,6 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeExtras, exclude) {
 			go func() {
 				extras, err := db.GetCollectionExtras(h, col.ID)
-				fmt.Println("db.GetCollectionExtras", col.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
