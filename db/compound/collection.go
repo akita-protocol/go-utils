@@ -54,52 +54,58 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		compCollection := Collection{
 			Collection: &col,
 		}
-		buffer := (8 - len(exclude))
+		buffer := (10 - len(exclude))
 		rChan := make(chan interface{}, buffer)
 		defer close(rChan)
 
-		if !misc.InSlice(CollectionGetExcludeBanner, exclude) && col.Banner != nil {
-			go func() {
-				bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
-				if err != nil && !db.ErrNoRows(err) {
-					rChan <- err
-					return
-				}
-
-				if !db.ErrNoRows(err) {
-					rChan <- LabeledAsset{
-						Asset: bannerAsset,
-						Label: "banner",
+		if !misc.InSlice(CollectionGetExcludeBanner, exclude) {
+			if col.Banner != nil {
+				go func() {
+					bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
+					if err != nil && !db.ErrNoRows(err) {
+						rChan <- err
+						return
 					}
-					return
-				}
 
-				rChan <- nil
-			}()
-		} else {
-			buffer--
+					if !db.ErrNoRows(err) {
+						rChan <- LabeledAsset{
+							Asset: bannerAsset,
+							Label: "banner",
+						}
+						return
+					}
+
+					rChan <- nil
+				}()
+			} else {
+				fmt.Println("banner is nil")
+				buffer--
+			}
 		}
 
-		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) && col.Avatar != nil {
-			go func() {
-				avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
-				if err != nil && !db.ErrNoRows(err) {
-					rChan <- err
-					return
-				}
-
-				if !db.ErrNoRows(err) {
-					rChan <- LabeledAsset{
-						Asset: avatarAsset,
-						Label: "avatar",
+		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) {
+			if col.Avatar != nil {
+				go func() {
+					avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
+					if err != nil && !db.ErrNoRows(err) {
+						rChan <- err
+						return
 					}
-					return
-				}
 
-				rChan <- nil
-			}()
-		} else {
-			buffer--
+					if !db.ErrNoRows(err) {
+						rChan <- LabeledAsset{
+							Asset: avatarAsset,
+							Label: "avatar",
+						}
+						return
+					}
+
+					rChan <- nil
+				}()
+			} else {
+				fmt.Println("avatar is nil")
+				buffer--
+			}
 		}
 
 		if !misc.InSlice(CollectionGetExcludePrefixes, exclude) {
