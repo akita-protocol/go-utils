@@ -54,7 +54,11 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		compCollection := Collection{
 			Collection: &col,
 		}
-		buffer := (9 - len(exclude))
+		buffer := (8 - len(exclude))
+		if buffer == 0 {
+			continue
+		}
+
 		rChan := make(chan interface{}, buffer)
 		defer close(rChan)
 
