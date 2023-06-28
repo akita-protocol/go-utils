@@ -66,9 +66,10 @@ func CheckSignature(stx types.SignedTxn) error {
 	return nil
 }
 
-func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]interface{}, error) {
+func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]string, error) {
 	const op cerrors.Op = "GetLatestAssetConfig"
-	var properties map[string]interface{}
+	var data map[string]interface{}
+	var properties map[string]string
 
 	nextToken := ""
 	loop := true
@@ -102,9 +103,19 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 
 		txn := resp.Transactions[len(resp.Transactions)-1]
 
-		err = json.Unmarshal(txn.Note, &properties)
+		err = json.Unmarshal(txn.Note, &data)
 		if err != nil {
 			return properties, cerrors.E(op, err)
+		}
+
+		props, ok := data["properties"]
+		if !ok {
+			return properties, cerrors.E(op, "properties not found")
+		}
+
+		properties, ok = props.(map[string]string)
+		if !ok {
+			return properties, cerrors.E(op, "properties is not a map")
 		}
 
 		break
