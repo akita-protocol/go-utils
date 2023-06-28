@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
@@ -119,4 +120,74 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 	}
 
 	return properties, nil
+}
+
+func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string, error) {
+	const op cerrors.Op = "Arc69Check"
+	var data map[string]interface{}
+	isArc69 := false
+	properties := map[string]string{}
+
+	nextToken := ""
+	loop := true
+	var lastResponse models.TransactionsResponse
+
+	for loop {
+		loop = false
+		nextPage := nextToken
+		resp, err := client.LookupAssetTransactions(assetID).NextToken(nextPage).TxType("acfg").Do(context.Background())
+		if err != nil {
+			return isArc69, properties, cerrors.E(op, err)
+		}
+
+		if resp.NextToken != "" {
+			lastResponse = resp
+			nextToken = resp.NextToken
+			loop = true
+			continue
+		}
+
+		if len(resp.Transactions) == 0 {
+			resp = lastResponse
+		}
+
+		txn := resp.Transactions[len(resp.Transactions)-1]
+
+		err = json.Unmarshal(txn.Note, &data)
+		if err != nil {
+			return isArc69, properties, cerrors.E(op, err)
+		}
+
+		props, ok := data["properties"]
+		if !ok {
+			return isArc69, properties, cerrors.E(op, "properties not found")
+		}
+
+		interumProps, ok := props.(map[string]interface{})
+		if !ok {
+			return isArc69, properties, cerrors.E(op, "properties is not a map of string to interface")
+		}
+
+		for key, value := range interumProps {
+			properties[key] = value.(string)
+		}
+
+		interfaceStandard, ok := data["standard"]
+		if !ok {
+			return isArc69, properties, cerrors.E(op, "standard not found")
+		}
+
+		standard, ok := interfaceStandard.(string)
+		if !ok {
+			return isArc69, properties, cerrors.E(op, "interface standard is not a string")
+		}
+
+		if strings.ToLower(standard) == "arc69" {
+			isArc69 = true
+		}
+
+		break
+	}
+
+	return isArc69, properties, nil
 }
