@@ -112,10 +112,11 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 		if !ok {
 			return properties, cerrors.E(op, "properties not found")
 		}
+		fmt.Println(props)
 
-		properties, ok = props.(map[string]string)
-		if !ok {
-			return properties, cerrors.E(op, "properties is not a map")
+		err = json.Unmarshal(props.([]byte), &properties)
+		if err != nil {
+			return properties, cerrors.E(op, err)
 		}
 
 		break
