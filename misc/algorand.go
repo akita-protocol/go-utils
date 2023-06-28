@@ -66,7 +66,7 @@ func CheckSignature(stx types.SignedTxn) error {
 	return nil
 }
 
-func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]interface{}, error) {
+func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]interface{}, error) {
 	const op cerrors.Op = "GetLatestAssetConfig"
 	var properties map[string]interface{}
 
