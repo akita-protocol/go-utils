@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/ed25519"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -67,9 +66,9 @@ func CheckSignature(stx types.SignedTxn) error {
 	return nil
 }
 
-func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]string, error) {
+func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]interface{}, error) {
 	const op cerrors.Op = "GetLatestAssetConfig"
-	var properties map[string]string
+	var properties map[string]interface{}
 
 	nextToken := ""
 	loop := true
@@ -103,13 +102,7 @@ func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]st
 
 		txn := resp.Transactions[len(resp.Transactions)-1]
 
-		fmt.Println(string(txn.Note))
-		decodedNotes, err := base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(string(txn.Note))
-		if err != nil {
-			return properties, cerrors.E(op, err)
-		}
-
-		err = json.Unmarshal(decodedNotes, &properties)
+		err = json.Unmarshal(txn.Note, &properties)
 		if err != nil {
 			return properties, cerrors.E(op, err)
 		}
