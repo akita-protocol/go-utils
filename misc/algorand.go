@@ -81,6 +81,13 @@ func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]st
 			return properties, cerrors.E(op, err)
 		}
 
+		jsn, err := json.Marshal(resp)
+		if err != nil {
+			return properties, cerrors.E(op, err)
+		}
+
+		fmt.Println(string(jsn))
+
 		if resp.NextToken != "" {
 			nextToken = resp.NextToken
 			loop = true
