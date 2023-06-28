@@ -103,7 +103,7 @@ func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]st
 
 		txn := resp.Transactions[len(resp.Transactions)-1]
 
-		decodedNotes, err := base64.StdEncoding.DecodeString(string(txn.Note))
+		decodedNotes, err := base64.RawStdEncoding.DecodeString(string(txn.Note))
 		if err != nil {
 			return properties, cerrors.E(op, err)
 		}
