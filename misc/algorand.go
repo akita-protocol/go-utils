@@ -11,6 +11,7 @@ import (
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/indexer"
 	cerrors "gitlab.algotoolchain.com/keelakay/utils/errors"
 )
@@ -72,6 +73,7 @@ func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]st
 
 	nextToken := ""
 	loop := true
+	var lastResponse models.TransactionsResponse
 
 	for loop {
 		loop = false
@@ -89,9 +91,14 @@ func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]st
 		fmt.Println(string(jsn))
 
 		if resp.NextToken != "" {
+			lastResponse = resp
 			nextToken = resp.NextToken
 			loop = true
 			continue
+		}
+
+		if len(resp.Transactions) == 0 {
+			resp = lastResponse
 		}
 
 		txn := resp.Transactions[len(resp.Transactions)-1]
