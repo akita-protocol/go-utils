@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
@@ -113,11 +114,7 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 			return properties, cerrors.E(op, "properties not found")
 		}
 		fmt.Println(props)
-
-		err = json.Unmarshal(props.([]byte), &properties)
-		if err != nil {
-			return properties, cerrors.E(op, err)
-		}
+		fmt.Println(reflect.TypeOf(props))
 
 		break
 	}
