@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
@@ -70,7 +69,7 @@ func CheckSignature(stx types.SignedTxn) error {
 func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]string, error) {
 	const op cerrors.Op = "GetLatestAssetConfig"
 	var data map[string]interface{}
-	var properties map[string]string
+	properties := map[string]string{}
 
 	nextToken := ""
 	loop := true
@@ -113,8 +112,15 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 		if !ok {
 			return properties, cerrors.E(op, "properties not found")
 		}
-		fmt.Println(props)
-		fmt.Println(reflect.TypeOf(props))
+
+		interumProps, ok := props.(map[string]interface{})
+		if !ok {
+			return properties, cerrors.E(op, "properties is not a map of string to interface")
+		}
+
+		for key, value := range interumProps {
+			properties[key] = value.(string)
+		}
 
 		break
 	}
