@@ -9,15 +9,6 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
-// create table "asset_properties" (
-//     "id" bigint unsigned NOT NULL,
-//     "meta_key" varchar(128) NOT NULL,
-//     "meta_value" text NOT NULL,
-
-//     primary key ("id", "meta_key"),
-//     index ("meta_key")
-// );
-
 type AssetProperty struct {
 	ID        uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	MetaKey   string `structs:"meta_key,omitempty" db:"meta_key" json:"meta_key,omitempty"`

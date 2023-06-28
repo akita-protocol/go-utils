@@ -1,26 +1,15 @@
 package ipfs
 
 type Arc3 struct {
-	Name           string     `json:"name"`
-	Decimals       int64      `json:"decimals"`
-	Description    string     `json:"description"`
-	Image          string     `json:"image"`
-	ImageIntegrity string     `json:"image_integrity"`
-	ImageMimetype  string     `json:"image_mimetype"`
-	UnitName       string     `json:"unitName"`
-	AssetName      string     `json:"assetName"`
-	Properties     Properties `json:"properties"`
-}
-
-type Properties struct {
-	Creator         Creator       `json:"creator"`
-	Royalties       []Royalty     `json:"royalties"`
-	Collection      Collection    `json:"collection"`
-	KeyWords        []interface{} `json:"keyWords"`
-	Publisher       string        `json:"publisher"`
-	ItemListElement int64         `json:"itemListElement"`
-	NumberOfItems   int64         `json:"numberOfItems"`
-	Arc69           Arc69         `json:"arc69"`
+	Name           string             `json:"name"`
+	Decimals       int64              `json:"decimals"`
+	Description    string             `json:"description"`
+	Image          string             `json:"image"`
+	ImageIntegrity string             `json:"image_integrity"`
+	ImageMimetype  string             `json:"image_mimetype"`
+	UnitName       string             `json:"unitName"`
+	AssetName      string             `json:"assetName"`
+	Properties     *map[string]string `json:"properties"`
 }
 
 type Arc69 struct {
