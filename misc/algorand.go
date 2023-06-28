@@ -2,12 +2,17 @@ package misc
 
 import (
 	"bytes"
+	"context"
 	"crypto/ed25519"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
 	"github.com/algorand/go-algorand-sdk/types"
+	"github.com/algorand/go-algorand-sdk/v2/client/v2/indexer"
+	cerrors "gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 func AddrToED25519PublicKey(a types.Address) (pk ed25519.PublicKey) {
@@ -59,4 +64,43 @@ func CheckSignature(stx types.SignedTxn) error {
 	}
 
 	return nil
+}
+
+func GetLatestAssetConfig(client *indexer.Client, assetID uint64) (map[string]string, error) {
+	const op cerrors.Op = "GetLatestAssetConfig"
+	var properties map[string]string
+
+	nextToken := ""
+	loop := true
+
+	for loop {
+		loop = false
+		nextPage := nextToken
+		resp, err := client.LookupAssetTransactions(assetID).NextToken(nextPage).TxType("acfg").Do(context.Background())
+		if err != nil {
+			return properties, cerrors.E(op, err)
+		}
+
+		if resp.NextToken != "" {
+			nextToken = resp.NextToken
+			loop = true
+			continue
+		}
+
+		txn := resp.Transactions[len(resp.Transactions)-1]
+
+		decodedNotes, err := base64.StdEncoding.DecodeString(string(txn.Note))
+		if err != nil {
+			return properties, cerrors.E(op, err)
+		}
+
+		err = json.Unmarshal(decodedNotes, &properties)
+		if err != nil {
+			return properties, cerrors.E(op, err)
+		}
+
+		break
+	}
+
+	return properties, nil
 }
