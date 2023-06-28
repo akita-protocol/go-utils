@@ -215,4 +215,13 @@ CREATE TABLE "asset" (
   KEY "unit_name" ("unit_name"),
   KEY "creator" ("creator"),
   KEY "reserve" ("reserve")
-)
+);
+
+create table "asset_properties" (
+    "id" bigint unsigned NOT NULL,
+    "meta_key" varchar(128) NOT NULL,
+    "meta_value" text NOT NULL,
+
+    primary key ("id", "meta_key"),
+    index ("meta_key")
+);
