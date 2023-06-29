@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
@@ -187,6 +188,7 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 
 		interumProps, ok := props.(map[string]interface{})
 		if !ok {
+			fmt.Println(reflect.TypeOf(props))
 			attributes, ok := props.([]traitTypeObject)
 			if !ok {
 				return isArc69, properties, cerrors.E(op, "properties is not a map of string to interface")
