@@ -169,7 +169,9 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 			data := <-rChan
 			switch result := data.(type) {
 			case *db.PropertyValue:
-				propertyValues = append(propertyValues, *result)
+				if result != nil {
+					propertyValues = append(propertyValues, *result)
+				}
 			case *[]db.PropertyValueExtras:
 				propertyValueExtras = *result
 			case error:
