@@ -163,14 +163,14 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 			}()
 		}
 
-		var propertyValues *[]db.PropertyValue
+		var propertyValues []db.PropertyValue
 		var propertyValueExtras []db.PropertyValueExtras
 		var errs []error
 		for i := 0; i < buffer; i++ {
 			data := <-rChan
 			switch result := data.(type) {
-			case *[]db.PropertyValue:
-				propertyValues = result
+			case *db.PropertyValue:
+				propertyValues = append(propertyValues, *result)
 			case *[]db.PropertyValueExtras:
 				propertyValueExtras = *result
 			case error:
@@ -187,12 +187,8 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 			return nil, errors.E(op, fmt.Errorf(msg))
 		}
 
-		if propertyValues == nil {
-			continue
-		}
-
-		for i := range *propertyValues {
-			value := (*propertyValues)[i]
+		for i := range propertyValues {
+			value := propertyValues[i]
 			compPropertyValue := PropertyValue{
 				PropertyValue: &value,
 				Extras:        make(map[string]string),
