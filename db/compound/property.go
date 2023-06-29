@@ -187,6 +187,10 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 			return nil, errors.E(op, fmt.Errorf(msg))
 		}
 
+		if propertyValues == nil {
+			continue
+		}
+
 		for i := range *propertyValues {
 			value := (*propertyValues)[i]
 			compPropertyValue := PropertyValue{
