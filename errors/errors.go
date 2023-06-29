@@ -126,6 +126,8 @@ func E(args ...interface{}) error {
 			e.Kind = arg
 		case error:
 			e.Err = arg
+		case Error:
+			e.Err = &arg
 		case string:
 			e.Msg = arg
 		default:
