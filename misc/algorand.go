@@ -128,6 +128,11 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 	isArc69 := false
 	properties := map[string]string{}
 
+	type traitTypeObject struct {
+		TraitType string `json:"trait_type"`
+		Value     string `json:"value"`
+	}
+
 	nextToken := ""
 	loop := true
 	var lastResponse models.TransactionsResponse
@@ -158,20 +163,6 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 			return isArc69, properties, cerrors.E(op, err)
 		}
 
-		props, ok := data["properties"]
-		if !ok {
-			return isArc69, properties, cerrors.E(op, "properties not found")
-		}
-
-		interumProps, ok := props.(map[string]interface{})
-		if !ok {
-			return isArc69, properties, cerrors.E(op, "properties is not a map of string to interface")
-		}
-
-		for key, value := range interumProps {
-			properties[key] = value.(string)
-		}
-
 		interfaceStandard, ok := data["standard"]
 		if !ok {
 			return isArc69, properties, cerrors.E(op, "standard not found")
@@ -186,7 +177,29 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 			isArc69 = true
 		}
 
-		break
+		props, ok := data["properties"]
+		if !ok {
+			props, ok = data["attributes"]
+			if !ok {
+				return isArc69, properties, cerrors.E(op, "properties not found")
+			}
+		}
+
+		interumProps, ok := props.(map[string]interface{})
+		if !ok {
+			attributes, ok := props.([]traitTypeObject)
+			if !ok {
+				return isArc69, properties, cerrors.E(op, "properties is not a map of string to interface")
+			}
+
+			for _, attribute := range attributes {
+				properties[attribute.TraitType] = attribute.Value
+			}
+		} else {
+			for key, value := range interumProps {
+				properties[key] = value.(string)
+			}
+		}
 	}
 
 	return isArc69, properties, nil
