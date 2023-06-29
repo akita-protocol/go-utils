@@ -25,6 +25,15 @@ func UniqueSlice[T comparable](slice []T) []T {
 	return list
 }
 
+func SliceOverlap[T comparable](a, b []T) bool {
+	for _, v := range a {
+		if InSlice(v, b) {
+			return true
+		}
+	}
+	return false
+}
+
 // SliceEqual checks if two slices are equal
 func SliceEqual[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
