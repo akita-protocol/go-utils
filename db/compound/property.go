@@ -138,7 +138,6 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 
 		buffer := (2 - len(exclude))
 		rChan := make(chan interface{}, buffer)
-		defer close(rChan)
 
 		if !misc.InSlice(PropertyGetExcludeValues, exclude) {
 			go func() {
@@ -177,6 +176,7 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 				errs = append(errs, result)
 			}
 		}
+		close(rChan)
 
 		if len(errs) > 0 {
 			msg := ""
