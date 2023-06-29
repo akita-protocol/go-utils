@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/algorand/go-algorand-sdk/encoding/msgpack"
@@ -195,12 +194,22 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 			}
 
 			for _, attribute := range attributes {
-				attr, ok := attribute.(traitTypeObject)
+				attr, ok := attribute.(map[string]interface{})
 				if !ok {
-					fmt.Println(reflect.TypeOf(attribute))
 					return isArc69, properties, cerrors.E(op, "attribute is not a traitTypeObject")
 				}
-				properties[attr.TraitType] = attr.Value
+
+				traitType, ok := attr["trait_type"]
+				if !ok {
+					return isArc69, properties, cerrors.E(op, "trait_type not found")
+				}
+
+				value, ok := attr["value"]
+				if !ok {
+					return isArc69, properties, cerrors.E(op, "value not found")
+				}
+
+				properties[traitType.(string)] = value.(string)
 			}
 		} else {
 			for key, value := range interumProps {
