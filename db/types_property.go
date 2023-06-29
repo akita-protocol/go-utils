@@ -52,6 +52,22 @@ func GetPropertiesByName[H Handle](h H, collectionID string, name string) (*[]Pr
 	return &properties, nil
 }
 
+func GetPropertiesWhereNameIn[H Handle](h H, collectionID string, names ...string) (*[]Property, error) {
+	const op errors.Op = "GetProperties"
+	query := fmt.Sprintf("select %s from %s.property where collection_id = ? and name in (%s)", strings.Join(PropertyTableKeys(), ","), NFDDatabase(), strings.Repeat("?, ", len(names))[0:(len(names)*3)-2])
+
+	var properties []Property
+	err := h.Select(&properties, query, append([]interface{}{collectionID}, misc.ToInterfaceSlice(names)...)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Properties Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &properties, nil
+}
+
 func DeleteCollectionProperties[H Handle](h H, collectionID string) error {
 	const op errors.Op = "DeleteCollectionProperties"
 	query := fmt.Sprintf("delete from %s.property where collection_id = ?", NFDDatabase())

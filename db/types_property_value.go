@@ -42,6 +42,22 @@ func GetPropertyValues[H Handle](h H, id string) (*[]PropertyValue, error) {
 	return &propertyValues, nil
 }
 
+func GetPropertyValueByName[H Handle](h H, id string, name string) (*PropertyValue, error) {
+	const op errors.Op = "GetPropertyValueByName"
+	query := fmt.Sprintf("select %s from %s.property_value where id = ? and name = ?", strings.Join(PropertyValueTableKeys(), ","), NFDDatabase())
+
+	var propertyValue PropertyValue
+	err := h.Get(&propertyValue, query, id, name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Property Value Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &propertyValue, nil
+}
+
 func DeletePropertyValues[H Handle](h H, id string) error {
 	const op errors.Op = "DeletePropertyValues"
 	query := fmt.Sprintf("delete from %s.property_value where id = ?", NFDDatabase())

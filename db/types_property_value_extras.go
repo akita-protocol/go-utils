@@ -37,6 +37,22 @@ func GetPropertyValueExtras[H Handle](h H, id string) (*[]PropertyValueExtras, e
 	return &extras, nil
 }
 
+func GetPropertyValueExtrasByName[H Handle](h H, id string, name string) (*[]PropertyValueExtras, error) {
+	const op errors.Op = "GetPropertyValueExtrasByName"
+	query := fmt.Sprintf("select %s from %s.property_value_extras where id = ? and name = ?", strings.Join(PropertyValueExtrasTableKeys(), ","), NFDDatabase())
+
+	var extras []PropertyValueExtras
+	err := h.Select(&extras, query, id, name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Property Value Extras Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &extras, nil
+}
+
 func DeletePropertyValueExtras[H Handle](h H, id string) error {
 	const op errors.Op = "DeletePropertyValueExtras"
 	query := fmt.Sprintf("delete from %s.property_value_extras where id = ?", NFDDatabase())
