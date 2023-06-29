@@ -209,11 +209,11 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 					return isArc69, properties, cerrors.E(op, "value not found")
 				}
 
-				properties[traitType.(string)] = value.(string)
+				properties[traitType.(string)] = fmt.Sprintf("%s", value)
 			}
 		} else {
 			for key, value := range interumProps {
-				properties[key] = value.(string)
+				properties[key] = fmt.Sprintf("%s", value)
 			}
 		}
 	}
