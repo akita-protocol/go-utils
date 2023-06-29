@@ -188,14 +188,19 @@ func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string
 
 		interumProps, ok := props.(map[string]interface{})
 		if !ok {
-			fmt.Println(reflect.TypeOf(props))
-			attributes, ok := props.([]traitTypeObject)
+
+			attributes, ok := props.([]interface{})
 			if !ok {
 				return isArc69, properties, cerrors.E(op, "properties is not a map of string to interface")
 			}
 
 			for _, attribute := range attributes {
-				properties[attribute.TraitType] = attribute.Value
+				attr, ok := attribute.(traitTypeObject)
+				if !ok {
+					fmt.Println(reflect.TypeOf(attribute))
+					return isArc69, properties, cerrors.E(op, "attribute is not a traitTypeObject")
+				}
+				properties[attr.TraitType] = attr.Value
 			}
 		} else {
 			for key, value := range interumProps {
