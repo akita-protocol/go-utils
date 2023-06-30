@@ -74,6 +74,33 @@ func ParseASAUrl(asaUrl string, reserveAddress types.Address) (string, error) {
 	return fmt.Sprintf("ipfs://%s", strings.ReplaceAll(asaUrl, matches[0], cidResult.String())), nil
 }
 
+func GetCID(url string) (string, error) {
+	const op errors.Op = "getIPFSCID"
+
+	url = strings.Replace(url, "?preview=1", "", -1)
+	url = strings.Replace(url, "/?preview=1", "", -1)
+
+	if strings.Contains(url, "?") {
+		url = strings.Split(url, "?")[0]
+	}
+
+	if strings.Contains(url, "ipfs://") {
+		return strings.TrimSpace(strings.Replace(url, "ipfs://", "", 1)), nil
+	} else if strings.Contains(url, "/ipfs/") {
+		return strings.TrimSpace(strings.Split(url, "/ipfs/")[1]), nil
+	} else if strings.Contains(url, ".ipfs.") {
+		return strings.TrimSpace(strings.Replace(strings.Replace(strings.Split(url, ".ipfs.")[0], "https://", "", 1), "http://", "", 1)), nil
+	} else {
+		splitURL := strings.FieldsFunc(url, func(r rune) bool { return r == '/' || r == '.' })
+		for _, slice := range splitURL {
+			if len(slice) >= 46 {
+				return strings.TrimSpace(slice), nil
+			}
+		}
+		return "", errors.E(op, fmt.Errorf("failed to get CID from url"))
+	}
+}
+
 func GetIPFSData(url string) ([]byte, error) {
 	const op errors.Op = "GetIPFSData"
 	if !strings.HasPrefix(url, "ipfs://") {
