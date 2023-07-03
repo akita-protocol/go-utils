@@ -1,15 +1,15 @@
 package ipfs
 
 type Arc3 struct {
-	Name           string             `json:"name"`
-	Decimals       int64              `json:"decimals"`
-	Description    string             `json:"description"`
-	Image          string             `json:"image"`
-	ImageIntegrity string             `json:"image_integrity"`
-	ImageMimetype  string             `json:"image_mimetype"`
-	UnitName       string             `json:"unitName"`
-	AssetName      string             `json:"assetName"`
-	Properties     *map[string]string `json:"properties"`
+	Name           string                  `json:"name"`
+	Decimals       int64                   `json:"decimals"`
+	Description    string                  `json:"description"`
+	Image          string                  `json:"image"`
+	ImageIntegrity string                  `json:"image_integrity"`
+	ImageMimetype  string                  `json:"image_mimetype"`
+	UnitName       string                  `json:"unitName"`
+	AssetName      string                  `json:"assetName"`
+	Properties     *map[string]interface{} `json:"properties"`
 }
 
 type Arc69 struct {
@@ -34,12 +34,12 @@ type Royalty struct {
 }
 
 type Arc19 struct {
-	Name           string             `json:"name"`
-	Description    *string            `json:"description"`
-	Standard       string             `json:"standard"`
-	Decimals       *int64             `json:"decimals"`
-	Image          string             `json:"image"`
-	ImageMimetype  string             `json:"image_mimetype"`
-	ImageIntegrity *string            `json:"image_integrity"`
-	Properties     *map[string]string `json:"properties"`
+	Name           string                  `json:"name"`
+	Description    *string                 `json:"description"`
+	Standard       string                  `json:"standard"`
+	Decimals       *int64                  `json:"decimals"`
+	Image          string                  `json:"image"`
+	ImageMimetype  string                  `json:"image_mimetype"`
+	ImageIntegrity *string                 `json:"image_integrity"`
+	Properties     *map[string]interface{} `json:"properties"`
 }
