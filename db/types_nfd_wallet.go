@@ -86,6 +86,8 @@ func GetNFDVerifiedOrOwnerWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, err
 				nlist = append(nlist, list[i])
 			}
 		}
+	} else {
+		return &list, nil
 	}
 
 	return &nlist, nil
