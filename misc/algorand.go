@@ -67,10 +67,10 @@ func CheckSignature(stx types.SignedTxn) error {
 	return nil
 }
 
-func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]string, error) {
+func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map[string]interface{}, error) {
 	const op cerrors.Op = "GetLatestAssetConfig"
 	var data map[string]interface{}
-	properties := map[string]string{}
+	properties := map[string]interface{}{}
 
 	nextToken := ""
 	loop := true
@@ -122,11 +122,11 @@ func GetLatestAssetConfigProperties(client *indexer.Client, assetID uint64) (map
 	return properties, nil
 }
 
-func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]string, error) {
+func Arc69Check(client *indexer.Client, assetID uint64) (bool, map[string]interface{}, error) {
 	const op cerrors.Op = "Arc69Check"
 	var data map[string]interface{}
 	isArc69 := false
-	properties := map[string]string{}
+	properties := map[string]interface{}{}
 
 	type traitTypeObject struct {
 		TraitType string `json:"trait_type"`
