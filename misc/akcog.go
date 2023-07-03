@@ -429,6 +429,7 @@ const (
 )
 
 var FurPlusTraits = []FurPlus{
+	FurPlusNone,
 	FurPlusBandanges,
 	FurPlusScars,
 	FurPlusStickers,
