@@ -1219,8 +1219,9 @@ var Compats = CompatMap{
 }
 
 type IncompatibilityMap struct {
-	Head map[Head][]Eyes
-	Body map[Body][]Eyes
+	Head  map[Head][]Eyes
+	Body  map[Body][]Eyes
+	Snout map[Snout][]Eyes
 }
 
 var InCompats = IncompatibilityMap{
@@ -1301,6 +1302,10 @@ var InCompats = IncompatibilityMap{
 		BodyToga:              {},
 		TopazDetectiveSuit:    {},
 		BodyWhiteButtonUp:     {},
+	},
+	Snout: map[Snout][]Eyes{
+		SnoutMuzzle:  {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
+		SnoutGasMask: {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
 	},
 }
 
