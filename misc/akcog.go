@@ -976,7 +976,7 @@ var Files = FileMap{
 			BackgroundSpace:          {"space_bg.png"},
 			BackgroundTopaz:          {"topaz_bg.png"},
 			BackgroundYellow:         {"yellow_bg.png"},
-			BackgroundGraffiti:       {"graffiti_bg.jpeg"},
+			BackgroundGraffiti:       {"graffiti_bg.png"},
 		},
 	},
 	BackgroundPlus: FileMapDetails[BackgroundPlus]{
