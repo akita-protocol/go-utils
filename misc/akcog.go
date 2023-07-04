@@ -54,6 +54,9 @@ const (
 	HaloEgg                        Head = "Halo, Egg"
 	HaloEarTag                     Head = "Halo, Ear Tag"
 	HaloWithThirdEye               Head = "Halo, Third Eye"
+
+	// COLLABS / SPECIALS
+	BlackCap Head = "Black Cap"
 )
 
 var HeadTraits = []Head{
@@ -92,6 +95,9 @@ var HeadTraits = []Head{
 	HeadDemonHornsWithThirdEye,
 	HeadRubyDemonHornsWithThirdEye,
 	HaloEgg,
+	HaloEarTag,
+	HaloWithThirdEye,
+	BlackCap,
 }
 
 func (h Head) GetTraits() []Head {
@@ -221,42 +227,45 @@ func (s Snout) GetTraits() []Snout {
 type Body string
 
 const (
-	BodyNone              Body = "None"
-	BodyButcher           Body = "Butcher Apron"
-	BodyCamo              Body = "Camo Uniform"
-	BodyFlannel           Body = "Flannel"
-	BodyCaveman           Body = "Caveman"
-	BodyCloak             Body = "Cloak"
-	BodyCyberTux          Body = "CyberTux"
-	BodyDetective         Body = "Detective Suit"
-	BodyDinoSuit          Body = "Dino Suit"
-	BodyDiver             Body = "Diving Suit"
-	BodyDoctorsCoat       Body = "Doctor Coat"
-	BodyEmeraldCloak      Body = "Emerald Cloak"
-	BodyAdventuringOutfit Body = "Adventuring Outfit"
-	BodyFishSuit          Body = "Fish Suit"
-	BodyFootballUniform   Body = "Football Uniform"
-	BodyGoldMedal         Body = "Gold Medal"
-	BodyHazmatSuit        Body = "Hazmat Suit"
-	BodyTrackSuit         Body = "Tracksuit"
-	BodyLeatherArmor      Body = "Leather Armor"
-	BodyMageCloak         Body = "Mage Cloak"
-	BodyMonkRobes         Body = "Monk Robes"
-	BodyPopeRobes         Body = "Pope Robes"
-	BodyPuffyJacket       Body = "Puffy Jacket"
-	BodyRoyalCape         Body = "Royal Cape"
-	BodyRubyCyberTux      Body = "Ruby CyberTux"
-	BodySailor            Body = "Sailor Suit"
-	BodySapphireMageCloak Body = "Sapphire Mage Cloak"
-	BodyScarf             Body = "Scarf"
-	BodyLabCoat           Body = "Lab Coat"
-	BodySoccerJersey      Body = "Soccer Jersey"
-	BodySweater           Body = "Sweater"
-	BodyTieDyeHoodie      Body = "Tie Dye Hoodie"
-	BodyTieDyeShirt       Body = "Tie Dye Shirt"
-	BodyToga              Body = "Toga"
-	TopazDetectiveSuit    Body = "Topaz Detective Suit"
-	BodyWhiteButtonUp     Body = "White Button Up"
+	BodyNone               Body = "None"
+	BodyButcher            Body = "Butcher Apron"
+	BodyCamo               Body = "Camo Uniform"
+	BodyFlannel            Body = "Flannel"
+	BodyCaveman            Body = "Caveman"
+	BodyCloak              Body = "Cloak"
+	BodyCyberTux           Body = "CyberTux"
+	BodyDetective          Body = "Detective Suit"
+	BodyDinoSuit           Body = "Dino Suit"
+	BodyDiver              Body = "Diving Suit"
+	BodyDoctorsCoat        Body = "Doctor Coat"
+	BodyEmeraldCloak       Body = "Emerald Cloak"
+	BodyAdventuringOutfit  Body = "Adventuring Outfit"
+	BodyFishSuit           Body = "Fish Suit"
+	BodyFootballUniform    Body = "Football Uniform"
+	BodyGoldMedal          Body = "Gold Medal"
+	BodyHazmatSuit         Body = "Hazmat Suit"
+	BodyTrackSuit          Body = "Tracksuit"
+	BodyLeatherArmor       Body = "Leather Armor"
+	BodyMageCloak          Body = "Mage Cloak"
+	BodyMonkRobes          Body = "Monk Robes"
+	BodyPopeRobes          Body = "Pope Robes"
+	BodyPuffyJacket        Body = "Puffy Jacket"
+	BodyRoyalCape          Body = "Royal Cape"
+	BodyRubyCyberTux       Body = "Ruby CyberTux"
+	BodySailor             Body = "Sailor Suit"
+	BodySapphireMageCloak  Body = "Sapphire Mage Cloak"
+	BodyScarf              Body = "Scarf"
+	BodyLabCoat            Body = "Lab Coat"
+	BodySoccerJersey       Body = "Soccer Jersey"
+	BodySweater            Body = "Sweater"
+	BodyTieDyeHoodie       Body = "Tie Dye Hoodie"
+	BodyTieDyeShirt        Body = "Tie Dye Shirt"
+	BodyToga               Body = "Toga"
+	BodyTopazDetectiveSuit Body = "Topaz Detective Suit"
+	BodyWhiteButtonUp      Body = "White Button Up"
+
+	// COLLABS / SPECIALS
+	BodyGreenScarf Body = "Green Scarf"
 )
 
 var BodyTraits = []Body{
@@ -294,8 +303,9 @@ var BodyTraits = []Body{
 	BodyTieDyeHoodie,
 	BodyTieDyeShirt,
 	BodyToga,
-	TopazDetectiveSuit,
+	BodyTopazDetectiveSuit,
 	BodyWhiteButtonUp,
+	BodyGreenScarf,
 }
 
 func (b Body) GetTraits() []Body {
@@ -461,6 +471,7 @@ const (
 	BackgroundSpace          Background = "Space"
 	BackgroundTopaz          Background = "Topaz"
 	BackgroundYellow         Background = "Yellow"
+	BackgroundGraffiti       Background = "Graffiti"
 )
 
 var BackgroundTraits = []Background{
@@ -482,6 +493,7 @@ var BackgroundTraits = []Background{
 	BackgroundSpace,
 	BackgroundTopaz,
 	BackgroundYellow,
+	BackgroundGraffiti,
 }
 
 func (b Background) GetTraits() []Background {
@@ -557,6 +569,7 @@ type FileMap struct {
 	Eyes           FileMapDetails[Eyes]
 	EyesVariant    FileMapDetails[Eyes]
 	Snout          FileMapDetails[Snout]
+	SnoutVariant   FileMapDetails[Snout]
 	Body           FileMapDetails[Body]
 	BodyVariant    FileMapDetails[Body]
 	Back           FileMapDetails[Back]
@@ -631,6 +644,7 @@ var Files = FileMap{
 				"angelhalo_head.png",
 				"thirdeye_head.png",
 			},
+			BlackCap: {"blackcap_head.png"},
 		},
 	},
 	Eyes: FileMapDetails[Eyes]{
@@ -700,12 +714,51 @@ var Files = FileMap{
 			SnoutDrool:              {"drool_snout.png"},
 			SnoutFakeBeard:          {"Fakebeard_snout.png"},
 			SnoutFootball:           {"football_snout.png"},
-			SnoutGasMask:            {"hazmat_snout.png"},
+			SnoutGasMask:            {"hazmatback_snout.png"},
 			SnoutHotDog:             {"hotdog_snout.png"},
 			SnoutKazoo:              {"kazoo_snout.png"},
 			SnoutLollyPop:           {"lollypop_snout.png"},
 			SnoutMouthGuard:         {"mouthguard_snout.png"},
-			SnoutMuzzle:             {"muzzle_snout.png"},
+			SnoutMuzzle:             {"muzzleback_snout.png"},
+			SnoutNoseRing:           {"nosering_snout.png"},
+			SnoutOldShoe:            {"oldshoe_snout.png"},
+			SnoutRabbitsFoot:        {"rabbitsfoot_snout.png"},
+			SnoutRoyalFlush:         {"royalflush_snout.png"},
+			SnoutScar:               {"scar_snout.png"},
+			SnoutSideTongue:         {"sidetongue_snout.png"},
+			SnoutSnarl:              {"snarl_snout.png"},
+			SnoutSpeechBubble:       {"speechbubble_snout.png"},
+			SnoutTopazDetectivePipe: {"topaz_pipe_snout.png"},
+			SnoutYoinkBall:          {"Yoink_snout.png"},
+			SnoutYoYo:               {"yoyo_snout.png"},
+		},
+	},
+	SnoutVariant: FileMapDetails[Snout]{
+		Prefix: "7_snout/",
+		Map: map[Snout][]string{
+			SnoutNone:          {"base_snout.png"},
+			SnoutBone:          {"bone_snout.png"},
+			SnoutBubblegum:     {"bubble_snout.png"},
+			SnoutDagger:        {"dagger_snout.png"},
+			SnoutDogToy:        {"chewtoy_snout.png"},
+			SnoutDetectivePipe: {"detective_snout.png"},
+			SnoutDonut:         {"donut_snout.png"},
+			SnoutDriftwood:     {"driftwood_snout.png"},
+			SnoutDrool:         {"drool_snout.png"},
+			SnoutFakeBeard:     {"Fakebeard_snout.png"},
+			SnoutFootball:      {"football_snout.png"},
+			SnoutGasMask: {
+				"hazmatback_snout.png",
+				"hazmatfront_snout.png",
+			},
+			SnoutHotDog:     {"hotdog_snout.png"},
+			SnoutKazoo:      {"kazoo_snout.png"},
+			SnoutLollyPop:   {"lollypop_snout.png"},
+			SnoutMouthGuard: {"mouthguard_snout.png"},
+			SnoutMuzzle: {
+				"muzzleback_snout.png",
+				"muzzlefront_snout.png",
+			},
 			SnoutNoseRing:           {"nosering_snout.png"},
 			SnoutOldShoe:            {"oldshoe_snout.png"},
 			SnoutRabbitsFoot:        {"rabbitsfoot_snout.png"},
@@ -722,83 +775,84 @@ var Files = FileMap{
 	Body: FileMapDetails[Body]{
 		Prefix: "6_body/",
 		Map: map[Body][]string{
-			BodyNone:              {""},
-			BodyButcher:           {"butcher_body.png"},
-			BodyCamo:              {"camo_body.png"},
-			BodyFlannel:           {"campshirt_body.png"},
-			BodyCaveman:           {"caveman_body.png"},
-			BodyCloak:             {"cloak_body.png"},
-			BodyCyberTux:          {"Cybertux_body.png"},
-			BodyDetective:         {"detective_body.png"},
-			BodyDinoSuit:          {"dinosuit_body.png"},
-			BodyDiver:             {"diver_body.png"},
-			BodyDoctorsCoat:       {"doctor_body.png"},
-			BodyEmeraldCloak:      {"emerald_cloak_body.png"},
-			BodyAdventuringOutfit: {"explorer_body.png"},
-			BodyFishSuit:          {"fishsuit_body.png"},
-			BodyFootballUniform:   {"football_body.png"},
-			BodyGoldMedal:         {"goldmedal_body.png"},
-			BodyHazmatSuit:        {"hazmat_body.png"},
-			BodyTrackSuit:         {"jogger_body.png"},
-			BodyLeatherArmor:      {"leatherarmor_body.png"},
-			BodyMageCloak:         {"mage_body.png"},
-			BodyMonkRobes:         {"monk_body.png"},
-			BodyPopeRobes:         {"popeshirt_body.png"},
-			BodyPuffyJacket:       {"puffjacket_body.png"},
-			BodyRoyalCape:         {"royalcape_body.png"},
-			BodyRubyCyberTux:      {"ruby_cybertux_body.png"},
-			BodySailor:            {"sailor_body.png"},
-			BodySapphireMageCloak: {"sapphire_mage_body.png"},
-			BodyScarf:             {"scarf_body.png"},
-			BodyLabCoat:           {"scientist_body.png"},
-			BodySoccerJersey:      {"soccer_body.png"},
-			BodySweater:           {"sweater_body.png"},
-			BodyTieDyeHoodie:      {"Tiedyehood_body.png"},
-			BodyTieDyeShirt:       {"Tiedyeshirt_body.png"},
-			BodyToga:              {"toga_body.png"},
-			TopazDetectiveSuit:    {"topaz_detective_body.png"},
-			BodyWhiteButtonUp:     {"Whitebutton_body.png"},
+			BodyNone:               {""},
+			BodyButcher:            {"butcher_body.png"},
+			BodyCamo:               {"camo_body.png"},
+			BodyFlannel:            {"campshirt_body.png"},
+			BodyCaveman:            {"caveman_body.png"},
+			BodyCloak:              {"cloak_body.png"},
+			BodyCyberTux:           {"Cybertux_body.png"},
+			BodyDetective:          {"detective_body.png"},
+			BodyDinoSuit:           {"dinosuit_body.png"},
+			BodyDiver:              {"diver_body.png"},
+			BodyDoctorsCoat:        {"doctor_body.png"},
+			BodyEmeraldCloak:       {"emerald_cloak_body.png"},
+			BodyAdventuringOutfit:  {"explorer_body.png"},
+			BodyFishSuit:           {"fishsuit_body.png"},
+			BodyFootballUniform:    {"football_body.png"},
+			BodyGoldMedal:          {"goldmedal_body.png"},
+			BodyHazmatSuit:         {"hazmat_body.png"},
+			BodyTrackSuit:          {"jogger_body.png"},
+			BodyLeatherArmor:       {"leatherarmor_body.png"},
+			BodyMageCloak:          {"mage_body.png"},
+			BodyMonkRobes:          {"monk_body.png"},
+			BodyPopeRobes:          {"popeshirt_body.png"},
+			BodyPuffyJacket:        {"puffjacket_body.png"},
+			BodyRoyalCape:          {"royalcape_body.png"},
+			BodyRubyCyberTux:       {"ruby_cybertux_body.png"},
+			BodySailor:             {"sailor_body.png"},
+			BodySapphireMageCloak:  {"sapphire_mage_body.png"},
+			BodyScarf:              {"scarf_body.png"},
+			BodyLabCoat:            {"scientist_body.png"},
+			BodySoccerJersey:       {"soccer_body.png"},
+			BodySweater:            {"sweater_body.png"},
+			BodyTieDyeHoodie:       {"Tiedyehood_body.png"},
+			BodyTieDyeShirt:        {"Tiedyeshirt_body.png"},
+			BodyToga:               {"toga_body.png"},
+			BodyTopazDetectiveSuit: {"topaz_detective_body.png"},
+			BodyWhiteButtonUp:      {"Whitebutton_body.png"},
+			BodyGreenScarf:         {"greenscarf_body.png"},
 		},
 	},
 	BodyVariant: FileMapDetails[Body]{
 		Prefix: "6_body/",
 		Map: map[Body][]string{
-			BodyNone:              {""},
-			BodyButcher:           {"butcher_body.png"},
-			BodyCamo:              {"camo_body.png"},
-			BodyFlannel:           {"campshirt_body.png"},
-			BodyCaveman:           {"caveman_body.png"},
-			BodyCloak:             {"cloak_body.png"},
-			BodyCyberTux:          {"Cybertux_body.png"},
-			BodyDetective:         {"detective_body.png"},
-			BodyDinoSuit:          {"dinosuit_down_body.png"},
-			BodyDiver:             {"diver_body.png"},
-			BodyDoctorsCoat:       {"doctor_body.png"},
-			BodyEmeraldCloak:      {"emerald_cloak_body.png"},
-			BodyAdventuringOutfit: {"explorer_body.png"},
-			BodyFishSuit:          {"fishsuit_down_body.png"},
-			BodyFootballUniform:   {"football_body.png"},
-			BodyGoldMedal:         {"goldmedal_body.png"},
-			BodyHazmatSuit:        {"hazmat_body.png"},
-			BodyTrackSuit:         {"jogger_body.png"},
-			BodyLeatherArmor:      {"leatherarmor_body.png"},
-			BodyMageCloak:         {"mage_body.png"},
-			BodyMonkRobes:         {"monk_body.png"},
-			BodyPopeRobes:         {"popeshirt_body.png"},
-			BodyPuffyJacket:       {"puffjacket_body.png"},
-			BodyRoyalCape:         {"royalcape_body.png"},
-			BodyRubyCyberTux:      {"ruby_cybertux_body.png"},
-			BodySailor:            {"sailor_body.png"},
-			BodySapphireMageCloak: {"sapphire_mage_body.png"},
-			BodyScarf:             {"scarf_body.png"},
-			BodyLabCoat:           {"scientist_body.png"},
-			BodySoccerJersey:      {"soccer_body.png"},
-			BodySweater:           {"sweater_body.png"},
-			BodyTieDyeHoodie:      {"Tiedyehood_body.png"},
-			BodyTieDyeShirt:       {"Tiedyeshirt_body.png"},
-			BodyToga:              {"toga_body.png"},
-			TopazDetectiveSuit:    {"topaz_detective_body.png"},
-			BodyWhiteButtonUp:     {"Whitebutton_body.png"},
+			BodyNone:               {""},
+			BodyButcher:            {"butcher_body.png"},
+			BodyCamo:               {"camo_body.png"},
+			BodyFlannel:            {"campshirt_body.png"},
+			BodyCaveman:            {"caveman_body.png"},
+			BodyCloak:              {"cloak_body.png"},
+			BodyCyberTux:           {"Cybertux_body.png"},
+			BodyDetective:          {"detective_body.png"},
+			BodyDinoSuit:           {"dinosuit_down_body.png"},
+			BodyDiver:              {"diver_body.png"},
+			BodyDoctorsCoat:        {"doctor_body.png"},
+			BodyEmeraldCloak:       {"emerald_cloak_body.png"},
+			BodyAdventuringOutfit:  {"explorer_body.png"},
+			BodyFishSuit:           {"fishsuit_down_body.png"},
+			BodyFootballUniform:    {"football_body.png"},
+			BodyGoldMedal:          {"goldmedal_body.png"},
+			BodyHazmatSuit:         {"hazmat_body.png"},
+			BodyTrackSuit:          {"jogger_body.png"},
+			BodyLeatherArmor:       {"leatherarmor_body.png"},
+			BodyMageCloak:          {"mage_body.png"},
+			BodyMonkRobes:          {"monk_body.png"},
+			BodyPopeRobes:          {"popeshirt_body.png"},
+			BodyPuffyJacket:        {"puffjacket_body.png"},
+			BodyRoyalCape:          {"royalcape_body.png"},
+			BodyRubyCyberTux:       {"ruby_cybertux_body.png"},
+			BodySailor:             {"sailor_body.png"},
+			BodySapphireMageCloak:  {"sapphire_mage_body.png"},
+			BodyScarf:              {"scarf_body.png"},
+			BodyLabCoat:            {"scientist_body.png"},
+			BodySoccerJersey:       {"soccer_body.png"},
+			BodySweater:            {"sweater_body.png"},
+			BodyTieDyeHoodie:       {"Tiedyehood_body.png"},
+			BodyTieDyeShirt:        {"Tiedyeshirt_body.png"},
+			BodyToga:               {"toga_body.png"},
+			BodyTopazDetectiveSuit: {"topaz_detective_body.png"},
+			BodyWhiteButtonUp:      {"Whitebutton_body.png"},
 		},
 	},
 	Back: FileMapDetails[Back]{
@@ -922,6 +976,7 @@ var Files = FileMap{
 			BackgroundSpace:          {"space_bg.png"},
 			BackgroundTopaz:          {"topaz_bg.png"},
 			BackgroundYellow:         {"yellow_bg.png"},
+			BackgroundGraffiti:       {"graffiti_bg.jpeg"},
 		},
 	},
 	BackgroundPlus: FileMapDetails[BackgroundPlus]{
@@ -1083,12 +1138,12 @@ var Compats = CompatMap{
 		SnoutDrool:              {},
 		SnoutFakeBeard:          {MoveBack},
 		SnoutFootball:           {},
-		SnoutGasMask:            {MoveBack, HoodieDown},
+		SnoutGasMask:            {},
 		SnoutHotDog:             {},
 		SnoutKazoo:              {},
 		SnoutLollyPop:           {},
 		SnoutMouthGuard:         {},
-		SnoutMuzzle:             {MoveBack, HoodieDown},
+		SnoutMuzzle:             {},
 		SnoutNoseRing:           {},
 		SnoutOldShoe:            {},
 		SnoutRabbitsFoot:        {},
@@ -1101,42 +1156,42 @@ var Compats = CompatMap{
 		SnoutYoYo:               {},
 	},
 	Body: map[Body][]CompatTypes{
-		BodyNone:              {},
-		BodyButcher:           {},
-		BodyCamo:              {},
-		BodyFlannel:           {},
-		BodyCaveman:           {},
-		BodyCloak:             {},
-		BodyCyberTux:          {},
-		BodyDetective:         {},
-		BodyDinoSuit:          {EarClipping},
-		BodyDiver:             {},
-		BodyDoctorsCoat:       {},
-		BodyEmeraldCloak:      {},
-		BodyAdventuringOutfit: {},
-		BodyFishSuit:          {EarClipping},
-		BodyFootballUniform:   {},
-		BodyGoldMedal:         {},
-		BodyHazmatSuit:        {},
-		BodyTrackSuit:         {},
-		BodyLeatherArmor:      {},
-		BodyMageCloak:         {},
-		BodyMonkRobes:         {},
-		BodyPopeRobes:         {},
-		BodyPuffyJacket:       {},
-		BodyRoyalCape:         {},
-		BodyRubyCyberTux:      {},
-		BodySailor:            {},
-		BodySapphireMageCloak: {},
-		BodyScarf:             {},
-		BodyLabCoat:           {},
-		BodySoccerJersey:      {},
-		BodySweater:           {},
-		BodyTieDyeHoodie:      {},
-		BodyTieDyeShirt:       {},
-		BodyToga:              {},
-		TopazDetectiveSuit:    {},
-		BodyWhiteButtonUp:     {},
+		BodyNone:               {},
+		BodyButcher:            {},
+		BodyCamo:               {},
+		BodyFlannel:            {},
+		BodyCaveman:            {},
+		BodyCloak:              {},
+		BodyCyberTux:           {},
+		BodyDetective:          {},
+		BodyDinoSuit:           {EarClipping},
+		BodyDiver:              {},
+		BodyDoctorsCoat:        {},
+		BodyEmeraldCloak:       {},
+		BodyAdventuringOutfit:  {},
+		BodyFishSuit:           {EarClipping},
+		BodyFootballUniform:    {},
+		BodyGoldMedal:          {},
+		BodyHazmatSuit:         {},
+		BodyTrackSuit:          {},
+		BodyLeatherArmor:       {},
+		BodyMageCloak:          {},
+		BodyMonkRobes:          {},
+		BodyPopeRobes:          {},
+		BodyPuffyJacket:        {},
+		BodyRoyalCape:          {},
+		BodyRubyCyberTux:       {},
+		BodySailor:             {},
+		BodySapphireMageCloak:  {},
+		BodyScarf:              {},
+		BodyLabCoat:            {},
+		BodySoccerJersey:       {},
+		BodySweater:            {},
+		BodyTieDyeHoodie:       {},
+		BodyTieDyeShirt:        {},
+		BodyToga:               {},
+		BodyTopazDetectiveSuit: {},
+		BodyWhiteButtonUp:      {},
 	},
 	Back: map[Back][]CompatTypes{
 		BackNone:              {},
@@ -1267,46 +1322,42 @@ var InCompats = IncompatibilityMap{
 		HaloWithThirdEye:               {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles},
 	},
 	Body: map[Body][]Eyes{
-		BodyNone:              {},
-		BodyButcher:           {},
-		BodyCamo:              {},
-		BodyFlannel:           {},
-		BodyCaveman:           {},
-		BodyCloak:             {},
-		BodyCyberTux:          {},
-		BodyDetective:         {},
-		BodyDinoSuit:          {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
-		BodyDiver:             {},
-		BodyDoctorsCoat:       {},
-		BodyEmeraldCloak:      {},
-		BodyAdventuringOutfit: {},
-		BodyFishSuit:          {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
-		BodyFootballUniform:   {},
-		BodyGoldMedal:         {},
-		BodyHazmatSuit:        {},
-		BodyTrackSuit:         {},
-		BodyLeatherArmor:      {},
-		BodyMageCloak:         {},
-		BodyMonkRobes:         {},
-		BodyPopeRobes:         {},
-		BodyPuffyJacket:       {},
-		BodyRoyalCape:         {},
-		BodyRubyCyberTux:      {},
-		BodySailor:            {},
-		BodySapphireMageCloak: {},
-		BodyScarf:             {},
-		BodyLabCoat:           {},
-		BodySoccerJersey:      {},
-		BodySweater:           {},
-		BodyTieDyeHoodie:      {},
-		BodyTieDyeShirt:       {},
-		BodyToga:              {},
-		TopazDetectiveSuit:    {},
-		BodyWhiteButtonUp:     {},
-	},
-	Snout: map[Snout][]Eyes{
-		SnoutMuzzle:  {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
-		SnoutGasMask: {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
+		BodyNone:               {},
+		BodyButcher:            {},
+		BodyCamo:               {},
+		BodyFlannel:            {},
+		BodyCaveman:            {},
+		BodyCloak:              {},
+		BodyCyberTux:           {},
+		BodyDetective:          {},
+		BodyDinoSuit:           {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
+		BodyDiver:              {},
+		BodyDoctorsCoat:        {},
+		BodyEmeraldCloak:       {},
+		BodyAdventuringOutfit:  {},
+		BodyFishSuit:           {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
+		BodyFootballUniform:    {},
+		BodyGoldMedal:          {},
+		BodyHazmatSuit:         {},
+		BodyTrackSuit:          {},
+		BodyLeatherArmor:       {},
+		BodyMageCloak:          {},
+		BodyMonkRobes:          {},
+		BodyPopeRobes:          {},
+		BodyPuffyJacket:        {},
+		BodyRoyalCape:          {},
+		BodyRubyCyberTux:       {},
+		BodySailor:             {},
+		BodySapphireMageCloak:  {},
+		BodyScarf:              {},
+		BodyLabCoat:            {},
+		BodySoccerJersey:       {},
+		BodySweater:            {},
+		BodyTieDyeHoodie:       {},
+		BodyTieDyeShirt:        {},
+		BodyToga:               {},
+		BodyTopazDetectiveSuit: {},
+		BodyWhiteButtonUp:      {},
 	},
 }
 
@@ -1623,6 +1674,36 @@ func getSnorkelImages() ([]image.Image, error) {
 	return data, nil
 }
 
+func getSnoutImages(trait Snout) ([]image.Image, error) {
+	prefix := Files.SnoutVariant.Prefix
+	filePaths := Files.SnoutVariant.Map[trait]
+	data := []image.Image{}
+	for _, path := range filePaths {
+		if path == "" {
+			continue
+		}
+
+		fileRoute := fmt.Sprintf("./assets/%v%v", prefix, path)
+		// fmt.Println(fileRoute)
+
+		catFile, err := os.Open(fileRoute)
+		if err != nil {
+			fmt.Println(err)
+			return data, err
+		}
+		defer catFile.Close()
+
+		imgData, _, err := image.Decode(catFile)
+		if err != nil {
+			fmt.Println(err)
+			return data, err
+		}
+		data = append(data, imgData)
+	}
+
+	return data, nil
+}
+
 func CheckAllOdds() error {
 	const op errors.Op = "CheckAllOdds"
 	err := mapCheck(RubyOdds)
@@ -1741,6 +1822,7 @@ type WIPAKCIMGS struct {
 	FurPlus        WIPIMG
 	Background     WIPIMG
 	BackgroundPlus WIPIMG
+	Append         []image.Image
 }
 
 func (w *WIPAKCIMGS) ToSlice() []image.Image {
@@ -1762,6 +1844,10 @@ func (w *WIPAKCIMGS) ToSlice() []image.Image {
 			r = append(r[:2], r[1:]...)
 			r[1] = w.Prepend[0]
 		}
+	}
+
+	if len(w.Append) > 0 {
+		r = append(r, w.Append...)
 	}
 
 	return r
@@ -1886,6 +1972,17 @@ func BuildImg(wip *WIPAKC) (*image.RGBA, error) {
 		}
 		wipImgs.Prepend = []image.Image{newEyesImg[0]}
 		wipImgs.Eyes.Imgs = []image.Image{newEyesImg[1]}
+	}
+
+	if wip.Snout == SnoutMuzzle || wip.Snout == SnoutGasMask {
+
+		newSnoutImg, err := getSnoutImages(wip.Snout)
+		if err != nil {
+			return nil, errors.E(op, err)
+		}
+
+		wipImgs.Snout.Imgs = []image.Image{newSnoutImg[0]}
+		wipImgs.Append = []image.Image{newSnoutImg[1]}
 	}
 
 	images := wipImgs.ToSlice()
