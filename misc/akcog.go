@@ -333,7 +333,7 @@ const (
 	BackIcePick           Back = "IcePick"
 	BackDemonPitchfork    Back = "Demon Pitchfork"
 	BackRobotArm          Back = "Robot Arm"
-	BackSandwhich         Back = "Sandwhich"
+	BackSandwich          Back = "Sandwich"
 	BackSkateboard        Back = "Skateboard"
 	BackSkis              Back = "Skis"
 	BackSurfboard         Back = "Surfboard"
@@ -361,7 +361,7 @@ var BackTraits = []Back{
 	BackIcePick,
 	BackDemonPitchfork,
 	BackRobotArm,
-	BackSandwhich,
+	BackSandwich,
 	BackSkateboard,
 	BackSkis,
 	BackSurfboard,
@@ -878,7 +878,7 @@ var Files = FileMap{
 			BackRadioactiveLiquid: {"radioactive_back.png"},
 			BackRobotArm:          {"roboarm_back.png"},
 			BackRoyalSceptre:      {"scepter_back.png"},
-			BackSandwhich:         {"sandwich_back.png"},
+			BackSandwich:          {"sandwich_back.png"},
 			BackSkateboard:        {"skate_back.png"},
 			BackSkis:              {"ski_back.png"},
 			BackSurfboard:         {"surfing_back.png"},
@@ -1215,7 +1215,7 @@ var Compats = CompatMap{
 		BackRadioactiveLiquid: {},
 		BackRobotArm:          {},
 		BackRoyalSceptre:      {},
-		BackSandwhich:         {},
+		BackSandwich:          {},
 		BackSkateboard:        {},
 		BackSkis:              {},
 		BackSurfboard:         {},
