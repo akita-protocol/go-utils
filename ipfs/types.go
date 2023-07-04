@@ -33,6 +33,8 @@ type Royalty struct {
 	Share int64  `json:"share"`
 }
 
+const ARC19_MINTING_TEMPLATE = "template-ipfs://{ipfscid:1:raw:reserve:sha2-256}"
+
 type Arc19 struct {
 	Name           string                  `json:"name"`
 	Description    *string                 `json:"description"`

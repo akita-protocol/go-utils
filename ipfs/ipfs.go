@@ -28,6 +28,15 @@ var (
 	templateIPFSRegexp  = regexp.MustCompile(`template-ipfs://{ipfscid:(?P<version>[01]):(?P<codec>[a-z0-9\-]+):(?P<field>[a-z0-9\-]+):(?P<hash>[a-z0-9\-]+)}`)
 )
 
+func ReserveAddressFromCID(cidToEncode cid.Cid) (string, error) {
+	const op errors.Op = "ReserveAddressFromCID"
+	decodedMultiHash, err := multihash.Decode(cidToEncode.Hash())
+	if err != nil {
+		return "", errors.E(op, fmt.Errorf("failed to decode ipfs cid: %w", err))
+	}
+	return types.EncodeAddress(decodedMultiHash.Digest)
+}
+
 func ParseASAUrl(asaUrl string, reserveAddress types.Address) (string, error) {
 	const op errors.Op = "ParseASAUrl"
 
