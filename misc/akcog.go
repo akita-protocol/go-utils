@@ -987,6 +987,7 @@ var Files = FileMap{
 }
 
 type NormalAkc struct {
+	InternalID     string         `json:"internal_id"`
 	Name           *string        `json:"Name,omitempty"`
 	Fur            Fur            `json:"Fur"`
 	FurPlus        FurPlus        `json:"Fur+"`
