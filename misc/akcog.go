@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"sort"
+	"strings"
 	"time"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -1992,4 +1993,14 @@ func BuildImg(wip *WIPAKC) (*image.RGBA, error) {
 	}
 
 	return base, nil
+}
+
+func AddZeros(num int, length int) string {
+	zerosToAdd := length - len(fmt.Sprintf("%v", num))
+
+	if zerosToAdd < 0 {
+		return fmt.Sprintf("%v", num)
+	}
+
+	return fmt.Sprintf("%v%v", strings.Repeat("0", zerosToAdd), num)
 }
