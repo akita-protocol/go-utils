@@ -14,14 +14,14 @@ import (
 
 type Head string
 
+// HeadAdventureHat     Head = "Adventure Hat"
+// HeadCowboyHat        Head = "Cowboy Hat"
 const (
 	HeadNone             Head = "None"
-	HeadAdventureHat     Head = "Adventure Hat"
 	HeadAngelHalo        Head = "Angel Halo"
 	HeadBeret            Head = "Beret"
 	HeadBikerHelmet      Head = "Biker Helmet"
 	HeadBucketHat        Head = "Bucket Hat"
-	HeadCowboyHat        Head = "Cowboy Hat"
 	HeadCrown            Head = "Crown"
 	HeadDemonHorns       Head = "Demon Horns"
 	HeadDuck             Head = "Duck"
@@ -61,12 +61,10 @@ const (
 
 var HeadTraits = []Head{
 	HeadNone,
-	HeadAdventureHat,
 	HeadAngelHalo,
 	HeadBeret,
 	HeadBikerHelmet,
 	HeadBucketHat,
-	HeadCowboyHat,
 	HeadCrown,
 	HeadDemonHorns,
 	HeadDuck,
@@ -590,15 +588,15 @@ var Files = FileMap{
 	Head: FileMapDetails[Head]{
 		Prefix: "8_head/",
 		Map: map[Head][]string{
-			HeadNone:         {""},
-			HeadAdventureHat: {"adventure_head.png"},
-			HeadAngelHalo:    {"angelhalo_head.png"},
-			HeadBeret:        {"beret_head.png"},
-			HeadBikerHelmet:  {"biker_head.png"},
-			HeadBucketHat:    {"buckethat_head.png"},
-			HeadCowboyHat:    {"cowboy_head.png"},
-			HeadCrown:        {"crown_head.png"},
-			HeadDemonHorns:   {"devilhorn_head.png"},
+			HeadNone: {""},
+			// HeadAdventureHat: {"adventure_head.png"},
+			HeadAngelHalo:   {"angelhalo_head.png"},
+			HeadBeret:       {"beret_head.png"},
+			HeadBikerHelmet: {"biker_head.png"},
+			HeadBucketHat:   {"buckethat_head.png"},
+			// HeadCowboyHat:    {"cowboy_head.png"},
+			HeadCrown:      {"crown_head.png"},
+			HeadDemonHorns: {"devilhorn_head.png"},
 			// HeadScrubCap:         {"doctor_head.png"},
 			HeadDuck:             {"duck_head.png"},
 			HeadEarTag:           {"eartag_head.png"},
@@ -1065,15 +1063,15 @@ type CompatDetails[V GenTwoTraits] map[V][]CompatTypes
 
 var Compats = CompatMap{
 	Head: map[Head][]CompatTypes{
-		HeadNone:         {},
-		HeadAdventureHat: {EarClipping, HoodieDown, BringForward},
-		HeadAngelHalo:    {},
-		HeadBeret:        {EarClipping, HoodieDown},
-		HeadBikerHelmet:  {EarClipping, HoodieDown},
-		HeadBucketHat:    {EarClipping, HoodieDown, BringForward},
-		HeadCowboyHat:    {EarClipping, HoodieDown, BringForward},
-		HeadCrown:        {HoodieDown},
-		HeadDemonHorns:   {HoodieDown},
+		HeadNone: {},
+		// HeadAdventureHat: {EarClipping, HoodieDown, BringForward},
+		HeadAngelHalo:   {},
+		HeadBeret:       {EarClipping, HoodieDown},
+		HeadBikerHelmet: {EarClipping, HoodieDown},
+		HeadBucketHat:   {EarClipping, HoodieDown, BringForward},
+		// HeadCowboyHat:    {EarClipping, HoodieDown, BringForward},
+		HeadCrown:      {HoodieDown},
+		HeadDemonHorns: {HoodieDown},
 		// HeadScrubCap:                   {EarClipping, HoodieDown},
 		HeadDuck:                       {HoodieDown},
 		HeadEarTag:                     {HoodieDown},
@@ -1283,15 +1281,15 @@ type IncompatibilityMap struct {
 
 var InCompats = IncompatibilityMap{
 	Head: map[Head][]Eyes{
-		HeadNone:         {},
-		HeadAdventureHat: {EyesSnorkel},
-		HeadAngelHalo:    {},
-		HeadBeret:        {EyesSnorkel},
-		HeadBikerHelmet:  {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
-		HeadBucketHat:    {},
-		HeadCowboyHat:    {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesAviators},
-		HeadCrown:        {},
-		HeadDemonHorns:   {},
+		HeadNone: {},
+		// HeadAdventureHat: {EyesSnorkel},
+		HeadAngelHalo:   {},
+		HeadBeret:       {EyesSnorkel},
+		HeadBikerHelmet: {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesTechGlasses},
+		HeadBucketHat:   {},
+		// HeadCowboyHat:    {EyesSafetyGoggles, EyesSnorkel, EyesSnowGoggles, EyesAviators},
+		HeadCrown:      {},
+		HeadDemonHorns: {},
 		// HeadScrubCap:                   {},
 		HeadDuck:                       {},
 		HeadEarTag:                     {},
