@@ -1986,6 +1986,13 @@ func BuildImg(wip *WIPAKC) (*image.RGBA, error) {
 		}
 	}
 
+	if InSlice(wip.Head, []Head{HeadThirdEye, HeadDemonHornsWithThirdEye, HeadRubyDemonHornsWithThirdEye}) && wip.Eyes == EyesEyePatch {
+		hOrd := wipImgs.Head.Order
+		eOrd := wipImgs.Eyes.Order
+		wipImgs.Head.Order = eOrd
+		wipImgs.Eyes.Order = hOrd
+	}
+
 	if wip.Eyes == EyesSnorkel {
 
 		newEyesImg, err := getSnorkelImages()
