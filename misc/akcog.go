@@ -1110,8 +1110,8 @@ var Compats = CompatMap{
 		EyesAngry:         {},
 		EyesAviators:      {},
 		EyesBlackholes:    {},
-		EyesBlindfold:     {MoveBack, HoodieDown},
-		EyesBushyBrows:    {},
+		EyesBlindfold:     {MoveBack},
+		EyesBushyBrows:    {MoveBack},
 		EyesGlowing:       {},
 		EyesGoogly:        {},
 		EyesHearts:        {},
@@ -1946,19 +1946,40 @@ func BuildImg(wip *WIPAKC) (*image.RGBA, error) {
 		wipImgs.Snout.Order = 7
 		wipImgs.Head.Order = 8
 	} else if InSlice(MoveBack, Compats.Eyes[wip.Eyes]) && InSlice(MoveBack, Compats.Snout[wip.Snout]) {
-		wipImgs.Snout.Order = 6
-		wipImgs.Eyes.Order = 7
-		wipImgs.Head.Order = 8
+
+		if !needsBodyVariant(wip.Head, wip.Body) {
+			wipImgs.Snout.Order = 5
+			wipImgs.Eyes.Order = 6
+			wipImgs.Body.Order = 7
+			wipImgs.Head.Order = 8
+		} else {
+			wipImgs.Snout.Order = 6
+			wipImgs.Eyes.Order = 7
+			wipImgs.Head.Order = 8
+		}
+
 	} else if InSlice(MoveBack, Compats.Eyes[wip.Eyes]) {
-		wipImgs.Eyes.Order = 6
-		wipImgs.Head.Order = 7
-		wipImgs.Snout.Order = 8
+		if !needsBodyVariant(wip.Head, wip.Body) {
+			wipImgs.Eyes.Order = 5
+			wipImgs.Body.Order = 6
+			wipImgs.Head.Order = 7
+			wipImgs.Snout.Order = 8
+		} else {
+			wipImgs.Eyes.Order = 6
+			wipImgs.Head.Order = 7
+			wipImgs.Snout.Order = 8
+		}
 	} else if InSlice(MoveBack, Compats.Snout[wip.Snout]) {
 		wipImgs.Head.Order = 6
 		wipImgs.Snout.Order = 7
 		wipImgs.Eyes.Order = 8
 
-		if wip.Snout == SnoutMuzzle || wip.Snout == SnoutGasMask {
+		if !needsBodyVariant(wip.Head, wip.Body) && (wip.Snout == SnoutMuzzle || wip.Snout == SnoutGasMask) {
+			wipImgs.Snout.Order = 5
+			wipImgs.Body.Order = 6
+			wipImgs.Head.Order = 7
+			wipImgs.Eyes.Order = 8
+		} else if wip.Snout == SnoutMuzzle || wip.Snout == SnoutGasMask {
 			wipImgs.Snout.Order = 6
 			wipImgs.Head.Order = 7
 			wipImgs.Eyes.Order = 8
