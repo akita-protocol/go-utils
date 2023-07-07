@@ -172,12 +172,12 @@ const (
 	SnoutGasMask            Snout = "Gas Mask"
 	SnoutHotDog             Snout = "Hot Dog"
 	SnoutKazoo              Snout = "Kazoo"
-	SnoutLollyPop           Snout = "LollyPop"
-	SnoutMouthGuard         Snout = "MouthGuard"
+	SnoutLolliPop           Snout = "Lollipop"
+	SnoutMouthGuard         Snout = "Mouth Guard"
 	SnoutMuzzle             Snout = "Muzzle"
-	SnoutNoseRing           Snout = "NoseRing"
-	SnoutOldShoe            Snout = "OldShoe"
-	SnoutRabbitsFoot        Snout = "RabbitsFoot"
+	SnoutNoseRing           Snout = "Nose Ring"
+	SnoutOldShoe            Snout = "Old Shoe"
+	SnoutRabbitsFoot        Snout = "Rabbits Foot"
 	SnoutRoyalFlush         Snout = "Royal Flush"
 	SnoutScar               Snout = "Scar"
 	SnoutSideTongue         Snout = "Side Tongue"
@@ -203,7 +203,7 @@ var SnoutTraits = []Snout{
 	SnoutGasMask,
 	SnoutHotDog,
 	SnoutKazoo,
-	SnoutLollyPop,
+	SnoutLolliPop,
 	SnoutMouthGuard,
 	SnoutMuzzle,
 	SnoutNoseRing,
@@ -325,7 +325,7 @@ const (
 	BackClub              Back = "Club"
 	BackDemonWings        Back = "Demon Wings"
 	BackEmeraldArrows     Back = "Emerald Arrows"
-	BackFishingPole       Back = "FishingPole"
+	BackFishingPole       Back = "Fishing Pole"
 	BackGuitar            Back = "Guitar"
 	BackHikingBackpack    Back = "Hiking Backpack"
 	BackMachete           Back = "Machete"
@@ -716,7 +716,7 @@ var Files = FileMap{
 			SnoutGasMask:            {"hazmatback_snout.png"},
 			SnoutHotDog:             {"hotdog_snout.png"},
 			SnoutKazoo:              {"kazoo_snout.png"},
-			SnoutLollyPop:           {"lollypop_snout.png"},
+			SnoutLolliPop:           {"lollypop_snout.png"},
 			SnoutMouthGuard:         {"mouthguard_snout.png"},
 			SnoutMuzzle:             {"muzzleback_snout.png"},
 			SnoutNoseRing:           {"nosering_snout.png"},
@@ -752,7 +752,7 @@ var Files = FileMap{
 			},
 			SnoutHotDog:     {"hotdog_snout.png"},
 			SnoutKazoo:      {"kazoo_snout.png"},
-			SnoutLollyPop:   {"lollypop_snout.png"},
+			SnoutLolliPop:   {"lollypop_snout.png"},
 			SnoutMouthGuard: {"mouthguard_snout.png"},
 			SnoutMuzzle: {
 				"muzzleback_snout.png",
@@ -1142,7 +1142,7 @@ var Compats = CompatMap{
 		SnoutGasMask:            {MoveBack},
 		SnoutHotDog:             {},
 		SnoutKazoo:              {},
-		SnoutLollyPop:           {},
+		SnoutLolliPop:           {},
 		SnoutMouthGuard:         {},
 		SnoutMuzzle:             {MoveBack},
 		SnoutNoseRing:           {},

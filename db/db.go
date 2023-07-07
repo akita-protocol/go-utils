@@ -294,6 +294,13 @@ func DiscordBotDatabase() string {
 	return "toolchain_test"
 }
 
+func ShuffleDatabase() string {
+	if IsProduction() {
+		return "shuffle"
+	}
+	return "shuffle_test"
+}
+
 func SubscriptionDatabase() string {
 	if IsProduction() {
 		return "subscription"

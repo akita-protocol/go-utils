@@ -225,3 +225,143 @@ create table "asset_properties" (
     primary key ("id", "meta_key"),
     index ("meta_key")
 );
+
+-- shf_
+create table "shuffle" (
+    "id" varchar(24) not null,
+    "nfd_id" bigint unsigned not null,
+    -- "type" enum("slate", "token") not null default "token",
+    "title" varchar(128) not null,
+    "about" text NOT NULL,
+    "avatar" varchar(256) DEFAULT NULL,
+    "avatar_id" int unsigned DEFAULT NULL,
+    "banner" varchar(256) DEFAULT NULL,
+    "banner_id" int unsigned DEFAULT NULL,
+    "max_per_wallet" int unsigned default null,
+    "max_sold" int unsigned default null,
+    "shuffle_begins_date" datetime NOT NULL,
+    "creator" varchar(24) NOT NULL,
+    "created_date" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "address" varchar(58) NOT NULL,
+
+    primary key ("id"),
+    index ("nfd_id"),
+    index ("shuffle_begins_date")
+);
+
+-- sas_
+create table "shuffle_asset" (
+    "id" varchar(24) not null,
+    "shuffle_id" varchar(24) not null,
+    "asset_id" bigint unsigned not null,
+
+    primary key ("shuffle_id", "asset_id")
+);
+
+-- swl_
+create table "shuffle_whitelist_token" (
+    "id" varchar(24) not null,
+    "shuffle_id" varchar(24) not null,
+    "asset_id" bigint unsigned not null,
+    -- the number of assets within the whitelist reserve_asset group to keep available
+    "reserve_quantity" int unsigned not null default 0,
+
+    primary key ("id", "shuffle_id", "asset_id")
+);
+
+create table "shuffle_reserve_asset" (
+    "shuffle_id" varchar(24) not null,
+    -- either address or whitelist_id is required
+    "address" varchar(58),
+    "whitelist_id" varchar(24),
+    "asset_id" bigint unsigned not null,
+
+    primary key ("shuffle_id", "asset_id"),
+    index ("address"),
+    index ("whitelist_id")
+);
+
+create table "shuffle_payment_option" (
+    "shuffle_id" varchar(24) not null,
+    "whitelist_id" varchar(24),
+    "asset_id" bigint unsigned not null,
+    -- amount or amount in algo is required
+    "amount" bigint unsigned,
+    "amount_in_algo" bigint unsigned,
+
+    primary key ("shuffle_id", "whitelist_id", "asset_id")
+);
+
+create table "shuffle_sale" (
+    "txn" varchar(64) not null,
+    "shuffle_id" varchar(24) not null,
+    "asset_id" bigint unsigned not null,
+
+    primary key ("txn", "shuffle_id", "asset_id"),
+    index ("shuffle_id")
+);
+
+
+insert into shuffle (id, nfd_id, title, about, avatar, banner, max_sold, shuffle_begins_date, creator, address) values ('shf_cik3g7qs1s440l1db4qg', 765902356, 'Akita Omnigems', 'Akita Omnigems is a second generation series of 5,000 unique NFTs minted on the unstoppable Algorand blockchain.', 'https://cdn.akita.community/shuffles/shf_cik3g7qs1s440l1db4qg/avatar.gif', '', 2750, '2023-07-08: 09:00:00', 'AKCTRDK4OWNWHTPH4XPKLNWNLZ333VE35SKQ4FGQK3ZJA4FIHCLTRG3PFI', 'TGRQ37EJYLS6Z7TQM5QTDJNIQHXRQ7IDBKDUTFL6EDGHSVA5UQAHSRHE3Q');
+
+insert into shuffle_payment_option (shuffle_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 0, 100);
+insert into shuffle_payment_option (shuffle_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 793124631, 100);
+insert into shuffle_payment_option (shuffle_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 31566704, 100);
+
+-- all 250 - 5000 assets
+-- insert into shuffle_asset (shuffle_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', );
+
+insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140534100);
+insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140774299);
+insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140770623);
+
+insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik56o2s1s44bhlkmm10', 'shf_cik3g7qs1s440l1db4qg', 955393925, 152); -- regular
+
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik56o2s1s44bhlkmm10', 0, 89); -- algo
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik56o2s1s44bhlkmm10', 793124631, 89); -- governance algo
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik56o2s1s44bhlkmm10', 31566704, 89); -- usdc
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik56o2s1s44bhlkmm10', 523683256, 89); -- Akita
+
+-- insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik56o2s1s44bhlkmm10,', xyz);
+
+
+insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik57ois1s44bri26bhg', 'shf_cik3g7qs1s440l1db4qg', 955399472, 76); -- emerald
+
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik57ois1s44bri26bhg', 0, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik57ois1s44bri26bhg', 793124631, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik57ois1s44bri26bhg', 31566704, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik57ois1s44bri26bhg', 523683256, 89);
+
+-- insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik57ois1s44bri26bhg,', xyz);
+
+
+insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik58bqs1s44c3jhejgg', 'shf_cik3g7qs1s440l1db4qg', 955400972, 69); -- ruby
+
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58bqs1s44c3jhejgg', 0, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58bqs1s44c3jhejgg', 793124631, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58bqs1s44c3jhejgg', 31566704, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58bqs1s44c3jhejgg', 523683256, 89);
+
+-- insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58bqs1s44c3jhejgg,', xyz);
+
+
+insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik58k2s1s44c8jh6q60', 'shf_cik3g7qs1s440l1db4qg', 955403494, 65); -- sapphire
+
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58k2s1s44c8jh6q60', 0, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58k2s1s44c8jh6q60', 793124631, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58k2s1s44c8jh6q60', 31566704, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58k2s1s44c8jh6q60', 523683256, 89);
+
+-- insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58k2s1s44c8jh6q60,', xyz);
+
+
+
+insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik58pis1s44cd6e79og', 'shf_cik3g7qs1s440l1db4qg', 955404324, 61); -- topaz
+
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og', 0, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og', 793124631, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og', 31566704, 89);
+insert into shuffle_payment_option (shuffle_id, whitelist_id, asset_id, amount_in_algo) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og', 523683256, 89);
+
+-- insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og,', xyz);
+
