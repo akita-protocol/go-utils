@@ -368,3 +368,11 @@ create table "shuffle_sale" (
 
 -- [-] insert into shuffle_reserve_asset (shuffle_id, whitelist_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'swl_cik58pis1s44cd6e79og,', xyz);
 
+create table "shuffle_asset_property" (
+    "id" bigint unsigned NOT NULL,
+    "meta_key" varchar(128) NOT NULL,
+    "meta_value" text NOT NULL,
+
+    primary key ("id", "meta_key"),
+    index ("meta_key")
+);
