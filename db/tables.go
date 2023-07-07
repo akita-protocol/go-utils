@@ -68,6 +68,18 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.subscription_pass", SubscriptionDatabase())
 	case SubscriptionPayment, *SubscriptionPayment:
 		return fmt.Sprintf("%s.subscription_payment", SubscriptionDatabase())
+	case Shuffle, *Shuffle:
+		return fmt.Sprintf("%s.shuffle", ShuffleDatabase())
+	case ShuffleWhitelistToken, *ShuffleWhitelistToken:
+		return fmt.Sprintf("%s.shuffle_whitelist_token", ShuffleDatabase())
+	case ShuffleAsset, *ShuffleAsset:
+		return fmt.Sprintf("%s.shuffle_asset", ShuffleDatabase())
+	case ShuffleReserveAsset, *ShuffleReserveAsset:
+		return fmt.Sprintf("%s.shuffle_reserve_asset", ShuffleDatabase())
+	case ShuffleSale, *ShuffleSale:
+		return fmt.Sprintf("%s.shuffle_sale", ShuffleDatabase())
+	case ShufflePaymentOption, *ShufflePaymentOption:
+		return fmt.Sprintf("%s.shuffle_payment_option", ShuffleDatabase())
 	default:
 		return ""
 	}

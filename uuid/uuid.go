@@ -36,6 +36,10 @@ const (
 	StakingRewardDisbursement
 	StakingMerchant
 	StakingGroup
+
+	Shuffle
+	ShufflePaymentOption
+	ShuffleWhitelistToken
 )
 
 func (p Prefix) String() string {
@@ -61,6 +65,9 @@ var prefixToString = map[Prefix]string{
 	StakingRewardDisbursement: "dis",
 	StakingMerchant:           "mer",
 	StakingGroup:              "grp",
+	Shuffle:                   "shf",
+	ShufflePaymentOption:      "spo",
+	ShuffleWhitelistToken:     "swl",
 }
 
 var prefixToID = map[string]Prefix{
@@ -82,6 +89,9 @@ var prefixToID = map[string]Prefix{
 	"dis": StakingRewardDisbursement,
 	"mer": StakingMerchant,
 	"grp": StakingGroup,
+	"shf": Shuffle,
+	"spo": ShufflePaymentOption,
+	"swl": ShuffleWhitelistToken,
 }
 
 // UnmarshalYAML checks to see if its type is valid

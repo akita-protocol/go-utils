@@ -181,7 +181,7 @@ func DeletePoolEntryAndAssetsByPoolIDAndUserID[H db.Handle](h H, poolID string, 
 func NewStakingPoolEntry[H db.Handle](h H, poolID string, userID string, assets []uint64) (string, error) {
 	const op errors.Op = "NewStakingPoolEntry"
 
-	entry := db.StakingPoolEntry{
+	entry := &db.StakingPoolEntry{
 		ID:     uuid.New(uuid.StakingPoolEntry),
 		PoolID: poolID,
 		UserID: userID,
@@ -193,7 +193,7 @@ func NewStakingPoolEntry[H db.Handle](h H, poolID string, userID string, assets 
 	}
 
 	for _, asset := range assets {
-		asset := db.StakingEntryAsset{
+		asset := &db.StakingEntryAsset{
 			EntryID: entry.ID,
 			AssetID: asset,
 		}
