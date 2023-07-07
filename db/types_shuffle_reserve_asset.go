@@ -10,6 +10,7 @@ import (
 
 // direct asset reservations for shuffle by address or whitelist
 type ShuffleReserveAsset struct {
+	ID string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	ShuffleID   string  `structs:"shuffle_id,omitempty" db:"shuffle_id" json:"shuffle_id,omitempty"`
 	Address     *string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 	WhitelistID *string `structs:"whitelist_id,omitempty" db:"whitelist_id" json:"whitelist_id,omitempty"`
@@ -18,6 +19,7 @@ type ShuffleReserveAsset struct {
 
 func ShuffleReserveAssetTableKeys() []string {
 	return []string{
+		"id",
 		"shuffle_id",
 		"address",
 		"whitelist_id",

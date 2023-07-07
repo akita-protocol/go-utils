@@ -251,7 +251,6 @@ create table "shuffle" (
 
 -- sas_
 create table "shuffle_asset" (
-    "id" varchar(24) not null,
     "shuffle_id" varchar(24) not null,
     "asset_id" bigint unsigned not null,
 
@@ -270,13 +269,16 @@ create table "shuffle_whitelist_token" (
 );
 
 create table "shuffle_reserve_asset" (
+    "id" varchar(24) not null,
     "shuffle_id" varchar(24) not null,
     -- either address or whitelist_id is required
     "address" varchar(58),
     "whitelist_id" varchar(24),
     "asset_id" bigint unsigned not null,
 
-    primary key ("shuffle_id", "asset_id"),
+    primary key ("id"),
+    index ("shuffle_id"),
+    index ("asset_id"),
     index ("address"),
     index ("whitelist_id")
 );
@@ -314,9 +316,9 @@ create table "shuffle_sale" (
 -- all 250 - 5000 assets
 -- [-] insert into shuffle_asset (shuffle_id, asset_id) values ('shf_cik3g7qs1s440l1db4qg', );
 
-[x] insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140534100);
-[x] insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140774299);
-[x] insert into shuffle_reserve_asset (shuffle_id, address, asset_id) values ('shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140770623);
+[x] insert into shuffle_reserve_asset (id, shuffle_id, address, asset_id) values ('sra_cik97a2s1s474fu3aa1g', 'shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140534100);
+[x] insert into shuffle_reserve_asset (id, shuffle_id, address, asset_id) values ('sra_cik97bas1s474ki60g4g', 'shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140774299);
+[x] insert into shuffle_reserve_asset (id, shuffle_id, address, asset_id) values ('sra_cik97cqs1s474pgmboj0', 'shf_cik3g7qs1s440l1db4qg', 'X5KD3VTDUN3H2FFYJX2NDIGQ2V2SS44XUSYGJWHI4KH6ZOXF44SE7KEXVU', 1140770623);
 
 [x] insert into shuffle_whitelist_token (id, shuffle_id, asset_id, reserve_quantity) values ('swl_cik56o2s1s44bhlkmm10', 'shf_cik3g7qs1s440l1db4qg', 955393925, 152); -- regular
 
