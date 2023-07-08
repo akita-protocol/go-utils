@@ -217,7 +217,7 @@ CREATE TABLE "asset" (
   KEY "reserve" ("reserve")
 );
 
-create table "asset_properties" (
+create table "asset_property" (
     "id" bigint unsigned NOT NULL,
     "meta_key" varchar(128) NOT NULL,
     "meta_value" text NOT NULL,
