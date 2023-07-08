@@ -34,7 +34,7 @@ func GetAssetProperty[H Handle](h H, id uint64, metaKey string) (*AssetProperty,
 	return &a, nil
 }
 
-func GetAssetProperties[H Handle](h H, id uint64) ([]AssetProperty, error) {
+func GetAssetProperties[H Handle](h H, id uint64) (*[]AssetProperty, error) {
 	const op errors.Op = "GetAssetProperties"
 	query := fmt.Sprintf("select %s from %s.asset_property where id = ?", strings.Join(AssetPropertyTableKeys(), ","), NFDDatabase())
 
@@ -46,7 +46,7 @@ func GetAssetProperties[H Handle](h H, id uint64) ([]AssetProperty, error) {
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return a, nil
+	return &a, nil
 }
 
 func DeleteAssetPropertiesNotIn[H Handle](h H, id uint64, metaKeys []string) error {

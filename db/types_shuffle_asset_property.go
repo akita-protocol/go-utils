@@ -19,26 +19,26 @@ func ShuffleAssetPropertyTableKeys() []string {
 	return []string{"id", "meta_key", "meta_value"}
 }
 
-func GetShuffleAssetProperty[H Handle](h H, id uint64, metaKey string) (*AssetProperty, error) {
+func GetShuffleAssetProperty[H Handle](h H, id uint64, metaKey string) (*ShuffleAssetProperty, error) {
 	const op errors.Op = "GetAssetProperty"
 	query := fmt.Sprintf("select %s from %s.shuffle_asset_property where id = ? and meta_key = ?", strings.Join(AssetPropertyTableKeys(), ","), ShuffleDatabase())
 
-	var a AssetProperty
+	var a ShuffleAssetProperty
 	err := h.Get(&a, query, id, metaKey)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "AssetProperty Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "ShuffleAssetProperty Not Found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
 	return &a, nil
 }
 
-func GetShuffleAssetProperties[H Handle](h H, id uint64) ([]AssetProperty, error) {
-	const op errors.Op = "GetAssetProperties"
+func GetShuffleAssetProperties[H Handle](h H, id uint64) (*[]ShuffleAssetProperty, error) {
+	const op errors.Op = "GetShuffleAssetProperties"
 	query := fmt.Sprintf("select %s from %s.shuffle_asset_property where id = ?", strings.Join(AssetPropertyTableKeys(), ","), ShuffleDatabase())
 
-	var a []AssetProperty
+	var a []ShuffleAssetProperty
 	err := h.Select(&a, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -46,7 +46,7 @@ func GetShuffleAssetProperties[H Handle](h H, id uint64) ([]AssetProperty, error
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return a, nil
+	return &a, nil
 }
 
 func DeleteShuffleAssetPropertiesNotIn[H Handle](h H, id uint64, metaKeys []string) error {
