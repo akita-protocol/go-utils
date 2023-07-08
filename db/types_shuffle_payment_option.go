@@ -13,7 +13,7 @@ type ShufflePaymentOption struct {
 	ID           string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	ShuffleID    string  `structs:"shuffle_id,omitempty" db:"shuffle_id" json:"shuffle_id,omitempty"`
 	WhitelistID  *string `structs:"whitelist_id,omitempty" db:"whitelist_id" json:"whitelist_id,omitempty"`
-	AssetID      uint64  `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id,omitempty"`
+	AssetID      *uint64 `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id,omitempty"`
 	Amount       *uint64 `structs:"amount,omitempty" db:"amount" json:"amount,omitempty"`
 	AmountInAlgo *uint64 `structs:"amount_in_algo,omitempty" db:"amount_in_algo" json:"amount_in_algo,omitempty"`
 }
