@@ -14,6 +14,7 @@ type Shuffle struct {
 	ShuffleReserveAssets *[]db.ShuffleReserveAsset   `json:"shuffle_reserve_assets,omitempty"`
 	Sales                *[]db.ShuffleSale           `json:"sales,omitempty"`
 	Creator              *Wallet                     `json:"creator,omitempty"`
+	Available            uint64                      `json:"available,omitempty"`
 }
 
 type ShuffleGetExclude string
@@ -141,6 +142,10 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 			case *Wallet:
 				shuffle.Creator = v
 			}
+		}
+
+		if !misc.InSlice(ShuffleGetExcludeSales, exclude) {
+			shuffle.Available = *shuf.MaxSold - uint64(len((*shuffle.Sales)))
 		}
 
 		shuffles = append(shuffles, shuffle)
