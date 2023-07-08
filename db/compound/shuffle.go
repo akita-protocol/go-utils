@@ -8,13 +8,13 @@ import (
 
 type Shuffle struct {
 	*db.Shuffle
-	Assets               *[]ShuffleAsset             `json:"assets,omitempty"`
-	PaymentOptions       *[]db.ShufflePaymentOption  `json:"payment_options,omitempty"`
-	WhitelistTokens      *[]db.ShuffleWhitelistToken `json:"whitelist_tokens,omitempty"`
-	ShuffleReserveAssets *[]db.ShuffleReserveAsset   `json:"shuffle_reserve_assets,omitempty"`
-	Sales                *[]db.ShuffleSale           `json:"sales,omitempty"`
-	Creator              *Wallet                     `json:"creator,omitempty"`
-	Available            uint64                      `json:"available,omitempty"`
+	Assets               *[]ShuffleAsset            `json:"assets,omitempty"`
+	PaymentOptions       *[]db.ShufflePaymentOption `json:"payment_options,omitempty"`
+	WhitelistTokens      *[]ShuffleWhitelistToken   `json:"whitelist_tokens,omitempty"`
+	ShuffleReserveAssets *[]db.ShuffleReserveAsset  `json:"shuffle_reserve_assets,omitempty"`
+	Sales                *[]db.ShuffleSale          `json:"sales,omitempty"`
+	Creator              *Wallet                    `json:"creator,omitempty"`
+	Available            uint64                     `json:"available,omitempty"`
 }
 
 type ShuffleGetExclude string
@@ -74,7 +74,7 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 
 		if !misc.InSlice(ShuffleGetExcludeWhitelistTokens, exclude) {
 			go func() {
-				whitelistTokens, err := db.GetShuffleWhitelistTokens(h, shuf.ID)
+				whitelistTokens, err := GetShuffleWhitelistTokens(h, shuf.ID)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -133,7 +133,7 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 				shuffle.Assets = v
 			case *[]db.ShufflePaymentOption:
 				shuffle.PaymentOptions = v
-			case *[]db.ShuffleWhitelistToken:
+			case *[]ShuffleWhitelistToken:
 				shuffle.WhitelistTokens = v
 			case *[]db.ShuffleReserveAsset:
 				shuffle.ShuffleReserveAssets = v
