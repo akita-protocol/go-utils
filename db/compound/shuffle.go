@@ -183,12 +183,28 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 
 	if !misc.InSlice(ShuffleGetExcludeAssets, exclude) {
 		go func() {
-			assets, err := GetShuffleAssets(h, shuf.ID)
-			if err != nil {
-				rChan <- err
-				return
+			if !misc.InSlice(ShuffleGetExcludeAssetProperties, exclude) {
+				assets, err := GetShuffleAssets(h, shuf.ID)
+				if err != nil {
+					rChan <- err
+					return
+				}
+				rChan <- assets
+			} else {
+				assets, err := db.GetShuffleAssets(h, shuf.ID)
+				if err != nil {
+					rChan <- err
+					return
+				}
+
+				var cmpAssets []ShuffleAsset
+				for i := range *assets {
+					asset := (*assets)[i]
+					cmpAssets = append(cmpAssets, ShuffleAsset{ShuffleAsset: &asset})
+				}
+
+				rChan <- cmpAssets
 			}
-			rChan <- assets
 		}()
 	}
 
