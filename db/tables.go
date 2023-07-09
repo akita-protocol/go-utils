@@ -68,6 +68,28 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.subscription_pass", SubscriptionDatabase())
 	case SubscriptionPayment, *SubscriptionPayment:
 		return fmt.Sprintf("%s.subscription_payment", SubscriptionDatabase())
+	case StakingDisbursement, *StakingDisbursement:
+		return fmt.Sprintf("%s.staking_disbursement", StakingDatabase())
+	case StakingPool, *StakingPool:
+		return fmt.Sprintf("%s.staking_pool", StakingDatabase())
+	case StakingPoolEntry, *StakingPoolEntry:
+		return fmt.Sprintf("%s.staking_pool_entry", StakingDatabase())
+	case StakingExclusion, *StakingExclusion:
+		return fmt.Sprintf("%s.staking_exclusion", StakingDatabase())
+	case StakingEntryRequirement, *StakingEntryRequirement:
+		return fmt.Sprintf("%s.staking_entry_requirement", StakingDatabase())
+	case StakingEntryRequirementSelection, *StakingEntryRequirementSelection:
+		return fmt.Sprintf("%s.staking_entry_requirement_selection", StakingDatabase())
+	case StakingEntryRequirementAsset, *StakingEntryRequirementAsset:
+		return fmt.Sprintf("%s.staking_entry_requirement_asset", StakingDatabase())
+	case StakingMerchant, *StakingMerchant:
+		return fmt.Sprintf("%s.staking_merchant", StakingDatabase())
+	case StakingPoolAsset, *StakingPoolAsset:
+		return fmt.Sprintf("%s.staking_pool_asset", StakingDatabase())
+	case StakingSnapshot, *StakingSnapshot:
+		return fmt.Sprintf("%s.staking_pool_snapshot", StakingDatabase())
+	case StakingReward, *StakingReward:
+		return fmt.Sprintf("%s.staking_reward", StakingDatabase())
 	case Shuffle, *Shuffle:
 		return fmt.Sprintf("%s.shuffle", ShuffleDatabase())
 	case ShuffleWhitelistToken, *ShuffleWhitelistToken:
