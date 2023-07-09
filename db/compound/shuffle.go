@@ -203,7 +203,7 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 					cmpAssets = append(cmpAssets, ShuffleAsset{ShuffleAsset: &asset})
 				}
 
-				rChan <- cmpAssets
+				rChan <- &cmpAssets
 			}
 		}()
 	}
