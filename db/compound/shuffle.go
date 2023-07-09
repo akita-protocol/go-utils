@@ -21,6 +21,7 @@ type ShuffleGetExclude string
 
 const (
 	ShuffleGetExcludeAssets               ShuffleGetExclude = "assets"
+	ShuffleGetExcludeAssetProperties      ShuffleGetExclude = "asset_properties"
 	ShuffleGetExcludePaymentOptions       ShuffleGetExclude = "payment_options"
 	ShuffleGetExcludeWhitelistTokens      ShuffleGetExclude = "whitelist_tokens"
 	ShuffleGetExcludeShuffleReserveAssets ShuffleGetExclude = "shuffle_reserve_assets"
@@ -165,7 +166,14 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 	shuffle := Shuffle{
 		Shuffle: shuf,
 	}
-	buffer := (6 - len(exclude))
+
+	var buffer int
+	if misc.InSlice(ShuffleGetExcludeAssetProperties, exclude) {
+		buffer = (6 - (len(exclude) - 1))
+	} else {
+		buffer = (6 - len(exclude))
+	}
+
 	if buffer == 0 {
 		return &shuffle, nil
 	}
