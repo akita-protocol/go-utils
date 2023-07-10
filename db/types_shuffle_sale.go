@@ -37,3 +37,16 @@ func GetShuffleSales[H Handle](h H, shuffleID string) (*[]ShuffleSale, error) {
 
 	return &sales, err
 }
+
+func GetShuffleSalesCount[H Handle](h H, shuffleID string) (*uint64, error) {
+	const op errors.Op = "GetShuffleSales"
+	query := fmt.Sprintf("select count(txn) from %v.shuffle_sale where shuffle_id = ?", ShuffleDatabase())
+
+	var count uint64
+	err := h.Get(&count, query, shuffleID)
+	if err != nil {
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &count, err
+}

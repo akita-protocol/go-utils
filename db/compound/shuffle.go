@@ -14,7 +14,7 @@ type Shuffle struct {
 	ShuffleReserveAssets *[]db.ShuffleReserveAsset `json:"shuffle_reserve_assets,omitempty"`
 	Sales                *[]db.ShuffleSale         `json:"sales,omitempty"`
 	Creator              *Wallet                   `json:"creator,omitempty"`
-	Available            uint64                    `json:"available,omitempty"`
+	Available            *uint64                   `json:"available,omitempty"`
 }
 
 type ShuffleGetExclude string
@@ -27,6 +27,7 @@ const (
 	ShuffleGetExcludeShuffleReserveAssets ShuffleGetExclude = "shuffle_reserve_assets"
 	ShuffleGetExcludeSales                ShuffleGetExclude = "sales"
 	ShuffleGetExcludeCreator              ShuffleGetExclude = "creator"
+	ShuffleGetExcludeAvailable            ShuffleGetExclude = "available"
 )
 
 func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (*[]Shuffle, error) {
@@ -43,7 +44,14 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 		shuffle := Shuffle{
 			Shuffle: &shuf,
 		}
-		buffer := (6 - len(exclude))
+
+		var buffer int
+		if misc.InSlice(ShuffleGetExcludeAssetProperties, exclude) {
+			buffer = (7 - (len(exclude) - 1))
+		} else {
+			buffer = (7 - len(exclude))
+		}
+
 		if buffer == 0 {
 			continue
 		}
@@ -53,12 +61,28 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 
 		if !misc.InSlice(ShuffleGetExcludeAssets, exclude) {
 			go func() {
-				assets, err := GetShuffleAssets(h, shuf.ID)
-				if err != nil {
-					rChan <- err
-					return
+				if !misc.InSlice(ShuffleGetExcludeAssetProperties, exclude) {
+					assets, err := GetShuffleAssets(h, shuf.ID)
+					if err != nil {
+						rChan <- err
+						return
+					}
+					rChan <- assets
+				} else {
+					assets, err := db.GetShuffleAssets(h, shuf.ID)
+					if err != nil {
+						rChan <- err
+						return
+					}
+
+					var cmpAssets []ShuffleAsset
+					for i := range *assets {
+						asset := (*assets)[i]
+						cmpAssets = append(cmpAssets, ShuffleAsset{ShuffleAsset: &asset})
+					}
+
+					rChan <- &cmpAssets
 				}
-				rChan <- assets
 			}()
 		}
 
@@ -106,6 +130,18 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 			}()
 		}
 
+		if !misc.InSlice(ShuffleGetExcludeAvailable, exclude) {
+			go func() {
+				count, err := db.GetShuffleSalesCount(h, shuf.ID)
+				if err != nil && !db.ErrNoRows(err) {
+					rChan <- err
+					return
+				}
+				available := (*shuf.MaxSold - *count)
+				rChan <- &available
+			}()
+		}
+
 		if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 			go func() {
 				nfds, err := db.GetNFDsByAddress(h, shuf.Creator, db.Tiny)
@@ -142,11 +178,9 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 				shuffle.Sales = v
 			case *Wallet:
 				shuffle.Creator = v
+			case *uint64:
+				shuffle.Available = v
 			}
-		}
-
-		if !misc.InSlice(ShuffleGetExcludeSales, exclude) {
-			shuffle.Available = *shuf.MaxSold - uint64(len((*shuffle.Sales)))
 		}
 
 		shuffles = append(shuffles, shuffle)
@@ -169,9 +203,9 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 
 	var buffer int
 	if misc.InSlice(ShuffleGetExcludeAssetProperties, exclude) {
-		buffer = (6 - (len(exclude) - 1))
+		buffer = (7 - (len(exclude) - 1))
 	} else {
-		buffer = (6 - len(exclude))
+		buffer = (7 - len(exclude))
 	}
 
 	if buffer == 0 {
@@ -252,6 +286,18 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 		}()
 	}
 
+	if !misc.InSlice(ShuffleGetExcludeAvailable, exclude) {
+		go func() {
+			count, err := db.GetShuffleSalesCount(h, shuf.ID)
+			if err != nil && !db.ErrNoRows(err) {
+				rChan <- err
+				return
+			}
+			available := (*shuf.MaxSold - *count)
+			rChan <- &available
+		}()
+	}
+
 	if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 		go func() {
 			nfds, err := db.GetNFDsByAddress(h, shuf.Creator, db.Tiny)
@@ -288,11 +334,9 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 			shuffle.Sales = v
 		case *Wallet:
 			shuffle.Creator = v
+		case *uint64:
+			shuffle.Available = v
 		}
-	}
-
-	if !misc.InSlice(ShuffleGetExcludeSales, exclude) {
-		shuffle.Available = *shuf.MaxSold - uint64(len((*shuffle.Sales)))
 	}
 
 	return &shuffle, nil
