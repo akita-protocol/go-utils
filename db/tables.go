@@ -72,6 +72,8 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.disbursement", StakingDatabase())
 	case StakingPool, *StakingPool:
 		return fmt.Sprintf("%s.pool", StakingDatabase())
+	case StakingUser, *StakingUser:
+		return fmt.Sprintf("%s.user", StakingDatabase())
 	case StakingPoolEntry, *StakingPoolEntry:
 		return fmt.Sprintf("%s.pool_entry", StakingDatabase())
 	case StakingExclusion, *StakingExclusion:
