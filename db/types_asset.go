@@ -95,6 +95,18 @@ func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) (*[]Asset, error) 
 	return &list, nil
 }
 
+func GetStakingPoolAssets[H Handle](h H, poolID string, st TableKeySlice) (*[]Asset, error) {
+	const op errors.Op = "GetPoolAssetIDs"
+	query := fmt.Sprintf("select %v from %v.asset where id in(select asset_id from %s.pool_asset where pool_id = ?)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), StakingDatabase())
+
+	var assets []Asset
+	err := h.Select(&assets, query, poolID)
+	if err != nil {
+		return nil, errors.E(pkg, op, err)
+	}
+	return &assets, nil
+}
+
 func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, include []uint64, exclude []uint64, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetAssetsByDetails"
 	data := []interface{}{}
