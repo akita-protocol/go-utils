@@ -48,6 +48,7 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.property_value", NFDDatabase())
 	case PropertyValueExtras, *PropertyValueExtras:
 		return fmt.Sprintf("%s.property_value_extras", NFDDatabase())
+
 	case SessionToken, *SessionToken:
 		return fmt.Sprintf("%s.session_token", DiscordBotDatabase())
 	case User, *User:
@@ -56,6 +57,7 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.wallet", DiscordBotDatabase())
 	case WalletToken, *WalletToken:
 		return fmt.Sprintf("%s.wallet_token", DiscordBotDatabase())
+
 	case Subscription, *Subscription:
 		return fmt.Sprintf("%s.subscription", SubscriptionDatabase())
 	case SubscriptionFactory, *SubscriptionFactory:
@@ -68,30 +70,38 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.subscription_pass", SubscriptionDatabase())
 	case SubscriptionPayment, *SubscriptionPayment:
 		return fmt.Sprintf("%s.subscription_payment", SubscriptionDatabase())
+
 	case StakingDisbursement, *StakingDisbursement:
 		return fmt.Sprintf("%s.disbursement", StakingDatabase())
-	case StakingPool, *StakingPool:
-		return fmt.Sprintf("%s.pool", StakingDatabase())
-	case StakingUser, *StakingUser:
-		return fmt.Sprintf("%s.user", StakingDatabase())
-	case StakingPoolEntry, *StakingPoolEntry:
-		return fmt.Sprintf("%s.pool_entry", StakingDatabase())
-	case StakingExclusion, *StakingExclusion:
-		return fmt.Sprintf("%s.exclusion", StakingDatabase())
+	case StakingEntryAsset, *StakingEntryAsset:
+		return fmt.Sprintf("%s.entry_asset", StakingDatabase())
 	case StakingEntryRequirement, *StakingEntryRequirement:
 		return fmt.Sprintf("%s.entry_requirement", StakingDatabase())
-	case StakingEntryRequirementSelection, *StakingEntryRequirementSelection:
-		return fmt.Sprintf("%s.entry_requirement_selection", StakingDatabase())
 	case StakingEntryRequirementAsset, *StakingEntryRequirementAsset:
 		return fmt.Sprintf("%s.entry_requirement_asset", StakingDatabase())
+	case StakingEntryRequirementSelection, *StakingEntryRequirementSelection:
+		return fmt.Sprintf("%s.entry_requirement_selection", StakingDatabase())
+	case StakingExclusion, *StakingExclusion:
+		return fmt.Sprintf("%s.exclusion", StakingDatabase())
 	case StakingMerchant, *StakingMerchant:
 		return fmt.Sprintf("%s.merchant", StakingDatabase())
+	case StakingPool, *StakingPool:
+		return fmt.Sprintf("%s.pool", StakingDatabase())
 	case StakingPoolAsset, *StakingPoolAsset:
 		return fmt.Sprintf("%s.pool_asset", StakingDatabase())
-	case StakingSnapshot, *StakingSnapshot:
-		return fmt.Sprintf("%s.snapshot", StakingDatabase())
+	case StakingPoolEntry, *StakingPoolEntry:
+		return fmt.Sprintf("%s.pool_entry", StakingDatabase())
 	case StakingReward, *StakingReward:
 		return fmt.Sprintf("%s.reward", StakingDatabase())
+	case StakingRewardCode, *StakingRewardCode:
+		return fmt.Sprintf("%s.reward_code", StakingDatabase())
+	case StakingSnapshot, *StakingSnapshot:
+		return fmt.Sprintf("%s.snapshot", StakingDatabase())
+	case StakingSnapshotAsset, *StakingSnapshotAsset:
+		return fmt.Sprintf("%s.snapshot_asset", StakingDatabase())
+	case StakingUser, *StakingUser:
+		return fmt.Sprintf("%s.user", StakingDatabase())
+
 	case Shuffle, *Shuffle:
 		return fmt.Sprintf("%s.shuffle", ShuffleDatabase())
 	case ShuffleWhitelistToken, *ShuffleWhitelistToken:
