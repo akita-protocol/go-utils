@@ -125,28 +125,31 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 	creatorsQMarks := []rune(strings.Repeat("?, ", len(creators)))
 	query += fmt.Sprintf(" creator in (%s)", string(creatorsQMarks[0:len(creatorsQMarks)-2]))
 
-	query += " and ("
+	if len(prefixes) > 0 || len(include) > 0 {
 
-	if len(prefixes) > 0 {
-		wildcardPrefixes := []string{}
-		for i, prefix := range prefixes {
-			wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
-			if i == 0 {
-				query += " unit_name like ?"
-			} else {
-				query += " or unit_name like ?"
+		query += " and ("
+
+		if len(prefixes) > 0 {
+			wildcardPrefixes := []string{}
+			for i, prefix := range prefixes {
+				wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
+				if i == 0 {
+					query += " unit_name like ?"
+				} else {
+					query += " or unit_name like ?"
+				}
 			}
+			data = append(data, misc.ToInterfaceSlice(wildcardPrefixes)...)
 		}
-		data = append(data, misc.ToInterfaceSlice(wildcardPrefixes)...)
-	}
 
-	if len(include) > 0 {
-		data = append(data, misc.ToInterfaceSlice(include)...)
-		includeQMarks := []rune(strings.Repeat("?, ", len(include)))
-		query += fmt.Sprintf(" or id in(%s)", string(includeQMarks[0:len(includeQMarks)-2]))
-	}
+		if len(include) > 0 {
+			data = append(data, misc.ToInterfaceSlice(include)...)
+			includeQMarks := []rune(strings.Repeat("?, ", len(include)))
+			query += fmt.Sprintf(" or id in(%s)", string(includeQMarks[0:len(includeQMarks)-2]))
+		}
 
-	query += ")"
+		query += ")"
+	}
 
 	if len(exclude) > 0 {
 		data = append(data, misc.ToInterfaceSlice(exclude)...)
