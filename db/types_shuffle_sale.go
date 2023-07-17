@@ -50,3 +50,16 @@ func GetShuffleSalesCount[H Handle](h H, shuffleID string) (*uint64, error) {
 
 	return &count, err
 }
+
+func GetShuffleSaleExists[H Handle](h H, shuffleID string, assetID uint64) (*bool, error) {
+	const op errors.Op = "GetShuffleSaleExists"
+	query := fmt.Sprintf("select exists(select 1 from %v.shuffle_sale where shuffle_id = ? and asset_id = ?)", ShuffleDatabase())
+
+	var exists bool
+	err := h.Get(&exists, query, shuffleID, assetID)
+	if err != nil {
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &exists, err
+}
