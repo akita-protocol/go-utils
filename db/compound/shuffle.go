@@ -144,16 +144,16 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 
 		if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 			go func() {
-				nfds, err := db.GetNFDsByAddress(h, shuf.Creator, db.Tiny)
+				nfd, err := GetNFDByAddress(h, shuf.Creator, db.Tiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
 				}
 
-				if nfds != nil && len(*nfds) > 0 {
+				if nfd != nil {
 					rChan <- &Wallet{
 						Address: shuf.Creator,
-						NFD:     &(*nfds)[0],
+						NFD:     nfd,
 					}
 				} else {
 					rChan <- &Wallet{Address: shuf.Creator}
@@ -300,16 +300,16 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 
 	if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 		go func() {
-			nfds, err := db.GetNFDsByAddress(h, shuf.Creator, db.Tiny)
+			nfd, err := GetNFDByAddress(h, shuf.Creator, db.Tiny)
 			if err != nil && !db.ErrNoRows(err) {
 				rChan <- err
 				return
 			}
 
-			if nfds != nil && len(*nfds) > 0 {
+			if nfd != nil {
 				rChan <- &Wallet{
 					Address: shuf.Creator,
-					NFD:     &(*nfds)[0],
+					NFD:     nfd,
 				}
 			} else {
 				rChan <- &Wallet{Address: shuf.Creator}
