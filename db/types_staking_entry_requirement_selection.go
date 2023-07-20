@@ -15,7 +15,7 @@ type StakingEntryRequirementSelection struct {
 }
 
 func EntryRequirementSelectionTableKeys() []string {
-	return []string{"er_id", "group_id", "quantity"}
+	return []string{"er_id", "quantity"}
 }
 
 func GetStakingEntryRequirementSelection[H Handle](h H, erID string) (*StakingEntryRequirementSelection, error) {
