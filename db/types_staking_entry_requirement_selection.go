@@ -9,9 +9,9 @@ import (
 )
 
 type StakingEntryRequirementSelection struct {
-	EntryRequirementID string  `structs:"er_id,omitempty" db:"er_id" json:"entry_requirement_id,omitempty"`
-	GroupID            *string `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
-	Quantity           uint64  `structs:"quantity,omitempty" db:"quantity" json:"quantity,omitempty"`
+	EntryRequirementID string `structs:"er_id,omitempty" db:"er_id" json:"entry_requirement_id,omitempty"`
+	// GroupID            *string `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
+	Quantity uint64 `structs:"quantity,omitempty" db:"quantity" json:"quantity,omitempty"`
 }
 
 func EntryRequirementSelectionTableKeys() []string {
