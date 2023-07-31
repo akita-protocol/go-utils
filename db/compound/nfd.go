@@ -139,11 +139,11 @@ func GetNFD[H db.Handle](h H, nfdID uint64, st db.TableKeySlice, exclude ...NFDG
 }
 
 func GetNFDByAddress[H db.Handle](h H, address string, st db.TableKeySlice, exclude ...NFDGetExclude) (*NFD, error) {
-	const op errors.Op = "GetNFD"
+	const op errors.Op = "GetNFDByAddress"
 
 	nfds, err := db.GetNFDsByAddress(h, address, st)
 	if err != nil {
-		return nil, errors.E(op, err)
+		return nil, err
 	}
 
 	if nfds == nil || len(*nfds) == 0 {
