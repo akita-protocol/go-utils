@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/algorand/go-algorand-sdk/types"
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/indexer"
+	"github.com/algorand/go-algorand-sdk/v2/types"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gitlab.algotoolchain.com/keelakay/utils/ipfs"
 )
