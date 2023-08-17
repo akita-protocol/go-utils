@@ -307,3 +307,10 @@ func SubscriptionDatabase() string {
 	}
 	return "subscription_test"
 }
+
+func FoundationWatchDatabase() string {
+	if IsProduction() {
+		return "foundation_watch"
+	}
+	return "foundation_watch_test"
+}
