@@ -18,6 +18,7 @@ const (
 	NamespaceFoundationWatch Namespace = "foundationwatch"
 	NamespaceSubscriptions   Namespace = "subscriptions"
 	NamespaceNFD             Namespace = "nfd"
+	NamespaceBlockWatcher    Namespace = "blockwatcher"
 )
 
 type NatsWrapper struct {
