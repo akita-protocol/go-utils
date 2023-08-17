@@ -112,6 +112,14 @@ func (s *GenericServer) NatsConnect(namespace natswrapper.Namespace) {
 func (s *GenericServer) Close() {
 	sentry.Flush(2 * time.Second)
 	s.DB.Close()
+
+	if s.Nats != nil {
+		for _, sub := range s.Nats.Subs {
+			sub.Unsubscribe()
+		}
+
+		s.Nats.Close()
+	}
 }
 
 // IsProduction returns a boolean for whether the request wants to use product or not
