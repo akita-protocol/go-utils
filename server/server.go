@@ -8,6 +8,7 @@ import (
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"github.com/nats-io/nats.go"
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gitlab.algotoolchain.com/keelakay/utils/uuid"
@@ -62,6 +63,8 @@ func New() *GenericServer {
 		panic(err)
 	}
 
+	s.NatsConnect()
+
 	return s
 }
 
@@ -71,6 +74,7 @@ type GenericServer struct {
 	DB        *sqlx.DB
 	LocalTime *time.Location
 	Sentry    *sentry.Client
+	Nats      *nats.EncodedConn
 }
 
 func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client, error) {
@@ -83,6 +87,32 @@ func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client
 	hub.BindClient(client)
 	return client, nil
 }
+
+// NatsConnect connects to the nats cluster
+func (s *GenericServer) NatsConnect() {
+	const op errors.Op = "server.NatsConnect"
+
+	nc, err := nats.Connect("nats.nats", nats.Timeout(10*time.Second))
+	if err != nil {
+		err := errors.E(op, err, "failure to connect to nats cluster")
+		panic(err.Error())
+	}
+
+	ec, err := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	if err != nil {
+		err := errors.E(op, err, "failure to setup encoded connection")
+		panic(err.Error())
+	}
+	s.Nats = ec
+}
+
+type NatsNamespaces string
+
+const (
+	NatsNamespaceFoundationWatch NatsNamespaces = "foundationwatch"
+	NatsNamespaceSubscriptions   NatsNamespaces = "subscriptions"
+	NatsNamespaceNFD             NatsNamespaces = "nfd"
+)
 
 // Close cleanly exits the server
 func (s *GenericServer) Close() {
