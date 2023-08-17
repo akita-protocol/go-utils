@@ -103,9 +103,7 @@ func (s *GenericServer) NatsConnect(namespace natswrapper.Namespace) {
 		panic(err.Error())
 	}
 
-	natswrapper.New(ec, s.Getenv(), namespace)
-
-	s.Nats = &natswrapper.NatsWrapper{}
+	s.Nats = natswrapper.New(ec, s.Getenv(), namespace)
 }
 
 // Close cleanly exits the server
