@@ -12,6 +12,14 @@ const (
 	StandardTimeout = (time.Second * 30)
 )
 
+type Namespace string
+
+const (
+	NamespaceFoundationWatch Namespace = "foundationwatch"
+	NamespaceSubscriptions   Namespace = "subscriptions"
+	NamespaceNFD             Namespace = "nfd"
+)
+
 type NatsWrapper struct {
 	*nats.EncodedConn
 	Subs      []*nats.Subscription
@@ -19,12 +27,12 @@ type NatsWrapper struct {
 	Namespace string
 }
 
-func New(n *nats.EncodedConn, env, namespace string) *NatsWrapper {
+func New(n *nats.EncodedConn, env string, namespace Namespace) *NatsWrapper {
 	return &NatsWrapper{
 		EncodedConn: n,
 		Subs:        []*nats.Subscription{},
 		Env:         env,
-		Namespace:   namespace,
+		Namespace:   string(namespace),
 	}
 }
 
@@ -126,7 +134,14 @@ func (n *NatsWrapper) QueueSubscribeSyncWithChan(subject string, queue string, c
 
 // EncodedQueueSubscribe will create a queue subscription on the given subject and process incoming messages using the specified Handler.
 func (n *NatsWrapper) EncodedQueueSubscribe(subject string, queue string, handler MsgHandlerFunc) (*nats.Subscription, error) {
-	return n.EncodedConn.QueueSubscribe(n.dotJoin(subject), queue, handler)
+	sub, err := n.EncodedConn.QueueSubscribe(n.dotJoin(subject), queue, handler)
+	if err != nil {
+		return nil, err
+	}
+
+	n.Subs = append(n.Subs, sub)
+
+	return sub, err
 }
 
 // Request subscribes to a subject and expects one response

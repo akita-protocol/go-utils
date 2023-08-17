@@ -11,6 +11,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/natswrapper"
 	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
@@ -63,8 +64,6 @@ func New() *GenericServer {
 		panic(err)
 	}
 
-	s.NatsConnect()
-
 	return s
 }
 
@@ -74,7 +73,7 @@ type GenericServer struct {
 	DB        *sqlx.DB
 	LocalTime *time.Location
 	Sentry    *sentry.Client
-	Nats      *nats.EncodedConn
+	Nats      *natswrapper.NatsWrapper
 }
 
 func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client, error) {
@@ -89,7 +88,7 @@ func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client
 }
 
 // NatsConnect connects to the nats cluster
-func (s *GenericServer) NatsConnect() {
+func (s *GenericServer) NatsConnect(namespace natswrapper.Namespace) {
 	const op errors.Op = "server.NatsConnect"
 
 	nc, err := nats.Connect("nats.nats", nats.Timeout(10*time.Second))
@@ -103,16 +102,11 @@ func (s *GenericServer) NatsConnect() {
 		err := errors.E(op, err, "failure to setup encoded connection")
 		panic(err.Error())
 	}
-	s.Nats = ec
+
+	natswrapper.New(ec, s.Getenv(), namespace)
+
+	s.Nats = &natswrapper.NatsWrapper{}
 }
-
-type NatsNamespaces string
-
-const (
-	NatsNamespaceFoundationWatch NatsNamespaces = "foundationwatch"
-	NatsNamespaceSubscriptions   NatsNamespaces = "subscriptions"
-	NatsNamespaceNFD             NatsNamespaces = "nfd"
-)
 
 // Close cleanly exits the server
 func (s *GenericServer) Close() {
