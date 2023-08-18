@@ -47,6 +47,21 @@ func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
 	return &communities, nil
 }
 
+func GetAllCommunityVerifiedWallets[H Handle](h H) ([]string, error) {
+	const op errors.Op = "GetAllCommunityVerifiedWallets"
+	query := fmt.Sprintf("select address from %v.nfd_wallet where id in (select id from %v.community)", NFDDatabase(), NFDDatabase())
+
+	var wallets []string
+	err := h.Select(&wallets, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Community Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return wallets, nil
+}
+
 func GetCommunity[H Handle](h H, id uint64) (*Community, error) {
 	const op errors.Op = "GetCommunity"
 	query := fmt.Sprintf("select %v from %v.community where id = ?", strings.Join(CommunityTableKeys(), ","), NFDDatabase())
