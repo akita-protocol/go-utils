@@ -314,3 +314,10 @@ func FoundationWatchDatabase() string {
 	}
 	return "foundation_watch_test"
 }
+
+func HoldingsDatabase() string {
+	if IsProduction() {
+		return "holdings"
+	}
+	return "holdings_test"
+}

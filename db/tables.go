@@ -116,6 +116,9 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.shuffle_payment_option", ShuffleDatabase())
 	case ShuffleAssetProperty, *ShuffleAssetProperty:
 		return fmt.Sprintf("%s.shuffle_asset_property", ShuffleDatabase())
+
+	case Holdings, *Holdings:
+		return fmt.Sprintf("%s.holdings", HoldingsDatabase())
 	default:
 		return ""
 	}
