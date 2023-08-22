@@ -21,6 +21,22 @@ func HoldingsTableKeys() []string {
 	}
 }
 
+func GetAllHoldingWallets[H Handle](h H) (*[]string, error) {
+	const op errors.Op = "GetAllHoldingWallets"
+	query := fmt.Sprintf("select distinct(address) from %s.holdings", HoldingsDatabase())
+	var list []string
+
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &list, nil
+}
+
 func GetHoldingsByAddress[H Handle](h H, address string) (*[]Holdings, error) {
 	const op errors.Op = "GetHoldingsByAddress"
 	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where address = ?", HoldingsDatabase())
