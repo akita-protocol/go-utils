@@ -51,11 +51,11 @@ func getTable(obj interface{}) string {
 
 	case SessionToken, *SessionToken:
 		return fmt.Sprintf("%s.session_token", DiscordBotDatabase())
-	case User, *User:
+	case DiscordUser, *DiscordUser:
 		return fmt.Sprintf("%s.user", DiscordBotDatabase())
-	case Wallet, *Wallet:
+	case DiscordWallet, *DiscordWallet:
 		return fmt.Sprintf("%s.wallet", DiscordBotDatabase())
-	case WalletToken, *WalletToken:
+	case DiscordWalletToken, *DiscordWalletToken:
 		return fmt.Sprintf("%s.wallet_token", DiscordBotDatabase())
 
 	case Subscription, *Subscription:

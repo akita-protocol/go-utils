@@ -8,7 +8,7 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type Wallet struct {
+type DiscordWallet struct {
 	ID       string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	UserID   string  `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
 	Label    *string `structs:"label,omitempty" db:"label" json:"label,omitempty"`
@@ -17,10 +17,10 @@ type Wallet struct {
 	Main     *bool   `structs:"main,omitempty" db:"main" json:"main,omitempty"`
 }
 
-func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
+func GetDiscordWalletByID[H DBStruct](h H, id string) (*DiscordWallet, error) {
 	const op errors.Op = "GetWalletByID"
 	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where id = ?", DiscordBotDatabase())
-	var w Wallet
+	var w DiscordWallet
 
 	err := h.Get(&w, query, id)
 	if err != nil {
@@ -32,10 +32,10 @@ func GetWalletByID[H DBStruct](h H, id string) (*Wallet, error) {
 	return &w, nil
 }
 
-func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
+func GetDiscordWalletByAddress[H DBStruct](h H, id string) (*DiscordWallet, error) {
 	const op errors.Op = "GetWalletByAddress"
 	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where address = ?", DiscordBotDatabase())
-	var w Wallet
+	var w DiscordWallet
 
 	err := h.Get(&w, query, id)
 	if err != nil {
@@ -47,10 +47,10 @@ func GetWalletByAddress[H DBStruct](h H, id string) (*Wallet, error) {
 	return &w, nil
 }
 
-func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) {
+func GetVerifiedDiscordWalletByUserID[H DBStruct](h H, userID string) (*DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
 	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1 limit 1", DiscordBotDatabase())
-	var w Wallet
+	var w DiscordWallet
 
 	err := h.Get(&w, query, userID)
 	if err != nil {
@@ -62,10 +62,10 @@ func GetVerifiedWalletByUserID[H DBStruct](h H, userID string) (*Wallet, error) 
 	return &w, nil
 }
 
-func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, error) {
+func GetVerifiedDiscordWalletsByUserID[H DBStruct](h H, userID string) (*[]DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
 	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1", DiscordBotDatabase())
-	var list []Wallet
+	var list []DiscordWallet
 
 	err := h.Select(&list, query, userID)
 	if err != nil {
@@ -82,7 +82,7 @@ func GetVerifiedWalletsByUserID[H DBStruct](h H, userID string) (*[]Wallet, erro
 	return &list, nil
 }
 
-func DeleteWalletByAddress[H DBStruct](h H, address string) error {
+func DeleteDiscordWalletByAddress[H DBStruct](h H, address string) error {
 	const op errors.Op = "DeleteWalletByAddress"
 	query := fmt.Sprintf("delete from %s.wallet where address = ?", DiscordBotDatabase())
 	var err error
@@ -108,15 +108,15 @@ func DeleteWalletByAddress[H DBStruct](h H, address string) error {
 	return nil
 }
 
-type WalletToken struct {
+type DiscordWalletToken struct {
 	WalletID string `structs:"wallet_id,omitempty" db:"wallet_id" json:"wallet_id,omitempty"`
 	Token    string `structs:"token,omitempty" db:"token" json:"token,omitempty"`
 }
 
-func GetWalletToken[H DBStruct](h H, id string) error {
+func GetDiscordWalletToken[H DBStruct](h H, id string) error {
 	const op errors.Op = "Get"
 	query := fmt.Sprintf("select wallet_id, token from %s.wallet_token where wallet_id = ?", DiscordBotDatabase())
-	var r Wallet
+	var r DiscordWallet
 
 	err := h.Get(&r, query, id)
 	if err != nil {
