@@ -22,6 +22,26 @@ func NFDWalletTableKeys() []string {
 	return []string{"id", "address", "verified", "deposit"}
 }
 
+func GetAllNFDWallets[H DBStruct](h H) (*[]NFDWallet, error) {
+	const op errors.Op = "GetAllNFDWallets"
+	query := fmt.Sprintf("select %s from %s.nfd_wallet", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
+	var list []NFDWallet
+
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
+	}
+
+	return &list, nil
+}
+
 func GetNFDWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
 	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ?", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
