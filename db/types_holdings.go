@@ -69,6 +69,38 @@ func GetHoldingsByAsaID[H Handle](h H, asaID uint64) (*[]Holdings, error) {
 	return &list, nil
 }
 
+func GetHoldingsByAsaIDIn[H Handle](h H, asaIDs []uint64) (*[]Holdings, error) {
+	const op errors.Op = "GetHoldingsByAsaIDIn"
+	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where asa_id in (?)", HoldingsDatabase())
+	var list []Holdings
+
+	err := h.Select(&list, query, asaIDs)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &list, nil
+}
+
+func GetHoldingsAddressesByAsaIDIn[H Handle](h H, asaIDs []uint64) (*[]string, error) {
+	const op errors.Op = "GetHoldingsAddressesByAsaIDIn"
+	query := fmt.Sprintf("select distinct(address) from %s.holdings where asa_id in (?)", HoldingsDatabase())
+	var list []string
+
+	err := h.Select(&list, query, asaIDs)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &list, nil
+}
+
 func GetHoldingsByAddressAndAsaID[H Handle](h H, address string, asaID uint64) (*Holdings, error) {
 	const op errors.Op = "GetHoldingsByAddressAndAsaID"
 	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where address = ? and asa_id = ?", HoldingsDatabase())

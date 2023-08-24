@@ -19,10 +19,9 @@ const TimeFormat = "2006-01-02 15:04:05"
 type TableKeySlice string
 
 const (
-	IDOnly TableKeySlice = "id"
-	Tiny   TableKeySlice = "tiny"
-	Small  TableKeySlice = "small"
-	Full   TableKeySlice = "full"
+	Tiny  TableKeySlice = "tiny"
+	Small TableKeySlice = "small"
+	Full  TableKeySlice = "full"
 )
 
 // Connect connects to a mysql database
