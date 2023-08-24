@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
+	"math/big"
 	"strings"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -122,7 +122,7 @@ func GetHoldingsByAddressAndAsaID[H Handle](h H, address string, asaID uint64) (
 	return &list, nil
 }
 
-func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses []string) (uint64, error) {
+func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses []string) (*big.Int, error) {
 	const op errors.Op = "GetHoldingsSumByAddressListAndAsaID"
 	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
 	query := fmt.Sprintf("select sum(amount) from %s.holdings where asa_id = ? and address in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
@@ -131,15 +131,15 @@ func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses 
 	err := h.Get(&sumString, query, append([]interface{}{asaID}, misc.ToInterfaceSlice(addresses)...)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return 0, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
 		}
-		return 0, errors.E(pkg, op, err)
+		return nil, errors.E(pkg, op, err)
 	}
 
-	sum, err := strconv.ParseUint(sumString, 10, 64)
-	if err != nil {
-		return 0, errors.E(pkg, op, err)
+	var bignum, ok = new(big.Int).SetString(sumString, 0)
+	if !ok {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("cant initialize big int"))
 	}
 
-	return sum, nil
+	return bignum, nil
 }
