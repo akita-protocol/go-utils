@@ -124,10 +124,10 @@ func GetHoldingsByAddressAndAsaID[H Handle](h H, address string, asaID uint64) (
 func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses []string) (uint64, error) {
 	const op errors.Op = "GetHoldingsSumByAddressListAndAsaID"
 	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
-	query := fmt.Sprintf("select sum(amount) from %s.holdings where address in (%s) and asa_id = ?", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
+	query := fmt.Sprintf("select sum(amount) from %s.holdings where asa_id = ? and address in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var sum uint64
 
-	err := h.Get(&sum, query, misc.ToInterfaceSlice(addresses)...)
+	err := h.Get(&sum, query, append([]interface{}{asaID}, misc.ToInterfaceSlice(addresses)...)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
