@@ -3,8 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type Holdings struct {
@@ -69,12 +71,13 @@ func GetHoldingsByAsaID[H Handle](h H, asaID uint64) (*[]Holdings, error) {
 	return &list, nil
 }
 
-func GetHoldingsByAsaIDIn[H Handle](h H, asaIDs []uint64) (*[]Holdings, error) {
+func GetHoldingsByAsaIDIn[H Handle](h H, ids []uint64) (*[]Holdings, error) {
 	const op errors.Op = "GetHoldingsByAsaIDIn"
-	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where asa_id in (?)", HoldingsDatabase())
+	qMarks := []rune(strings.Repeat("?, ", len(ids)))
+	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where asa_id in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var list []Holdings
 
-	err := h.Select(&list, query, asaIDs)
+	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
@@ -85,12 +88,13 @@ func GetHoldingsByAsaIDIn[H Handle](h H, asaIDs []uint64) (*[]Holdings, error) {
 	return &list, nil
 }
 
-func GetHoldingsAddressesByAsaIDIn[H Handle](h H, asaIDs []uint64) (*[]string, error) {
+func GetHoldingsAddressesByAsaIDIn[H Handle](h H, ids []uint64) (*[]string, error) {
 	const op errors.Op = "GetHoldingsAddressesByAsaIDIn"
-	query := fmt.Sprintf("select distinct(address) from %s.holdings where asa_id in (?)", HoldingsDatabase())
+	qMarks := []rune(strings.Repeat("?, ", len(ids)))
+	query := fmt.Sprintf("select distinct(address) from %s.holdings where asa_id in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var list []string
 
-	err := h.Select(&list, query, asaIDs)
+	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
