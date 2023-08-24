@@ -82,6 +82,26 @@ func GetNFDVerifiedWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	return &list, nil
 }
 
+func GetNFDVerifiedWalletAddressesByAdjacentAddresses[H DBStruct](h H, addresses []string) (*[]string, error) {
+	const op errors.Op = "GetNFDVerifiedWalletAddressesByAdjacentAddresses"
+	query := fmt.Sprintf("select distinct(address) from %s.nfd_wallet where verified = 1 and address in (%s)", NFDDatabase(), strings.Repeat("?, ", len(addresses))[0:(len(addresses)*3)-2])
+	var list []string
+
+	err := h.Select(&list, query, misc.ToInterfaceSlice(addresses)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
+	}
+
+	return &list, nil
+}
+
 func GetNFDVerifiedOrOwnerWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWallets"
 	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = ? order by deposit desc", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase())
