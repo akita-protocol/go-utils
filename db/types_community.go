@@ -102,3 +102,16 @@ func DeleteCommunity[H Handle](h H, id uint64) error {
 
 	return nil
 }
+
+// *********************************************************************************************************************
+
+func GetCommunityPower[H Handle](h H, id uint64) (uint64, error) {
+	const op errors.Op = "GetCommunityPower"
+
+	// this sql query is going to suck to write
+	// i need to query -> the addresses that hold > 1 of the assets belonging to the community
+	// both NFTs and ASAs are considered, and then expand the addresses to any addresses verified with an NFD that the wallets in the initial query hold
+	// then i need to sum the holdings of akita of those addresses
+
+	return 0, nil
+}

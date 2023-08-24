@@ -170,6 +170,16 @@ create table "collection_prefix" (
     index ("prefix")
 );
 
+create table "collection_address" (
+    -- id is the id of the collection the creator is attached to
+    "id" varchar(24) not null,
+    -- address is the algorand public address of a user
+    "address" varchar(58) not null,
+    primary key ("id", "address"),
+    index ("id"),
+    index ("address")
+);
+
 create table "collection_artist" (
     -- id is the id of the collection the creator is attached to
     "id" varchar(24) not null,

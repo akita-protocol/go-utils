@@ -225,3 +225,78 @@ func DeleteCommunity[H db.Handle](h H, nfdID uint64) error {
 
 	return nil
 }
+
+// *************************************************************
+
+func GetCommunityAssetIDs[H db.Handle](h H, nfdID uint64) ([]uint64, error) {
+	const op errors.Op = "GetCommunityAssetIDs"
+
+	buffer := 2
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	go func() {
+		var assets = []uint64{}
+		cols, err := db.GetCollectionsByNFDID(h, nfdID)
+		if err != nil {
+			rChan <- err
+			return
+		}
+
+		for i := range *cols {
+			col := (*cols)[i]
+
+			colAssets, err := GetCollectionAssets(h, nfdID, col.ID)
+			if err != nil {
+				rChan <- err
+				return
+			}
+
+			for i := range *colAssets {
+				asset := (*colAssets)[i]
+				assets = append(assets, asset.ID)
+			}
+		}
+
+		rChan <- assets
+	}()
+
+	go func() {
+		tokens, err := db.GetCommunityTokens(h, nfdID)
+		if err != nil {
+			rChan <- err
+			return
+		}
+		rChan <- tokens
+	}()
+
+	var errs []error
+	var ids = []uint64{}
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *[]uint64:
+			ids = append(ids, *result...)
+		case *[]db.CommunityToken:
+			for _, token := range *result {
+				ids = append(ids, token.AssetID)
+			}
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			if db.ErrNoRows(err) && strings.Contains(err.Error(), "operation: GetCommunity") {
+				return nil, err
+			}
+
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	ids = misc.UniqueSlice(ids)
+	return ids, nil
+}

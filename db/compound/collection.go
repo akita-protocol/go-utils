@@ -15,6 +15,7 @@ type Collection struct {
 	AvatarURL      *string           `json:"avatar_url,omitempty"`
 	AvatarMime     *string           `json:"avatar_mime,omitempty"`
 	Prefixes       []string          `json:"prefixes,omitempty"`
+	Addresses      []string          `json:"addresses,omitempty"`
 	Assets         []uint64          `json:"assets,omitempty"`
 	ExcludedAssets []uint64          `json:"excluded_assets,omitempty"`
 	Artists        []string          `json:"artists,omitempty"`
@@ -33,6 +34,7 @@ const (
 	CollectionGetExcludeBanner         CollectionGetExclude = "banner"
 	CollectionGetExcludeAvatar         CollectionGetExclude = "avatar"
 	CollectionGetExcludePrefixes       CollectionGetExclude = "prefixes"
+	CollectionGetExcludeAddresses      CollectionGetExclude = "addresses"
 	CollectionGetExcludeAssets         CollectionGetExclude = "assets"
 	CollectionGetExcludeExcludedAssets CollectionGetExclude = "excluded_assets"
 	CollectionGetExcludeArtists        CollectionGetExclude = "artists"
@@ -123,6 +125,17 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 			}()
 		}
 
+		if !misc.InSlice(CollectionGetExcludeAddresses, exclude) {
+			go func() {
+				addresses, err := db.GetCollectionAddresses(h, col.ID)
+				if err != nil && !db.ErrNoRows(err) {
+					rChan <- err
+					return
+				}
+				rChan <- addresses
+			}()
+		}
+
 		if !misc.InSlice(CollectionGetExcludeAssets, exclude) {
 			go func() {
 				assets, err := db.GetCollectionAssets(h, col.ID)
@@ -189,6 +202,13 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 					prefixes = append(prefixes, prefix.Prefix)
 				}
 				compCollection.Prefixes = prefixes
+			case *[]db.CollectionAddress:
+				addresses := []string{}
+				for i := range *result {
+					address := (*result)[i]
+					addresses = append(addresses, address.Address)
+				}
+				compCollection.Addresses = addresses
 			case *[]db.CollectionAsset:
 				assets := []uint64{}
 				for i := range *result {
@@ -264,7 +284,7 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 	const op errors.Op = "GetCollectionCriteria"
 	collection := Collection{}
 
-	buffer := 3
+	buffer := 4
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
@@ -275,6 +295,16 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 			return
 		}
 		rChan <- prefixes
+	}()
+
+	go func() {
+		addresses, err := db.GetCollectionAddresses(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+
+		rChan <- addresses
 	}()
 
 	go func() {
@@ -306,6 +336,13 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 				prefixes = append(prefixes, prefix.Prefix)
 			}
 			collection.Prefixes = prefixes
+		case *[]db.CollectionAddress:
+			addresses := []string{}
+			for i := range *result {
+				address := (*result)[i]
+				addresses = append(addresses, address.Address)
+			}
+			collection.Addresses = addresses
 		case *[]db.CollectionAsset:
 			assets := []uint64{}
 			for i := range *result {
@@ -390,6 +427,10 @@ func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*
 		return nil, errors.E(op, fmt.Errorf(msg))
 	}
 
+	if len(criteria.Addresses) > 0 {
+		creators = criteria.Addresses
+	}
+
 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
 	if err != nil {
 		return nil, errors.E(op, err)
@@ -456,6 +497,10 @@ func GetCollectionAssetsByNFDName[H db.Handle](h H, name string, collectionID st
 		return nil, errors.E(op, fmt.Errorf(msg))
 	}
 
+	if len(criteria.Addresses) > 0 {
+		creators = criteria.Addresses
+	}
+
 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
 	if err != nil {
 		return nil, errors.E(op, err)
@@ -520,6 +565,10 @@ func GetCollection[H db.Handle](h H, collectionID string) (*[]db.Asset, error) {
 		}
 
 		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	if len(criteria.Addresses) > 0 {
+		creators = criteria.Addresses
 	}
 
 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
