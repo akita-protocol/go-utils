@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -125,13 +126,18 @@ func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses 
 	const op errors.Op = "GetHoldingsSumByAddressListAndAsaID"
 	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
 	query := fmt.Sprintf("select sum(amount) from %s.holdings where asa_id = ? and address in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
-	var sum uint64
+	var sumString string
 
-	err := h.Get(&sum, query, append([]interface{}{asaID}, misc.ToInterfaceSlice(addresses)...)...)
+	err := h.Get(&sumString, query, append([]interface{}{asaID}, misc.ToInterfaceSlice(addresses)...)...)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return 0, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
 		}
+		return 0, errors.E(pkg, op, err)
+	}
+
+	sum, err := strconv.ParseUint(sumString, 10, 64)
+	if err != nil {
 		return 0, errors.E(pkg, op, err)
 	}
 
