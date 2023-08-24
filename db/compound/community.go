@@ -275,8 +275,8 @@ func GetCommunityAssetIDs[H db.Handle](h H, nfdID uint64) ([]uint64, error) {
 	for i := 0; i < buffer; i++ {
 		data := <-rChan
 		switch result := data.(type) {
-		case *[]uint64:
-			ids = append(ids, *result...)
+		case []uint64:
+			ids = append(ids, result...)
 		case *[]db.CommunityToken:
 			for _, token := range *result {
 				ids = append(ids, token.AssetID)
