@@ -4,6 +4,7 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
+	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
 type StakingReward struct {
@@ -105,3 +106,46 @@ func GetStakingRewardsByAddress[H db.Handle](h H, address string) (*[]StakingRew
 
 // 	}
 // }
+
+func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uint64, amount uint64, userID string) (rewardID string, disbursementID string, err error) {
+	const op errors.Op = "NewReward"
+
+	rewardID = uuid.New(uuid.StakingReward)
+	reward := db.StakingReward{
+		ID:               rewardID,
+		Type:             db.StakingRewardTypeAsset,
+		DistributionType: db.StakingRewardDistributionTypeEnd,
+		RateType:         db.StakingRewardRateTypeFlat,
+		Rate:             1,
+		Title:            name,
+		StakingRewardURL: url,
+		AssetID:          &assetID,
+		Quantity:         &amount,
+	}
+
+	_, err = db.Insert(h, &reward)
+	if err != nil {
+		rewardID = ""
+		err = errors.E(op, err)
+		return
+	}
+
+	disbursementID = uuid.New(uuid.StakingRewardDisbursement)
+	disbursement := db.StakingDisbursement{
+		ID:       disbursementID,
+		GroupID:  uuid.New(uuid.StakingGroup),
+		RewardID: rewardID,
+		UserID:   userID,
+		Quantity: &amount,
+	}
+
+	_, err = db.Insert(h, &disbursement)
+	if err != nil {
+		rewardID = ""
+		disbursementID = ""
+		err = errors.E(op, err)
+		return
+	}
+
+	return
+}
