@@ -51,6 +51,8 @@ type StakingReward struct {
 	// reward type code fields
 	MerchantID         *string        `structs:"merchant_id,omitempty" db:"merchant_id" json:"merchant_id,omitempty"`
 	ExpirationDuration *time.Duration `structs:"expiration_duration,omitempty" db:"expiration_duration" json:"expiration_duration,omitempty"`
+
+	Address string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
 func StakingRewardTableKeys() []string {
@@ -68,6 +70,7 @@ func StakingRewardTableKeys() []string {
 		"quantity",
 		"merchant_id",
 		"expiration_duration",
+		"address",
 	}
 }
 
