@@ -35,7 +35,7 @@ type StakingPool struct {
 	Requirements    *[]StakingEntryRequirement `json:"requirements"`
 	EntryCount      uint64                     `json:"entry_count"`
 	Entries         *[]StakingPoolEntry        `json:"entries"`
-	Rewards         *[]StakingReward           `json:"rewards"`
+	Rewards         *[]Reward                  `json:"rewards"`
 }
 
 type PoolGetExclude string
@@ -144,7 +144,7 @@ func GetStakingPool[H db.Handle](h H, id string, exclude ...PoolGetExclude) (*St
 
 	if !misc.InSlice(PoolGetExcludeRewards, exclude) {
 		go func() {
-			rewards, err := GetStakingRewardsByPoolID(h, id)
+			rewards, err := GetRewardsByPoolID(h, id)
 			if err != nil {
 				rChan <- err
 				return
@@ -179,7 +179,7 @@ func GetStakingPool[H db.Handle](h H, id string, exclude ...PoolGetExclude) (*St
 			p.EntryCount = result
 		case *[]StakingPoolEntry:
 			p.Entries = result
-		case *[]StakingReward:
+		case *[]Reward:
 			p.Rewards = result
 		case error:
 			err := result.(*errors.Error)

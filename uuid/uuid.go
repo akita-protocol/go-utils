@@ -32,8 +32,8 @@ const (
 	StakingEntryRequirement
 	StakingPoolEntry
 	StakingSnapshot
-	StakingReward
-	StakingRewardDisbursement
+	Reward
+	RewardDisbursement
 	StakingMerchant
 	StakingGroup
 	Shuffle
@@ -47,28 +47,28 @@ func (p Prefix) String() string {
 }
 
 var prefixToString = map[Prefix]string{
-	Request:                   "req",
-	User:                      "usr",
-	Wallet:                    "wal",
-	Transaction:               "txn",
-	NFD:                       "nfd",
-	Token:                     "tok",
-	PrivateChannel:            "pvc",
-	Collection:                "col",
-	Property:                  "prp",
-	StakingPool:               "pol",
-	StakingExclusion:          "exc",
-	StakingEntryRequirement:   "erq",
-	StakingPoolEntry:          "pen",
-	StakingSnapshot:           "snp",
-	StakingReward:             "rwd",
-	StakingRewardDisbursement: "dis",
-	StakingMerchant:           "mer",
-	StakingGroup:              "grp",
-	Shuffle:                   "shf",
-	ShufflePaymentOption:      "spo",
-	ShuffleWhitelistToken:     "swl",
-	ShuffleReserveAsset:       "sra",
+	Request:                 "req",
+	User:                    "usr",
+	Wallet:                  "wal",
+	Transaction:             "txn",
+	NFD:                     "nfd",
+	Token:                   "tok",
+	PrivateChannel:          "pvc",
+	Collection:              "col",
+	Property:                "prp",
+	StakingPool:             "pol",
+	StakingExclusion:        "exc",
+	StakingEntryRequirement: "erq",
+	StakingPoolEntry:        "pen",
+	StakingSnapshot:         "snp",
+	Reward:                  "rwd",
+	RewardDisbursement:      "dis",
+	StakingMerchant:         "mer",
+	StakingGroup:            "grp",
+	Shuffle:                 "shf",
+	ShufflePaymentOption:    "spo",
+	ShuffleWhitelistToken:   "swl",
+	ShuffleReserveAsset:     "sra",
 }
 
 var prefixToID = map[string]Prefix{
@@ -86,8 +86,8 @@ var prefixToID = map[string]Prefix{
 	"erq": StakingEntryRequirement,
 	"pen": StakingPoolEntry,
 	"snp": StakingSnapshot,
-	"rwd": StakingReward,
-	"dis": StakingRewardDisbursement,
+	"rwd": Reward,
+	"dis": RewardDisbursement,
 	"mer": StakingMerchant,
 	"grp": StakingGroup,
 	"shf": Shuffle,

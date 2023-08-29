@@ -91,9 +91,9 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.pool_asset", StakingDatabase())
 	case StakingPoolEntry, *StakingPoolEntry:
 		return fmt.Sprintf("%s.pool_entry", StakingDatabase())
-	case StakingReward, *StakingReward:
+	case Reward, *Reward:
 		return fmt.Sprintf("%s.reward", StakingDatabase())
-	case StakingRewardCode, *StakingRewardCode:
+	case RewardCode, *RewardCode:
 		return fmt.Sprintf("%s.reward_code", StakingDatabase())
 	case StakingSnapshot, *StakingSnapshot:
 		return fmt.Sprintf("%s.snapshot", StakingDatabase())

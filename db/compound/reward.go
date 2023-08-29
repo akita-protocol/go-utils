@@ -7,32 +7,32 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
-type StakingReward struct {
-	Reward        *db.StakingReward         `json:"reward"`
+type Reward struct {
+	Reward        *db.Reward                `json:"reward"`
 	Disbursements *[]db.StakingDisbursement `json:"disbursements,omitempty"`
-	Codes         *[]db.StakingRewardCode   `json:"code,omitempty"`
+	Codes         *[]db.RewardCode          `json:"code,omitempty"`
 	Entry         *db.StakingPoolEntry      `json:"entry,omitempty"`
 }
 
-func GetStakingRewardsByPoolID[H db.Handle](h H, poolID string) (*[]StakingReward, error) {
+func GetRewardsByPoolID[H db.Handle](h H, poolID string) (*[]Reward, error) {
 	const op errors.Op = "GetRewardsByPoolID"
-	rewards, err := db.GetStakingRewardsByPoolID(h, poolID)
+	rewards, err := db.GetRewardsByPoolID(h, poolID)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}
 
-	fullRewards := []StakingReward{}
+	fullRewards := []Reward{}
 	for _, reward := range *rewards {
-		fullRewards = append(fullRewards, StakingReward{
+		fullRewards = append(fullRewards, Reward{
 			Reward: &reward,
 		})
 	}
 	return &fullRewards, nil
 }
 
-func GetStakingRewardsByAddress[H db.Handle](h H, address string) (*[]StakingReward, error) {
+func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 	const op errors.Op = "GetRewardByAddress"
-	rewards := []StakingReward{}
+	rewards := []Reward{}
 
 	user, err := db.GetStakingUserByAddress(h, address, db.Tiny)
 	if err != nil {
@@ -63,16 +63,16 @@ func GetStakingRewardsByAddress[H db.Handle](h H, address string) (*[]StakingRew
 		rewardDisbursements[dis.RewardID] = []db.StakingDisbursement{dis}
 	}
 
-	dbrewards, err := db.GetStakingRewardsByID(h, rewardIDs)
+	dbrewards, err := db.GetRewardsByID(h, rewardIDs)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}
 
 	for _, reward := range *dbrewards {
 		realReward := reward
-		if reward.Type != db.StakingRewardTypeCode {
+		if reward.Type != db.RewardTypeCode {
 			disbursements := rewardDisbursements[reward.ID]
-			rewards = append(rewards, StakingReward{
+			rewards = append(rewards, Reward{
 				Reward:        &realReward,
 				Disbursements: &disbursements,
 			})
@@ -110,15 +110,15 @@ func GetStakingRewardsByAddress[H db.Handle](h H, address string) (*[]StakingRew
 func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uint64, amount uint64, userID string, rewardAddress string) (rewardID string, disbursementID string, err error) {
 	const op errors.Op = "NewReward"
 
-	rewardID = uuid.New(uuid.StakingReward)
-	reward := db.StakingReward{
+	rewardID = uuid.New(uuid.Reward)
+	reward := db.Reward{
 		ID:               rewardID,
-		Type:             db.StakingRewardTypeAsset,
-		DistributionType: db.StakingRewardDistributionTypeEnd,
-		RateType:         db.StakingRewardRateTypeFlat,
+		Type:             db.RewardTypeAsset,
+		DistributionType: db.RewardDistributionTypeEnd,
+		RateType:         db.RewardRateTypeFlat,
 		Rate:             1,
 		Title:            name,
-		StakingRewardURL: url,
+		RewardURL:        url,
 		AssetID:          &assetID,
 		Quantity:         &amount,
 		Address:          rewardAddress,
@@ -131,7 +131,7 @@ func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uin
 		return
 	}
 
-	disbursementID = uuid.New(uuid.StakingRewardDisbursement)
+	disbursementID = uuid.New(uuid.RewardDisbursement)
 	disbursement := db.StakingDisbursement{
 		ID:       disbursementID,
 		GroupID:  uuid.New(uuid.StakingGroup),
