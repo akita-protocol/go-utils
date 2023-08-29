@@ -33,7 +33,7 @@ const (
 	StakingPoolEntry
 	StakingSnapshot
 	Reward
-	RewardDisbursement
+	Disbursement
 	StakingMerchant
 	StakingGroup
 	Shuffle
@@ -62,7 +62,7 @@ var prefixToString = map[Prefix]string{
 	StakingPoolEntry:        "pen",
 	StakingSnapshot:         "snp",
 	Reward:                  "rwd",
-	RewardDisbursement:      "dis",
+	Disbursement:            "dis",
 	StakingMerchant:         "mer",
 	StakingGroup:            "grp",
 	Shuffle:                 "shf",
@@ -87,7 +87,7 @@ var prefixToID = map[string]Prefix{
 	"pen": StakingPoolEntry,
 	"snp": StakingSnapshot,
 	"rwd": Reward,
-	"dis": RewardDisbursement,
+	"dis": Disbursement,
 	"mer": StakingMerchant,
 	"grp": StakingGroup,
 	"shf": Shuffle,

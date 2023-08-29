@@ -71,7 +71,7 @@ func getTable(obj interface{}) string {
 	case SubscriptionPayment, *SubscriptionPayment:
 		return fmt.Sprintf("%s.subscription_payment", SubscriptionDatabase())
 
-	case StakingDisbursement, *StakingDisbursement:
+	case Disbursement, *Disbursement:
 		return fmt.Sprintf("%s.disbursement", StakingDatabase())
 	case StakingEntryAsset, *StakingEntryAsset:
 		return fmt.Sprintf("%s.entry_asset", StakingDatabase())

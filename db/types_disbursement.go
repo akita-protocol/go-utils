@@ -9,7 +9,7 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type StakingDisbursement struct {
+type Disbursement struct {
 	ID        string    `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	GroupID   string    `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
 	RewardID  string    `structs:"reward_id,omitempty" db:"reward_id" json:"reward_id,omitempty"`
@@ -21,7 +21,7 @@ type StakingDisbursement struct {
 	Timestamp time.Time `structs:"ts,omitempty" db:"ts" json:"timestamp,omitempty"`
 }
 
-func StakingDisbursementTableKeys() []string {
+func DisbursementTableKeys() []string {
 	return []string{
 		"id",
 		"group_id",
@@ -35,11 +35,11 @@ func StakingDisbursementTableKeys() []string {
 	}
 }
 
-func GetStakingDisbursementsByRewardID[H Handle](h H, rewardID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByRewardID"
-	query := fmt.Sprintf("select %s from disbursement where reward_id = ?", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetDisbursementsByRewardID[H Handle](h H, rewardID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByRewardID"
+	query := fmt.Sprintf("select %s from disbursement where reward_id = ?", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, rewardID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -64,11 +64,11 @@ func GetUnclaimedDisbursmentsQuantityAllocatedByRewardID[H Handle](h H, rewardID
 	return quantity, nil
 }
 
-func GetStakingDisbursementsByEntryID[H Handle](h H, entryID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByEntryID"
-	query := fmt.Sprintf("select %s from disbursement where entry_id = ?", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetDisbursementsByEntryID[H Handle](h H, entryID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByEntryID"
+	query := fmt.Sprintf("select %s from disbursement where entry_id = ?", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, entryID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -79,11 +79,11 @@ func GetStakingDisbursementsByEntryID[H Handle](h H, entryID string) (*[]Staking
 	return &list, nil
 }
 
-func GetUnclaimedStakingDisbursementsByEntryID[H Handle](h H, entryID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetUnclaimedStakingDisbursementsByEntryID"
-	query := fmt.Sprintf("select %s from disbursement where entry_id = ? and redeemed = 0", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetUnclaimedDisbursementsByEntryID[H Handle](h H, entryID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetUnclaimedDisbursementsByEntryID"
+	query := fmt.Sprintf("select %s from disbursement where entry_id = ? and redeemed = 0", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, entryID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -94,11 +94,11 @@ func GetUnclaimedStakingDisbursementsByEntryID[H Handle](h H, entryID string) (*
 	return &list, nil
 }
 
-func GetStakingDisbursementsByUserID[H Handle](h H, userID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByUserID"
-	query := fmt.Sprintf("select %s from disbursement where user_id = ?", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetDisbursementsByUserID[H Handle](h H, userID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByUserID"
+	query := fmt.Sprintf("select %s from disbursement where user_id = ?", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -109,11 +109,11 @@ func GetStakingDisbursementsByUserID[H Handle](h H, userID string) (*[]StakingDi
 	return &list, nil
 }
 
-func GetUnclaimedStakingDisbursementsByUserID[H Handle](h H, userID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByUserID"
-	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and user_id = ?", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetUnclaimedDisbursementsByUserID[H Handle](h H, userID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByUserID"
+	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and user_id = ?", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -124,11 +124,11 @@ func GetUnclaimedStakingDisbursementsByUserID[H Handle](h H, userID string) (*[]
 	return &list, nil
 }
 
-func GetUnclaimedStakingDisbursementsByRewardAndUserID[H Handle](h H, rewardID string, userID string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByUserID"
-	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and reward_id = ? and user_id = ?", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetUnclaimedDisbursementsByRewardAndUserID[H Handle](h H, rewardID string, userID string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByUserID"
+	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and reward_id = ? and user_id = ?", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, rewardID, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -139,11 +139,11 @@ func GetUnclaimedStakingDisbursementsByRewardAndUserID[H Handle](h H, rewardID s
 	return &list, nil
 }
 
-func GetStakingDisbursementsByUserAddress[H Handle](h H, address string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByUserID"
-	query := fmt.Sprintf("select %s from disbursement where user_id = (select id from user where address = ?)", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetDisbursementsByUserAddress[H Handle](h H, address string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByUserID"
+	query := fmt.Sprintf("select %s from disbursement where user_id = (select id from user where address = ?)", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, address)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -154,11 +154,11 @@ func GetStakingDisbursementsByUserAddress[H Handle](h H, address string) (*[]Sta
 	return &list, nil
 }
 
-func GetUnclaimedStakingDisbursementsByUserAddress[H Handle](h H, address string) (*[]StakingDisbursement, error) {
-	const op errors.Op = "GetStakingDisbursementsByUserID"
-	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and user_id = (select id from user where address = ?)", strings.Join(StakingDisbursementTableKeys(), ","))
+func GetUnclaimedDisbursementsByUserAddress[H Handle](h H, address string) (*[]Disbursement, error) {
+	const op errors.Op = "GetDisbursementsByUserID"
+	query := fmt.Sprintf("select %s from disbursement where redeemed = 0 and user_id = (select id from user where address = ?)", strings.Join(DisbursementTableKeys(), ","))
 
-	var list []StakingDisbursement
+	var list []Disbursement
 	err := h.Select(&list, query, address)
 	if err != nil {
 		if err == sql.ErrNoRows {

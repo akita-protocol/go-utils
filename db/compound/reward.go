@@ -8,10 +8,10 @@ import (
 )
 
 type Reward struct {
-	Reward        *db.Reward                `json:"reward"`
-	Disbursements *[]db.StakingDisbursement `json:"disbursements,omitempty"`
-	Codes         *[]db.RewardCode          `json:"code,omitempty"`
-	Entry         *db.StakingPoolEntry      `json:"entry,omitempty"`
+	Reward        *db.Reward           `json:"reward"`
+	Disbursements *[]db.Disbursement   `json:"disbursements,omitempty"`
+	Codes         *[]db.RewardCode     `json:"code,omitempty"`
+	Entry         *db.StakingPoolEntry `json:"entry,omitempty"`
 }
 
 func GetRewardsByPoolID[H db.Handle](h H, poolID string) (*[]Reward, error) {
@@ -41,7 +41,7 @@ func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 
 	// TODO: paginate this api endpoint
 
-	disbursements, err := db.GetUnclaimedStakingDisbursementsByUserID(h, user.ID)
+	disbursements, err := db.GetUnclaimedDisbursementsByUserID(h, user.ID)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}
@@ -51,7 +51,7 @@ func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 	}
 
 	rewardIDs := []string{}
-	rewardDisbursements := map[string][]db.StakingDisbursement{}
+	rewardDisbursements := map[string][]db.Disbursement{}
 	for _, dis := range *disbursements {
 		if misc.InSlice(dis.RewardID, rewardIDs) {
 			list := rewardDisbursements[dis.RewardID]
@@ -60,7 +60,7 @@ func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 			continue
 		}
 		rewardIDs = append(rewardIDs, dis.RewardID)
-		rewardDisbursements[dis.RewardID] = []db.StakingDisbursement{dis}
+		rewardDisbursements[dis.RewardID] = []db.Disbursement{dis}
 	}
 
 	dbrewards, err := db.GetRewardsByID(h, rewardIDs)
@@ -97,7 +97,7 @@ func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 // func GetUnclaimedRewardsByUserAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 // 	const op errors.Op = "GetUnclaimedRewardsByUserAddress"
 
-// 	claims, err := db.GetUnclaimedRewardDisbursementsByUserAddress(h, address)
+// 	claims, err := db.GetUnclaimedDisbursementsByUserAddress(h, address)
 // 	if err != nil {
 // 		return nil, errors.E(pkg, op, err)
 // 	}
@@ -131,8 +131,8 @@ func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uin
 		return
 	}
 
-	disbursementID = uuid.New(uuid.RewardDisbursement)
-	disbursement := db.StakingDisbursement{
+	disbursementID = uuid.New(uuid.Disbursement)
+	disbursement := db.Disbursement{
 		ID:       disbursementID,
 		GroupID:  uuid.New(uuid.StakingGroup),
 		RewardID: rewardID,
