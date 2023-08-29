@@ -35,7 +35,7 @@ const (
 
 type Reward struct {
 	ID               string                 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	PoolID           string                 `structs:"pool_id,omitempty" db:"pool_id" json:"pool_id,omitempty"`
+	PoolID           *string                `structs:"pool_id,omitempty" db:"pool_id" json:"pool_id,omitempty"`
 	Type             RewardType             `structs:"type,omitempty" db:"type" json:"type,omitempty"`
 	DistributionType RewardDistributionType `structs:"distribution_type,omitempty" db:"distribution_type" json:"distribution_type,omitempty"`
 	RateType         RewardRateType         `structs:"rate_type,omitempty" db:"rate_type" json:"rate_type,omitempty"`
