@@ -42,6 +42,18 @@ const (
 	CollectionGetExcludeExtras         CollectionGetExclude = "extras"
 )
 
+var allCollectionGetExcludes = []CollectionGetExclude{
+	CollectionGetExcludeBanner,
+	CollectionGetExcludeAvatar,
+	CollectionGetExcludePrefixes,
+	CollectionGetExcludeAddresses,
+	CollectionGetExcludeAssets,
+	CollectionGetExcludeExcludedAssets,
+	CollectionGetExcludeArtists,
+	CollectionGetExcludeProperties,
+	CollectionGetExcludeExtras,
+}
+
 func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...CollectionGetExclude) (*[]Collection, error) {
 	const op errors.Op = "GetCollectionsByNFDID"
 
@@ -56,7 +68,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		compCollection := Collection{
 			Collection: &col,
 		}
-		buffer := (8 - len(exclude))
+		buffer := (len(allCollectionGetExcludes) - len(exclude))
 		if buffer == 0 {
 			continue
 		}
