@@ -9,8 +9,8 @@ import (
 
 	"github.com/1Password/connect-sdk-go/connect"
 	"github.com/1Password/connect-sdk-go/onepassword"
-	"github.com/algorand/go-algorand-sdk/crypto"
-	"github.com/algorand/go-algorand-sdk/mnemonic"
+	"github.com/algorand/go-algorand-sdk/v2/crypto"
+	"github.com/algorand/go-algorand-sdk/v2/mnemonic"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
