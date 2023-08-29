@@ -52,7 +52,7 @@ type Reward struct {
 	MerchantID         *string        `structs:"merchant_id,omitempty" db:"merchant_id" json:"merchant_id,omitempty"`
 	ExpirationDuration *time.Duration `structs:"expiration_duration,omitempty" db:"expiration_duration" json:"expiration_duration,omitempty"`
 
-	Address string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	Address *string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
 func RewardTableKeys() []string {
