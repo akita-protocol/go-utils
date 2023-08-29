@@ -107,7 +107,7 @@ func GetStakingRewardsByAddress[H db.Handle](h H, address string) (*[]StakingRew
 // 	}
 // }
 
-func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uint64, amount uint64, userID string) (rewardID string, disbursementID string, err error) {
+func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uint64, amount uint64, userID string, rewardAddress string) (rewardID string, disbursementID string, err error) {
 	const op errors.Op = "NewReward"
 
 	rewardID = uuid.New(uuid.StakingReward)
@@ -121,6 +121,7 @@ func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uin
 		StakingRewardURL: url,
 		AssetID:          &assetID,
 		Quantity:         &amount,
+		Address:          rewardAddress,
 	}
 
 	_, err = db.Insert(h, &reward)
