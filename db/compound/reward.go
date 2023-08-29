@@ -121,7 +121,7 @@ func NewOneOffRewardAsset[H db.Handle](h H, name string, url string, assetID uin
 		RewardURL:        url,
 		AssetID:          &assetID,
 		Quantity:         &amount,
-		Address:          rewardAddress,
+		Address:          &rewardAddress,
 	}
 
 	_, err = db.Insert(h, &reward)
