@@ -105,7 +105,8 @@ func NewAccountInOnePassword(client connect.Client) (*crypto.Account, error) {
 	mnemonic := strings.Split(mnemonics, " ")
 
 	item := &onepassword.Item{
-		Title: fmt.Sprintf("Algorand Wallet - %s", account.Address.String()),
+		Category: onepassword.Login,
+		Title:    fmt.Sprintf("Algorand Wallet - %s", account.Address.String()),
 		Fields: []*onepassword.ItemField{
 			{
 				Label: "1",
