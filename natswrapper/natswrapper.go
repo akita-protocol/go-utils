@@ -15,6 +15,7 @@ const (
 type Namespace string
 
 const (
+	NamespaceDiscordBot      Namespace = "discordbot"
 	NamespaceFoundationWatch Namespace = "foundationwatch"
 	NamespaceSubscriptions   Namespace = "subscriptions"
 	NamespaceNFD             Namespace = "nfd"
