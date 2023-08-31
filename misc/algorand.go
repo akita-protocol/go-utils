@@ -16,6 +16,15 @@ import (
 	cerrors "gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
+func ListInner(stxn *types.SignedTxnWithAD) []types.Transaction {
+	txns := []types.Transaction{}
+	for _, itxn := range stxn.ApplyData.EvalDelta.InnerTxns {
+		txns = append(txns, itxn.SignedTxn.Txn)
+		txns = append(txns, ListInner(&itxn)...)
+	}
+	return txns
+}
+
 func AddrToED25519PublicKey(a types.Address) (pk ed25519.PublicKey) {
 	pk = make([]byte, len(a))
 	copy(pk, a[:])
