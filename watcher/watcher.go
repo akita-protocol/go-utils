@@ -44,9 +44,11 @@ type WSList[C Category, L ListType] struct {
 	List   []L
 }
 
-func NewEventQueue[C Category, L ListType]() *EventQueue[C, L] {
+func NewEventQueue[C Category, L ListType](processors []Processor[L]) *EventQueue[C, L] {
 	return &EventQueue[C, L]{
-		ListChan: make(chan []WSList[C, L], 1000),
+		Subs:       map[C]*sync.Map{},
+		Processors: processors,
+		ListChan:   make(chan []WSList[C, L], 1000),
 		Failures: QueueFailures[L]{
 			Mutex: &sync.Mutex{},
 			List:  map[L]error{},
@@ -63,7 +65,7 @@ type Processor[L ListType] func(item L) error
 
 type EventQueue[C Category, L ListType] struct {
 	Subs       map[C]*sync.Map
-	Processors map[string]Processor[L]
+	Processors []Processor[L]
 	ListChan   chan []WSList[C, L]
 	Failures   QueueFailures[L]
 }
