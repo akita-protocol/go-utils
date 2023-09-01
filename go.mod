@@ -1,6 +1,6 @@
 module gitlab.algotoolchain.com/keelakay/utils
 
-go 1.18
+go 1.21
 
 require (
 	github.com/1Password/connect-sdk-go v1.5.0
