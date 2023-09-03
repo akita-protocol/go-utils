@@ -16,10 +16,10 @@ import (
 	cerrors "gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-func ListInner(stxn *types.SignedTxnWithAD) []types.Transaction {
-	txns := []types.Transaction{}
+func ListInner(stxn *types.SignedTxnWithAD) []types.SignedTxnWithAD {
+	txns := []types.SignedTxnWithAD{}
 	for _, itxn := range stxn.ApplyData.EvalDelta.InnerTxns {
-		txns = append(txns, itxn.SignedTxn.Txn)
+		txns = append(txns, itxn)
 		txns = append(txns, ListInner(&itxn)...)
 	}
 	return txns
