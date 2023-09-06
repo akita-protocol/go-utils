@@ -107,6 +107,7 @@ func (eq *EventQueue[C, L]) Start() {
 					fmt.Println("Running Processor: ", i, " on item: ", item, " of type: ", entry.Labels, " with value: ", item)
 					err := process(item)
 					if err != nil {
+						fmt.Println(err)
 						eq.LogFailure(item, err)
 						continue
 					}
