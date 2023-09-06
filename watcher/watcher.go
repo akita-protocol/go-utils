@@ -103,8 +103,7 @@ func (eq *EventQueue[C, L]) Start() {
 					eq.Subs[category].Store(item, struct{}{})
 				}
 
-				for i, process := range eq.Processors {
-					fmt.Println("Running Processor: ", i, " on item: ", item, " of type: ", entry.Labels, " with value: ", item)
+				for _, process := range eq.Processors {
 					err := process(item)
 					if err != nil {
 						fmt.Println(err)
