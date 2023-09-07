@@ -145,3 +145,15 @@ func GetHoldingsSumByAddressListAndAsaID[H Handle](h H, asaID uint64, addresses 
 
 	return bignum, nil
 }
+
+func UpdateLastChangedBlock[H Handle](h H, lastChangedBlock uint64, address string, asaIDs []uint64) error {
+	const op errors.Op = "UpdateLastChangedBlock"
+	includeQMarks := []rune(strings.Repeat("?, ", len(asaIDs)))
+	query := fmt.Sprintf("update %s.holdings set last_changed_block = ? where address = ? and asa_id in(%s)", HoldingsDatabase(), string(includeQMarks[0:len(includeQMarks)-2]))
+	_, err := h.Exec(query, append([]interface{}{lastChangedBlock, address}, misc.ToInterfaceSlice(asaIDs)...)...)
+	if err != nil {
+		return errors.E(pkg, op, err)
+	}
+
+	return nil
+}
