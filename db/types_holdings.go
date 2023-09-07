@@ -44,7 +44,7 @@ func GetAllHoldingWallets[H Handle](h H) (*[]string, error) {
 
 func GetHoldingsByAddress[H Handle](h H, address string) (*[]Holdings, error) {
 	const op errors.Op = "GetHoldingsByAddress"
-	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where address = ?", HoldingsDatabase())
+	query := fmt.Sprintf("select %s from %s.holdings where address = ?", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase())
 	var list []Holdings
 
 	err := h.Select(&list, query, address)
@@ -60,7 +60,7 @@ func GetHoldingsByAddress[H Handle](h H, address string) (*[]Holdings, error) {
 
 func GetHoldingsByAsaID[H Handle](h H, asaID uint64) (*[]Holdings, error) {
 	const op errors.Op = "GetHoldingsByAsaID"
-	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where asa_id = ?", HoldingsDatabase())
+	query := fmt.Sprintf("select %s from %s.holdings where asa_id = ?", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase())
 	var list []Holdings
 
 	err := h.Select(&list, query, asaID)
@@ -77,7 +77,7 @@ func GetHoldingsByAsaID[H Handle](h H, asaID uint64) (*[]Holdings, error) {
 func GetHoldingsByAsaIDIn[H Handle](h H, ids []uint64) (*[]Holdings, error) {
 	const op errors.Op = "GetHoldingsByAsaIDIn"
 	qMarks := []rune(strings.Repeat("?, ", len(ids)))
-	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where asa_id in (%s)", HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
+	query := fmt.Sprintf("select %s from %s.holdings where asa_id in (%s)", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]))
 	var list []Holdings
 
 	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
@@ -110,7 +110,7 @@ func GetHoldingsAddressesByAsaIDIn[H Handle](h H, ids []uint64) (*[]string, erro
 
 func GetHoldingsByAddressAndAsaID[H Handle](h H, address string, asaID uint64) (*Holdings, error) {
 	const op errors.Op = "GetHoldingsByAddressAndAsaID"
-	query := fmt.Sprintf("select address, asa_id, amount from %s.holdings where address = ? and asa_id = ?", HoldingsDatabase())
+	query := fmt.Sprintf("select %s from %s.holdings where address = ? and asa_id = ?", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase())
 	var list Holdings
 
 	err := h.Get(&list, query, address, asaID)
