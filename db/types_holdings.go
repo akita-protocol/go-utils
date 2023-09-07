@@ -11,9 +11,10 @@ import (
 )
 
 type Holdings struct {
-	Address string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
-	AsaID   *uint64 `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id"`
-	Amount  *uint64 `structs:"amount,omitempty" db:"amount" json:"amount"`
+	Address          string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	AsaID            *uint64 `structs:"asa_id,omitempty" db:"asa_id" json:"asa_id"`
+	Amount           *uint64 `structs:"amount,omitempty" db:"amount" json:"amount"`
+	LastChangedBlock *uint64 `structs:"last_changed_block,omitempty" db:"last_changed_block" json:"last_changed_block,omitempty"`
 }
 
 func HoldingsTableKeys() []string {
@@ -21,6 +22,7 @@ func HoldingsTableKeys() []string {
 		"address",
 		"asa_id",
 		"amount",
+		"last_changed_block",
 	}
 }
 
