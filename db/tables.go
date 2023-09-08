@@ -49,7 +49,7 @@ func getTable(obj interface{}) string {
 	case PropertyValueExtras, *PropertyValueExtras:
 		return fmt.Sprintf("%s.property_value_extras", NFDDatabase())
 
-	case SessionToken, *SessionToken:
+	case DiscordSessionToken, *DiscordSessionToken:
 		return fmt.Sprintf("%s.session_token", DiscordBotDatabase())
 	case DiscordUser, *DiscordUser:
 		return fmt.Sprintf("%s.user", DiscordBotDatabase())
@@ -57,6 +57,14 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.wallet", DiscordBotDatabase())
 	case DiscordWalletToken, *DiscordWalletToken:
 		return fmt.Sprintf("%s.wallet_token", DiscordBotDatabase())
+	case DiscordServer, *DiscordServer:
+		return fmt.Sprintf("%s.server", DiscordBotDatabase())
+	case DiscordServerRole, *DiscordServerRole:
+		return fmt.Sprintf("%s.server_role", DiscordBotDatabase())
+	case DiscordRoleReq, *DiscordRoleReq:
+		return fmt.Sprintf("%s.role_req", DiscordBotDatabase())
+	case DiscordTransaction, *DiscordTransaction:
+		return fmt.Sprintf("%s.transaction", DiscordBotDatabase())
 
 	case Subscription, *Subscription:
 		return fmt.Sprintf("%s.subscription", SubscriptionDatabase())

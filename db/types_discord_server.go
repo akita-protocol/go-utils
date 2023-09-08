@@ -7,15 +7,15 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type Server struct {
+type DiscordServer struct {
 	ID   string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	Name string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 }
 
-func GetServer[H DBStruct](h H, id string) (*Server, error) {
+func GetDiscordServer[H DBStruct](h H, id string) (*DiscordServer, error) {
 	const op errors.Op = "GetServer"
 	query := fmt.Sprintf("select id, name from %s.server where id = ?", DiscordBotDatabase())
-	var s Server
+	var s DiscordServer
 
 	err := h.Get(&s, query, id)
 	if err != nil {
@@ -27,10 +27,10 @@ func GetServer[H DBStruct](h H, id string) (*Server, error) {
 	return &s, nil
 }
 
-func GetServers[H DBStruct](h H) (*[]Server, error) {
+func GetDiscordServers[H DBStruct](h H) (*[]DiscordServer, error) {
 	const op errors.Op = "GetServers"
 	query := fmt.Sprintf("select id, name from %s.server", DiscordBotDatabase())
-	var list []Server
+	var list []DiscordServer
 
 	err := h.Select(&list, query)
 	if err != nil {

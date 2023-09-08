@@ -8,7 +8,7 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type RoleReq struct {
+type DiscordRoleReq struct {
 	RoleID         string `structs:"role_id,omitempty" db:"role_id" json:"role_id,omitempty"`
 	GroupID        string `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
 	GreaterThan    int64  `structs:"greater_than,omitempty" db:"greater_than" json:"greater_than,omitempty"`
@@ -16,14 +16,14 @@ type RoleReq struct {
 	DistinctAssets *bool  `structs:"distinct_assets,omitempty" db:"distinct_assets" json:"distinct_assets,omitempty"`
 }
 
-func RoleReqTableKeys() []string {
+func DiscordRoleReqTableKeys() []string {
 	return []string{"role_id", "group_id", "greater_than", "less_than", "distinct_assets"}
 }
 
-func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
+func GetDiscordRoleReqByRoleID[H DBStruct](h H, roleID string) (*DiscordRoleReq, error) {
 	const op errors.Op = "GetRoleReqByRoleID"
-	query := fmt.Sprintf("select %s from %s.role_req where role_id = ?", strings.Join(RoleReqTableKeys(), ","), DiscordBotDatabase())
-	var r RoleReq
+	query := fmt.Sprintf("select %s from %s.role_req where role_id = ?", strings.Join(DiscordRoleReqTableKeys(), ","), DiscordBotDatabase())
+	var r DiscordRoleReq
 
 	err := h.Get(&r, query, roleID)
 	if err != nil {
@@ -35,10 +35,10 @@ func GetRoleReqByRoleID[H DBStruct](h H, roleID string) (*RoleReq, error) {
 	return &r, nil
 }
 
-func GetRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]RoleReq, error) {
+func GetDiscordRoleReqsByGroupID[H DBStruct](h H, groupID string) (*[]DiscordRoleReq, error) {
 	const op errors.Op = "GetRoleReqsByGroupID"
-	query := fmt.Sprintf("select %s from %s.role_req where group_id = ?", strings.Join(RoleReqTableKeys(), ","), DiscordBotDatabase())
-	var list []RoleReq
+	query := fmt.Sprintf("select %s from %s.role_req where group_id = ?", strings.Join(DiscordRoleReqTableKeys(), ","), DiscordBotDatabase())
+	var list []DiscordRoleReq
 
 	err := h.Select(&list, query, groupID)
 	if err != nil {

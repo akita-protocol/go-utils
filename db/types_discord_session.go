@@ -7,15 +7,15 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
-type SessionToken struct {
+type DiscordSessionToken struct {
 	UserID string `structs:"user_id,omitempty" db:"user_id" json:"user_id,omitempty"`
 	Token  string `structs:"token,omitempty" db:"token" json:"token,omitempty"`
 }
 
-func GetSessionTokenByUserID[H DBStruct](h H, userID string) (*SessionToken, error) {
+func GetDiscordSessionTokenByUserID[H DBStruct](h H, userID string) (*DiscordSessionToken, error) {
 	const op errors.Op = "GetSessionTokenByUserID"
 	query := fmt.Sprintf("select user_id, token from %s.user where user_id = ?", DiscordBotDatabase())
-	var s SessionToken
+	var s DiscordSessionToken
 
 	err := h.Get(&s, query, userID)
 	if err != nil {
@@ -27,10 +27,10 @@ func GetSessionTokenByUserID[H DBStruct](h H, userID string) (*SessionToken, err
 	return &s, nil
 }
 
-func GetSessionTokenByToken[H DBStruct](h H, token string) (*SessionToken, error) {
+func GetDiscordSessionTokenByToken[H DBStruct](h H, token string) (*DiscordSessionToken, error) {
 	const op errors.Op = "GetSessionTokenByToken"
 	query := fmt.Sprintf("select user_id, token from %s.user where token = ?", DiscordBotDatabase())
-	var s SessionToken
+	var s DiscordSessionToken
 
 	err := h.Get(&s, query, token)
 	if err != nil {
