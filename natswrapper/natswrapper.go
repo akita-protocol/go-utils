@@ -12,6 +12,51 @@ const (
 	StandardTimeout = (time.Second * 30)
 )
 
+type Events string
+
+const (
+	NEW_DISCORD_USER        Events = "NEW_DISCORD_USER"
+	NEW_DISCORD_ADDRESS     Events = "NEW_DISCORD_ADDRESS"
+	REMOVED_DISCORD_ADDRESS Events = "REMOVED_DISCORD_ADDRESS"
+	USER_JOINED_SERVER      Events = "USER_JOINED_SERVER"
+	USER_LEFT_SERVER        Events = "USER_LEFT_SERVER"
+	NEW_TWEET               Events = "NEW_TWEET"
+	NEW_APP                 Events = "NEW_APP"
+	NEW_ASSET               Events = "NEW_ASSET"
+	ASSET_CHANGE            Events = "ASSET_CHANGE"
+	NEW_TRANSACTION         Events = "NEW_TRANSACTION"
+	NEW_ADDRESS             Events = "NEW_ADDRESS"
+	NEW_COMMUNITY           Events = "NEW_COMMUNITY"
+	NEW_USER                Events = "NEW_USER"
+)
+
+var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
+	NamespaceDiscordBot: {
+		NEW_DISCORD_USER,
+		NEW_DISCORD_ADDRESS,
+		REMOVED_DISCORD_ADDRESS,
+		USER_JOINED_SERVER,
+		USER_LEFT_SERVER,
+	},
+	NamespaceFoundationWatch: {
+		NEW_TWEET,
+	},
+	NamespaceSubscriptions: {},
+	NamespaceNFD:           {},
+	NamespaceBlockWatcher: {
+		NEW_APP,
+		NEW_ASSET,
+		ASSET_CHANGE,
+		NEW_TRANSACTION,
+		NEW_ADDRESS,
+	},
+	NamespaceSeed: {},
+	NamespaceGateway: {
+		NEW_USER,
+		NEW_ADDRESS,
+	},
+}
+
 type Namespace string
 
 const (
