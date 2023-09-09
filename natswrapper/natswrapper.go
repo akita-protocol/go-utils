@@ -90,17 +90,17 @@ type MsgHandlerFunc = func() nats.MsgHandler
 type HandlerFunc = func() nats.Handler
 
 // EncodedBindRecvChan binds a channel for receive operations from NATS.
-func (n *NatsWrapper) EncodedBindRecvChan(subject string, channel interface{}) (*nats.Subscription, error) {
+func (n *NatsWrapper) EncodedBindRecvChan(subject string, channel any) (*nats.Subscription, error) {
 	return n.EncodedConn.BindRecvChan(subject, channel)
 }
 
 // EncodedBindRecvQueueChan binds a channel for queue-based receive operations from NATS.
-func (n *NatsWrapper) EncodedBindRecvQueueChan(subject string, queue string, channel interface{}) (*nats.Subscription, error) {
+func (n *NatsWrapper) EncodedBindRecvQueueChan(subject string, queue string, channel any) (*nats.Subscription, error) {
 	return n.EncodedConn.BindRecvQueueChan(subject, queue, channel)
 }
 
 // EncodedBindSendChan binds a channel for send operations to NATS.
-func (n *NatsWrapper) EncodedBindSendChan(subject string, channel interface{}) error {
+func (n *NatsWrapper) EncodedBindSendChan(subject string, channel any) error {
 	return n.EncodedConn.BindSendChan(subject, channel)
 }
 
@@ -120,7 +120,7 @@ func (n *NatsWrapper) EncodedPublish(subject string, v any) error {
 }
 
 // EncodedPublishRequest will perform a Publish() expecting a response on the reply subject.
-func (n *NatsWrapper) EncodedPublishRequest(subject string, reply string, payload []byte) error {
+func (n *NatsWrapper) EncodedPublishRequest(subject string, reply string, payload any) error {
 	return n.EncodedConn.PublishRequest(subject, reply, payload)
 }
 
@@ -182,8 +182,8 @@ func (n *NatsWrapper) QueueSubscribeSyncWithChan(subject string, queue string, c
 }
 
 // EncodedQueueSubscribe will create a queue subscription on the given subject and process incoming messages using the specified Handler.
-func (n *NatsWrapper) EncodedQueueSubscribe(subject string, queue string, handler MsgHandlerFunc) (*nats.Subscription, error) {
-	sub, err := n.EncodedConn.QueueSubscribe(subject, queue, handler)
+func (n *NatsWrapper) EncodedQueueSubscribe(subject string, queue string, handler HandlerFunc) (*nats.Subscription, error) {
+	sub, err := n.EncodedConn.QueueSubscribe(subject, queue, handler())
 	if err != nil {
 		return nil, err
 	}
@@ -223,8 +223,8 @@ func (n *NatsWrapper) SubscribeSync(subject string) (*nats.Subscription, error) 
 	return n.EncodedConn.Conn.SubscribeSync(subject)
 }
 
-func (n *NatsWrapper) EncodedSubscribe(subject string, handler MsgHandlerFunc) (*nats.Subscription, error) {
-	return n.EncodedConn.Subscribe(subject, handler)
+func (n *NatsWrapper) EncodedSubscribe(subject string, handler HandlerFunc) (*nats.Subscription, error) {
+	return n.EncodedConn.Subscribe(subject, handler())
 }
 
 func (n *NatsWrapper) BuildSubject(values ...string) string {
