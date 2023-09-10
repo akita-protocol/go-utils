@@ -1,4 +1,4 @@
-package natswrapper
+package nw
 
 import (
 	"context"
