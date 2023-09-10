@@ -8,10 +8,10 @@ import (
 )
 
 type DiscordServerRole struct {
-	ID       string  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	ServerID string  `structs:"server_id,omitempty" db:"server_id" json:"server_id,omitempty"`
-	RoleID   *string `structs:"role_id,omitempty" db:"role_id" json:"role_id,omitempty"`
-	Name     string  `structs:"name,omitempty" db:"name" json:"name,omitempty"`
+	ID       string `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	ServerID string `structs:"server_id,omitempty" db:"server_id" json:"server_id,omitempty"`
+	RoleID   string `structs:"role_id,omitempty" db:"role_id" json:"role_id,omitempty"`
+	Name     string `structs:"name,omitempty" db:"name" json:"name,omitempty"`
 }
 
 func GetServerRoles[H DBStruct](h H, serverID string) (*[]DiscordServerRole, error) {
