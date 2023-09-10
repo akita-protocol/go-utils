@@ -15,27 +15,26 @@ const (
 type Events string
 
 const (
-	NEW_DISCORD_USER        Events = "NEW_DISCORD_USER"
-	NEW_DISCORD_ADDRESS     Events = "NEW_DISCORD_ADDRESS"
-	REMOVED_DISCORD_ADDRESS Events = "REMOVED_DISCORD_ADDRESS"
-	JOINED_DISCORD_SERVER   Events = "JOINED_DISCORD_SERVER"
-	LEFT_DISCORD_SERVER     Events = "LEFT_DISCORD_SERVER"
-	NEW_TWEET               Events = "NEW_TWEET"
-	NEW_APP                 Events = "NEW_APP"
-	UPDATE_APP              Events = "UPDATE_APP"
-	NEW_ASSET               Events = "NEW_ASSET"
-	UPDATE_ASSET            Events = "UPDATE_ASSET"
-	NEW_TRANSACTION         Events = "NEW_TRANSACTION"
-	NEW_ADDRESS             Events = "NEW_ADDRESS"
-	NEW_COMMUNITY           Events = "NEW_COMMUNITY"
-	NEW_USER                Events = "NEW_USER"
+	REMOVED_ADDRESS                Events = "REMOVED_DISCORD_ADDRESS"
+	JOINED_DISCORD_SERVER          Events = "JOINED_DISCORD_SERVER"
+	LEFT_DISCORD_SERVER            Events = "LEFT_DISCORD_SERVER"
+	NEW_TWEET                      Events = "NEW_TWEET"
+	NEW_APP                        Events = "NEW_APP"
+	UPDATE_APP                     Events = "UPDATE_APP"
+	NEW_ASSET                      Events = "NEW_ASSET"
+	UPDATE_ASSET                   Events = "UPDATE_ASSET"
+	NEW_TRANSACTION                Events = "NEW_TRANSACTION"
+	NEW_ADDRESS                    Events = "NEW_ADDRESS"
+	NEW_ADDRESS_HOLDINGS_PROCESSED Events = "NEW_ADDRESS_HOLDINGS_PROCESSED"
+	NEW_COMMUNITY                  Events = "NEW_COMMUNITY"
+	NEW_USER                       Events = "NEW_USER"
 )
 
 var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
 	NamespaceDiscordBot: {
-		NEW_DISCORD_USER,
-		NEW_DISCORD_ADDRESS,
-		REMOVED_DISCORD_ADDRESS,
+		NEW_USER,
+		NEW_ADDRESS,
+		REMOVED_ADDRESS,
 		JOINED_DISCORD_SERVER,
 		LEFT_DISCORD_SERVER,
 	},
@@ -51,6 +50,7 @@ var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
 		UPDATE_ASSET,
 		NEW_TRANSACTION,
 		NEW_ADDRESS,
+		NEW_ADDRESS_HOLDINGS_PROCESSED,
 	},
 	NamespaceSeed: {},
 	NamespaceGateway: {
