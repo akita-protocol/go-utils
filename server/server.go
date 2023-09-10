@@ -11,7 +11,7 @@ import (
 	"github.com/nats-io/nats.go"
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/natswrapper"
+	"gitlab.algotoolchain.com/keelakay/utils/nw"
 	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
@@ -73,7 +73,7 @@ type GenericServer struct {
 	DB        *sqlx.DB
 	LocalTime *time.Location
 	Sentry    *sentry.Client
-	Nats      *natswrapper.NatsWrapper
+	Nats      *nw.NatsWrapper
 }
 
 func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client, error) {
@@ -88,7 +88,7 @@ func (s *GenericServer) SentryInit(options sentry.ClientOptions) (*sentry.Client
 }
 
 // NatsConnect connects to the nats cluster
-func (s *GenericServer) NatsConnect(namespace natswrapper.Namespace) {
+func (s *GenericServer) NatsConnect(namespace nw.Namespace) {
 	const op errors.Op = "server.NatsConnect"
 
 	nc, err := nats.Connect("nats.nats", nats.Timeout(10*time.Second))
@@ -103,7 +103,7 @@ func (s *GenericServer) NatsConnect(namespace natswrapper.Namespace) {
 		panic(err.Error())
 	}
 
-	s.Nats = natswrapper.New(ec, s.Getenv(), namespace)
+	s.Nats = nw.New(ec, s.Getenv(), namespace)
 }
 
 // Close cleanly exits the server
