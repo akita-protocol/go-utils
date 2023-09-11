@@ -21,6 +21,10 @@ const (
 	NEW_TWEET                      Events = "NEW_TWEET"
 	NEW_APP                        Events = "NEW_APP"
 	UPDATE_APP                     Events = "UPDATE_APP"
+	NEW_NFD_DISCORD_ID             Events = "NEW_NFD_DISCORD_ID"
+	REMOVED_NFD_DISCORD_ID         Events = "REMOVED_NFD_DISCORD_ID"
+	NEW_NFD_VERIFIED_ADDRESS       Events = "NEW_NFD_VERIFIED_ADDRESS"
+	REMOVED_NFD_VERIFIED_ADDRESS   Events = "REMOVED_NFD_VERIFIED_ADDRESS"
 	NEW_ASSET                      Events = "NEW_ASSET"
 	UPDATE_ASSET                   Events = "UPDATE_ASSET"
 	NEW_TRANSACTION                Events = "NEW_TRANSACTION"
@@ -46,6 +50,10 @@ var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
 	NamespaceBlockWatcher: {
 		NEW_APP,
 		UPDATE_APP,
+		NEW_NFD_DISCORD_ID,
+		REMOVED_NFD_DISCORD_ID,
+		NEW_NFD_VERIFIED_ADDRESS,
+		REMOVED_NFD_VERIFIED_ADDRESS,
 		NEW_ASSET,
 		UPDATE_ASSET,
 		NEW_TRANSACTION,
