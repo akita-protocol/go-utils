@@ -136,7 +136,7 @@ func GetNFDVerifiedOrOwnerWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, err
 
 func GetNFDWalletsByDiscordID[H DBStruct](h H, discordID string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetNFDWalletsByUserID"
-	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select id from %s.nfd where discord_id = ? limit 1)", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select id from %s.nfd where discord_id = ? order by last_changed_block desc limit 1) and (verified = 1 or owner = 1)", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
 	var list []NFDWallet
 
 	err := h.Select(&list, query, discordID)
