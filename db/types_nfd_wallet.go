@@ -16,10 +16,11 @@ type NFDWallet struct {
 	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 	Verified *bool  `structs:"verified,omitempty" db:"verified" json:"verified,omitempty"`
 	Deposit  *bool  `structs:"deposit,omitempty" db:"deposit" json:"deposit,omitempty"`
+	Owner    *bool  `structs:"owner,omitempty" db:"owner" json:"owner,omitempty"`
 }
 
 func NFDWalletTableKeys() []string {
-	return []string{"id", "address", "verified", "deposit"}
+	return []string{"id", "address", "verified", "deposit", "owner"}
 }
 
 func GetAllNFDWallets[H DBStruct](h H) (*[]NFDWallet, error) {
