@@ -107,9 +107,9 @@ func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD
 	return &list, nil
 }
 
-func GetNFDsByVerifiedAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
-	const op errors.Op = "GetNFDsByVerifiedAddress"
-	query := fmt.Sprintf("select %s from %s.nfd_wallet left join %s.nfd on %s.nfd_wallet.id = %s.nfd.id where address = ? and deposit = 1 and verified = 1 order by last_changed_block desc", strings.Join(NFDTableKeysWithStrictTableReference(st), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
+func GetNFDsByVerifiedOrOwnerAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
+	const op errors.Op = "GetNFDsByVerifiedOrOwnerAddress"
+	query := fmt.Sprintf("select %s from %s.nfd_wallet left join %s.nfd on %s.nfd_wallet.id = %s.nfd.id where address = ? and deposit = 1 and (verified = 1 or owner = 1) order by verified desc, last_changed_block desc", strings.Join(NFDTableKeysWithStrictTableReference(st), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
 	var list []NFD
 
 	err := h.Select(&list, query, address)
