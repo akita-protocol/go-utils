@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
@@ -17,9 +18,13 @@ type DiscordWallet struct {
 	Main     *bool   `structs:"main,omitempty" db:"main" json:"main,omitempty"`
 }
 
+func DiscordWalletKeys() []string {
+	return []string{"id", "user_id", "label", "address", "verified", "main"}
+}
+
 func GetDiscordWalletByID[H DBStruct](h H, id string) (*DiscordWallet, error) {
 	const op errors.Op = "GetWalletByID"
-	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where id = ?", DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where id = ?", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
 	var w DiscordWallet
 
 	err := h.Get(&w, query, id)
@@ -34,7 +39,7 @@ func GetDiscordWalletByID[H DBStruct](h H, id string) (*DiscordWallet, error) {
 
 func GetDiscordWalletByAddress[H DBStruct](h H, id string) (*DiscordWallet, error) {
 	const op errors.Op = "GetWalletByAddress"
-	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where address = ?", DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where address = ?", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
 	var w DiscordWallet
 
 	err := h.Get(&w, query, id)
@@ -49,7 +54,7 @@ func GetDiscordWalletByAddress[H DBStruct](h H, id string) (*DiscordWallet, erro
 
 func GetAllVerifiedDiscordWallets[H DBStruct](h H) (*[]DiscordWallet, error) {
 	const op errors.Op = "GetAllVerifiedDiscordWallets"
-	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where verified = 1", DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
 	var list []DiscordWallet
 
 	err := h.Select(&list, query)
@@ -69,7 +74,7 @@ func GetAllVerifiedDiscordWallets[H DBStruct](h H) (*[]DiscordWallet, error) {
 
 func GetVerifiedDiscordWalletByUserID[H DBStruct](h H, userID string) (*DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1 limit 1", DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where user_id = ? and verified = 1 limit 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
 	var w DiscordWallet
 
 	err := h.Get(&w, query, userID)
@@ -84,10 +89,30 @@ func GetVerifiedDiscordWalletByUserID[H DBStruct](h H, userID string) (*DiscordW
 
 func GetVerifiedDiscordWalletsByUserID[H DBStruct](h H, userID string) (*[]DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	query := fmt.Sprintf("select id, user_id, label, address, verified, main from %s.wallet where user_id = ? and verified = 1", DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where user_id = ? and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
 	var list []DiscordWallet
 
 	err := h.Select(&list, query, userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("wallets not found"))
+	}
+
+	return &list, nil
+}
+
+func GetVerifiedDiscordWalletsByAdjacentAddress[H DBStruct](h H, address string) (*[]DiscordWallet, error) {
+	const op errors.Op = "GetVerifiedWalletByUserID"
+	query := fmt.Sprintf("select %s from %s.wallet where user_id in (select user_id from %s.wallet where address = ?) and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase(), DiscordBotDatabase())
+	var list []DiscordWallet
+
+	err := h.Select(&list, query, address)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "wallets not found")
