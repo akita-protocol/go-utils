@@ -107,6 +107,26 @@ func GetNFDsByAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD
 	return &list, nil
 }
 
+func GetNFDsByVerifiedAddress[H DBStruct](h H, address string, st TableKeySlice) (*[]NFD, error) {
+	const op errors.Op = "GetNFDsByVerifiedAddress"
+	query := fmt.Sprintf("select %s from %s.nfd_wallet left join %s.nfd on %s.nfd_wallet.id = %s.nfd.id where address = ? and deposit = 1 and verified = 1 order by last_changed_block desc", strings.Join(NFDTableKeysWithStrictTableReference(st), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
+	var list []NFD
+
+	err := h.Select(&list, query, address)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "nfd not found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	if !(len(list) > 0) {
+		return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, fmt.Errorf("nfd not found"))
+	}
+
+	return &list, nil
+}
+
 func GetNFDsByAddresses[H DBStruct](h H, st TableKeySlice, addresses ...string) (*[]NFD, error) {
 	const op errors.Op = "GetNFDsByAddresses"
 	query := fmt.Sprintf("select %s from %s.nfd_wallet left join %s.nfd on %s.nfd_wallet.id = %s.nfd.id where address in (?) and deposit = 1 order by verified desc, last_changed_block desc", strings.Join(NFDTableKeysWithStrictTableReference(st), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
