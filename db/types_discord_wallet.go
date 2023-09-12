@@ -109,7 +109,7 @@ func GetVerifiedDiscordWalletsByUserID[H DBStruct](h H, userID string) (*[]Disco
 
 func GetVerifiedDiscordWalletsByAdjacentAddress[H DBStruct](h H, address string) (*[]DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
-	query := fmt.Sprintf("select %s from %s.wallet where user_id in (select user_id from %s.wallet where address = ?) and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase(), DiscordBotDatabase())
+	query := fmt.Sprintf("select %s from %s.wallet where user_id in (select user_id from %s.wallet where address = ? and verified = 1) and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase(), DiscordBotDatabase())
 	var list []DiscordWallet
 
 	err := h.Select(&list, query, address)

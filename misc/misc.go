@@ -25,6 +25,14 @@ func UniqueSlice[T comparable](slice []T) []T {
 	return list
 }
 
+func FlattenSlice[T comparable](slice [][]T) []T {
+	flat := []T{}
+	for _, sub := range slice {
+		flat = append(flat, sub...)
+	}
+	return flat
+}
+
 func SliceOverlap[T comparable](a, b []T) bool {
 	for _, v := range a {
 		if InSlice(v, b) {
