@@ -87,6 +87,21 @@ func GetVerifiedDiscordWalletByUserID[H DBStruct](h H, userID string) (*DiscordW
 	return &w, nil
 }
 
+func GetVerifiedDiscordWalletsByDiscordID[H DBStruct](h H, did string) (*DiscordWallet, error) {
+	const op errors.Op = "GetVerifiedWalletByUserID"
+	query := fmt.Sprintf("select %s from %s.wallet where user_id = (select id from %s.user where discord_id = ?) and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase(), DiscordBotDatabase())
+	var w DiscordWallet
+
+	err := h.Get(&w, query, did)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallet Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &w, nil
+}
+
 func GetVerifiedDiscordWalletsByUserID[H DBStruct](h H, userID string) (*[]DiscordWallet, error) {
 	const op errors.Op = "GetVerifiedWalletByUserID"
 	query := fmt.Sprintf("select %s from %s.wallet where user_id = ? and verified = 1", strings.Join(DiscordWalletKeys(), ", "), DiscordBotDatabase())
