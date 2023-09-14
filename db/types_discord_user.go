@@ -41,3 +41,18 @@ func GetUserByDiscordID[H DBStruct](h H, did string) (*DiscordUser, error) {
 	}
 	return &u, nil
 }
+
+func GetUserByAddress[H DBStruct](h H, address string) (*DiscordUser, error) {
+	const op errors.Op = "GetUserByDiscordID"
+	query := fmt.Sprintf("select id, discord_id from %s.user where id = (select user_id from %s.wallet where address = ? and verified = 1)", DiscordBotDatabase(), DiscordBotDatabase())
+	var u DiscordUser
+
+	err := h.Get(&u, query, address)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "User Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &u, nil
+}
