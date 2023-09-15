@@ -43,7 +43,7 @@ func GetUserByDiscordID[H DBStruct](h H, did string) (*DiscordUser, error) {
 }
 
 func GetUserByAddress[H DBStruct](h H, address string) (*DiscordUser, error) {
-	const op errors.Op = "GetUserByDiscordID"
+	const op errors.Op = "GetUserByAddress"
 	query := fmt.Sprintf("select id, discord_id from %s.user where id = (select user_id from %s.wallet where address = ? and verified = 1)", DiscordBotDatabase(), DiscordBotDatabase())
 	var u DiscordUser
 
