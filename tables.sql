@@ -388,3 +388,32 @@ create table "shuffle_asset_property" (
     primary key ("id", "meta_key"),
     index ("meta_key")
 );
+
+
+insert into server_role (id, server_id, role_id, name) values ('rol_ck316s7skmp00gsinfdg', 904883897224032256, 1152707761390485545, 'Bronze');
+insert into server_role (id, server_id, role_id, name) values ('rol_ck316vfskmp00prfohb0', 904883897224032256, 1152708756438798456, 'Silver');
+insert into server_role (id, server_id, role_id, name) values ('rol_ck3172nskmp013ma2pi0', 904883897224032256, 1152709087168041010, 'Gold');
+insert into server_role (id, server_id, role_id, name) values ('rol_ck3174fskmp01ct5gr5g', 904883897224032256, 1152710715287818372, 'Platinum');
+insert into server_role (id, server_id, role_id, name) values ('rol_ck31767skmp01lr7tsv0', 904883897224032256, 1152710874046410874, 'Diamond');
+
+
+insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_ck316s7skmp00gsinfdg', 'grp_cipq34qs1s485123oebg',       999999,          100000000);
+insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_ck316vfskmp00prfohb0', 'grp_cipq34qs1s485123oebg',     99999999,         1000000000);
+insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_ck3172nskmp013ma2pi0', 'grp_cipq34qs1s485123oebg',    999999999,       100000000000);
+insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_ck3174fskmp01ct5gr5g', 'grp_cipq34qs1s485123oebg',  99999999999,      1000000000000);
+insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_ck31767skmp01lr7tsv0', 'grp_cipq34qs1s485123oebg', 999999999999, 999999999999999999);
+
+
+create table "lp" (
+    "id" bigint unsigned not null, -- the id of the lp token
+    "type" enum('tinyman_1', 'tinyman_1.1', 'tinyman_2', 'humble', 'pact'),
+    "asset_one" bigint unsigned not null, -- the id of the first asset
+    "asset_two" bigint unsigned not null, -- the id of the second asset
+    "address" varchar(58) not null, -- the address of pool
+
+    primary key ("id"),
+    index ("type"),
+    index ("asset_one"),
+    index ("asset_two"),
+    index ("address")
+)
