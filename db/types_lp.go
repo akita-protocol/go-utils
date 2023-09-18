@@ -20,11 +20,11 @@ const (
 )
 
 type LP struct {
-	ID       uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Type     LPType `structs:"type,omitempty" db:"type" json:"type,omitempty"`
-	AssetOne uint64 `structs:"asset_one,omitempty" db:"asset_one" json:"asset_one,omitempty"`
-	AssetTwo uint64 `structs:"asset_two,omitempty" db:"asset_two" json:"asset_two,omitempty"`
-	Address  string `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	ID       uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Type     LPType  `structs:"type,omitempty" db:"type" json:"type,omitempty"`
+	AssetOne *uint64 `structs:"asset_one,omitempty" db:"asset_one" json:"asset_one,omitempty"`
+	AssetTwo *uint64 `structs:"asset_two,omitempty" db:"asset_two" json:"asset_two,omitempty"`
+	Address  string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
 func LPTableKeys() []string {
