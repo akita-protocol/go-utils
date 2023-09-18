@@ -6,6 +6,8 @@ func getTable(obj interface{}) string {
 	switch obj.(type) {
 	case Asset, *Asset:
 		return fmt.Sprintf("%s.asset", NFDDatabase())
+	case LP, *LP:
+		return fmt.Sprintf("%s.lp", NFDDatabase())
 	case AssetProperty, *AssetProperty:
 		return fmt.Sprintf("%s.asset_property", NFDDatabase())
 	case NFD, *NFD:
