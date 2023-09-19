@@ -78,17 +78,17 @@ func GetLPs[H Handle](h H, ids []uint64) (*[]LP, error) {
 	return &list, nil
 }
 
-func GetLPByAsset[H Handle](h H, assetID uint64) (*LP, error) {
+func GetLPByAsset[H Handle](h H, assetID uint64) (*[]LP, error) {
 	const op errors.Op = "GetLPByAsset"
 	query := fmt.Sprintf("select %s from %s.lp where asset_one = ? or asset_two = ?", strings.Join(LPTableKeys(), ","), NFDDatabase())
 
-	var a LP
-	err := h.Get(&a, query, assetID, assetID)
+	var list []LP
+	err := h.Select(&list, query, assetID, assetID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "LP Not Found")
 		}
 		return nil, errors.E(pkg, op, err)
 	}
-	return &a, nil
+	return &list, nil
 }
