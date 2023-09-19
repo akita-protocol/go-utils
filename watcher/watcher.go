@@ -31,6 +31,7 @@ type AssetSubCategory string
 
 const (
 	AssetChanges AssetSubCategory = "AssetChanges"
+	LPAssets     AssetSubCategory = "LpAssets"
 )
 
 type AppSubCategory string
