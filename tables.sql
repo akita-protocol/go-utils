@@ -406,14 +406,16 @@ insert into role_req (role_id, group_id, greater_than, less_than) values ('rol_c
 
 create table "lp" (
     "id" bigint unsigned not null, -- the id of the lp token
-    "type" enum('tinyman_1', 'tinyman_1.1', 'tinyman_2', 'humble', 'pact'),
+    "type" enum('tinyman_1', 'tinyman_1.1', 'tinyman_2', 'humble', 'pact') not null,
     "asset_one" bigint unsigned not null, -- the id of the first asset
     "asset_two" bigint unsigned not null, -- the id of the second asset
     "address" varchar(58) not null, -- the address of pool
+    "issued" bigint unsigned not null, -- the amount of lp tokens issued
 
     primary key ("id"),
     index ("type"),
     index ("asset_one"),
     index ("asset_two"),
-    index ("address")
+    index ("address"),
+    index ("issued")
 )

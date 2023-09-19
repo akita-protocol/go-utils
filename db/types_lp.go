@@ -25,10 +25,11 @@ type LP struct {
 	AssetOne *uint64 `structs:"asset_one,omitempty" db:"asset_one" json:"asset_one,omitempty"`
 	AssetTwo *uint64 `structs:"asset_two,omitempty" db:"asset_two" json:"asset_two,omitempty"`
 	Address  string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	Issued   *uint64 `structs:"issued,omitempty" db:"issued" json:"issued,omitempty"`
 }
 
 func LPTableKeys() []string {
-	return []string{"id", "type", "asset_one", "asset_two", "address"}
+	return []string{"id", "type", "asset_one", "asset_two", "address", "issued"}
 }
 
 func GetLP[H Handle](h H, id uint64) (*LP, error) {
