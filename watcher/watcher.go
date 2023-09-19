@@ -22,6 +22,7 @@ const (
 	HoldingsWallets   AddressSubCategory = "HoldingsWallets"
 	CreatorWallets    AddressSubCategory = "CreatorWallets"
 	DiscordWallets    AddressSubCategory = "DiscordWallets"
+	LpWallets         AddressSubCategory = "LpWallets"
 	FoundationWallets AddressSubCategory = "FoundationWallets"
 	IncWallets        AddressSubCategory = "IncWallets"
 )
