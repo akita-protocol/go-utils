@@ -32,6 +32,22 @@ func LPTableKeys() []string {
 	return []string{"id", "type", "asset_one", "asset_two", "address", "issued"}
 }
 
+func GetAllLPs[H Handle](h H) (*[]LP, error) {
+	const op errors.Op = "GetAllLPs"
+	query := fmt.Sprintf("select %s from %s.lp", strings.Join(LPTableKeys(), ","), NFDDatabase())
+
+	var list []LP
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "LP Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &list, nil
+}
+
 func GetLP[H Handle](h H, id uint64) (*LP, error) {
 	const op errors.Op = "GetLP"
 	query := fmt.Sprintf("select %s from %s.lp where id = ?", strings.Join(LPTableKeys(), ","), NFDDatabase())
