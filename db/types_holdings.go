@@ -125,6 +125,24 @@ func GetHoldingsByAddressesIn[H Handle](h H, addresses []string) (*[]Holdings, e
 	return &list, nil
 }
 
+func GetHoldingsByAddressesInAndAsaIDIn[H Handle](h H, addresses []string, asaIDs []uint64) (*[]Holdings, error) {
+	const op errors.Op = "GetHoldingsByAddressesInAndAsaIDIn"
+	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
+	qMarks2 := []rune(strings.Repeat("?, ", len(asaIDs)))
+	query := fmt.Sprintf("select %v from %s.holdings where address in (%s) and asa_id in (%s)", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase(), string(qMarks[0:len(qMarks)-2]), string(qMarks2[0:len(qMarks2)-2]))
+	var list []Holdings
+
+	err := h.Select(&list, query, append(misc.ToInterfaceSlice(addresses), misc.ToInterfaceSlice(asaIDs)...)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &list, nil
+}
+
 func GetHoldingsByAddressAndAsaID[H Handle](h H, address string, asaID uint64) (*Holdings, error) {
 	const op errors.Op = "GetHoldingsByAddressAndAsaID"
 	query := fmt.Sprintf("select %s from %s.holdings where address = ? and asa_id = ?", strings.Join(HoldingsTableKeys(), ", "), HoldingsDatabase())
