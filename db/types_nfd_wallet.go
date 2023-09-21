@@ -83,8 +83,6 @@ func GetNFDVerifiedWallets[H DBStruct](h H, id uint64) (*[]NFDWallet, error) {
 	return &list, nil
 }
 
-// TODO: WHAT THE FUCK KYLE FIX THIS
-
 func GetNFDVerifiedWalletAddressesByAdjacentAddresses[H DBStruct](h H, addresses []string) (*[]string, error) {
 	const op errors.Op = "GetNFDVerifiedWalletAddressesByAdjacentAddresses"
 	query := fmt.Sprintf("select distinct(address) from %s.nfd_wallet where verified = 1 and id in (select id from %v.nfd_wallet where address in (%s))", NFDDatabase(), NFDDatabase(), strings.Repeat("?, ", len(addresses))[0:(len(addresses)*3)-2])
