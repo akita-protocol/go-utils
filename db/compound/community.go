@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"gitlab.algotoolchain.com/keelakay/utils/cp"
 	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
@@ -11,6 +12,7 @@ import (
 
 type Community struct {
 	*db.Community
+	CP          cp.Tier                 `json:"cp,omitempty"`
 	Tokens      []db.CommunityToken     `json:"tokens,omitempty"`
 	Associates  []db.CommunityAssociate `json:"associates,omitempty"`
 	Collections []Collection            `json:"collections,omitempty"`
@@ -95,6 +97,10 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		switch result := data.(type) {
 		case *db.Community:
 			community.Community = result
+			if result.AKTA != nil {
+				community.CP = cp.GetRanking(*result.AKTA)
+			}
+
 		case *[]db.CommunityToken:
 			community.Tokens = *result
 		case *[]Collection:
