@@ -33,6 +33,14 @@ func FlattenSlice[T comparable](slice [][]T) []T {
 	return flat
 }
 
+func FlattenMap[T comparable, U any](m map[T][]U) []U {
+	flat := []U{}
+	for _, sub := range m {
+		flat = append(flat, sub...)
+	}
+	return flat
+}
+
 func SliceOverlap[T comparable](a, b []T) bool {
 	for _, v := range a {
 		if InSlice(v, b) {
