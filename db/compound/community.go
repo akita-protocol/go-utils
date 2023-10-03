@@ -115,7 +115,6 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		switch result := data.(type) {
 		case *db.Community:
 			community.Community = result
-			community.Tabs = db.DefaultCommunityTabsList
 			if result.AKTA != nil {
 				community.CP = cp.GetRanking(*result.AKTA)
 			}
@@ -134,6 +133,15 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		default:
 			fmt.Println(op, "defaulted")
 			fmt.Println(result)
+		}
+	}
+
+	if len(community.Collections) > 0 {
+		community.Tabs = db.DefaultCommunityTabsList
+	} else {
+		community.Tabs = db.CommunityTabListWithoutCollections
+		if community.Settings.DefaultTab == "collections" {
+			community.Settings.DefaultTab = "about"
 		}
 	}
 

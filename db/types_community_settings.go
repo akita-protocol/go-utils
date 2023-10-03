@@ -16,6 +16,15 @@ var DefaultCommunityTabsList = []string{
 	"staking",
 	"subscriptions",
 }
+
+var CommunityTabListWithoutCollections = []string{
+	"activity",
+	"about",
+	"shuffles",
+	"staking",
+	"subscriptions",
+}
+
 var DefaultTab = "collections"
 
 type CommunitySettings struct {
