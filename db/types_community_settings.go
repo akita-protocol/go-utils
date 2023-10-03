@@ -12,17 +12,17 @@ var DefaultCommunityTabsList = []string{
 	"activity",
 	"about",
 	"collections",
-	"shuffles",
 	"staking",
 	"subscriptions",
+	"shuffles",
 }
 
 var CommunityTabListWithoutCollections = []string{
 	"activity",
 	"about",
-	"shuffles",
 	"staking",
 	"subscriptions",
+	"shuffles",
 }
 
 var DefaultTab = "collections"
