@@ -38,12 +38,12 @@ func GetCommunityTokens[H Handle](h H, id uint64) (*[]CommunityToken, error) {
 	return &assets, nil
 }
 
-func GetCommunityTokenByAsaID[H Handle](h H, asaID uint64) (*[]CommunityToken, error) {
+func GetCommunityTokenByAsaID[H Handle](h H, asaID uint64) (*CommunityToken, error) {
 	const op errors.Op = "GetCommunityTokenByAsaID"
 	query := fmt.Sprintf("select %s from %s.community_token where asset_id = ?", strings.Join(CommunityTokenTableKeys(), ","), NFDDatabase())
 
-	var assets []CommunityToken
-	err := h.Select(&assets, query, asaID)
+	var asset CommunityToken
+	err := h.Get(&asset, query, asaID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Collection Assets Not Found")
@@ -51,7 +51,7 @@ func GetCommunityTokenByAsaID[H Handle](h H, asaID uint64) (*[]CommunityToken, e
 		return nil, errors.E(pkg, op, err)
 	}
 
-	return &assets, nil
+	return &asset, nil
 }
 
 func DeleteCommunityTokens[H Handle](h H, id uint64) error {
