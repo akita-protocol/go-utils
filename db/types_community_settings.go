@@ -1,0 +1,60 @@
+package db
+
+import (
+	"database/sql"
+	"fmt"
+	"strings"
+
+	"gitlab.algotoolchain.com/keelakay/utils/errors"
+)
+
+var DefaultCommunityTabsList = []string{
+	"activity",
+	"about",
+	"collections",
+	"shuffles",
+	"staking",
+	"subscriptions",
+}
+var DefaultTab = "collections"
+
+type CommunitySettings struct {
+	ID         uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	DefaultTab string `structs:"default_tab,omitempty" db:"default_tab" json:"default_tab,omitempty"`
+}
+
+func CommunitySettingsTableKeys() []string {
+	return []string{"id", "default_tab"}
+}
+
+func GetCommunitySettings[H Handle](h H, id uint64) (*CommunitySettings, error) {
+	const op errors.Op = "GetCommunitySettings"
+	query := fmt.Sprintf("select %s from %s.community_settings where id = ?", strings.Join(CommunitySettingsTableKeys(), ","), NFDDatabase())
+
+	var settings CommunitySettings
+	err := h.Select(&settings, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Community Settings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &settings, nil
+}
+
+func GetAllCommunitySettings[H Handle](h H) (*CommunitySettings, error) {
+	const op errors.Op = "GetCommunitySettings"
+	query := fmt.Sprintf("select %s from %s.community_settings", strings.Join(CommunitySettingsTableKeys(), ","), NFDDatabase())
+
+	var settings CommunitySettings
+	err := h.Select(&settings, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Community Settings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &settings, nil
+}

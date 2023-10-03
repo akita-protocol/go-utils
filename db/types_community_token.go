@@ -10,37 +10,16 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
-// "tokens": [
-//     {
-//         "asset_id": 631899190,
-//         "distribution": {
-//             "interval": "weekly",
-//             "collections": [
-//                 {
-//                     "name": "Mostly Frens",
-//                     "amount": 2
-//                 },
-//                 {
-//                     "name": "M.N.G.O",
-//                     "amount": 6
-//                 },
-//                 {
-//                     "name": "Yieldlings",
-//                     "amount": 12
-//                 }
-//                 // ...
-//             ]
-//         }
-//     }
-// ],
-
 type CommunityToken struct {
-	ID      uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	AssetID uint64 `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id"`
+	ID        uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	AssetID   uint64  `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id"`
+	Image     *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
+	Integrity *string `structs:"integrity,omitempty" db:"integrity" json:"integrity,omitempty"`
+	Mime      *string `structs:"mime,omitempty" db:"mime" json:"mime,omitempty"`
 }
 
 func CommunityTokenTableKeys() []string {
-	return []string{"id", "asset_id"}
+	return []string{"id", "asset_id", "image", "integrity", "mime"}
 }
 
 func GetCommunityTokens[H Handle](h H, id uint64) (*[]CommunityToken, error) {

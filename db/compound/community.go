@@ -12,7 +12,10 @@ import (
 
 type Community struct {
 	*db.Community
-	CP          cp.Tier                 `json:"cp,omitempty"`
+	CP   cp.Tier  `json:"cp,omitempty"`
+	Tabs []string `json:"tabs,omitempty"`
+
+	Settings    *db.CommunitySettings   `json:"settings,omitempty"`
 	Tokens      []db.CommunityToken     `json:"tokens,omitempty"`
 	Associates  []db.CommunityAssociate `json:"associates,omitempty"`
 	Collections []Collection            `json:"collections,omitempty"`
@@ -24,6 +27,7 @@ type Community struct {
 type CommunityGetExclude string
 
 const (
+	CommunityGetExcludeSettings    CommunityGetExclude = "settings"
 	CommunityGetExcludeTokens      CommunityGetExclude = "tokens"
 	CommunityGetExcludeCollections CommunityGetExclude = "collections"
 	CommunityGetExcludeFaq         CommunityGetExclude = "faq"
@@ -34,7 +38,7 @@ const (
 func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude) (*Community, error) {
 	const op errors.Op = "GetCommunitiesByNFDID"
 	var community Community
-	buffer := (5 - len(exclude))
+	buffer := (6 - len(exclude))
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
@@ -46,6 +50,20 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		}
 		rChan <- comm
 	}()
+
+	if !misc.InSlice(CommunityGetExcludeSettings, exclude) {
+		go func() {
+			settings, err := db.GetCommunitySettings(h, nfdID)
+			if err != nil {
+				rChan <- &db.CommunitySettings{
+					ID:         nfdID,
+					DefaultTab: db.DefaultTab,
+				}
+				return
+			}
+			rChan <- settings
+		}()
+	}
 
 	if !misc.InSlice(CommunityGetExcludeTokens, exclude) {
 		go func() {
@@ -97,10 +115,12 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		switch result := data.(type) {
 		case *db.Community:
 			community.Community = result
+			community.Tabs = db.DefaultCommunityTabsList
 			if result.AKTA != nil {
 				community.CP = cp.GetRanking(*result.AKTA)
 			}
-
+		case *db.CommunitySettings:
+			community.Settings = result
 		case *[]db.CommunityToken:
 			community.Tokens = *result
 		case *[]Collection:

@@ -59,12 +59,13 @@ CREATE TABLE "community_json" (
     PRIMARY KEY ("id")
 );
 
-type CommunityAssociate struct {
-	Address   string  `structs:"address,omitempty" db:"address" json:"address,omitempty"`
-	Role      string  `structs:"role,omitempty" db:"role" json:"role,omitempty"`
-	Confirmed *bool   `structs:"confirmed,omitempty" db:"confirmed" json:"confirmed,omitempty"`
-	Txn       *string `structs:"txn,omitempty" db:"txn" json:"txn,omitempty"`
-}
+create table "community_settings" (
+    "id" bigint unsigned not null,
+    -- "theme"
+    "default_tab" varchar(32) not null, 
+
+    primary key ("id")
+);
 
 create table "community_associate" (
     "id" bigint unsigned not null,
@@ -77,12 +78,15 @@ create table "community_associate" (
     index ("confirmed")
 );
 
-
 create table "community_token" (
     "id" bigint unsigned not null,
-    "asset_id" bigint unsigned not null
+    "asset_id" bigint unsigned not null,
+    "image" varchar(256) default null,
+    "integrity" varchar(256) default null,
+    "mime" varchar(32) default null,
 
-    primary key ("id", "asset_id")
+    primary key ("id", "asset_id"),
+    index ("image")
 );
 
 create table "community_faq" (
@@ -114,6 +118,13 @@ create table "collection" (
     index ("nfd_id"),
     unique index ("nfd_id", "name")
 );
+
+create table "collection_settings" (
+    "id" varchar(24) not null,
+    "hide_blanks" boolean not null default 0,
+
+    primary key ("id")
+)
 
 create table "property" (
     "id" varchar(24) not null,
