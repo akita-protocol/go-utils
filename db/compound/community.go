@@ -29,6 +29,7 @@ type CommunityGetExclude string
 const (
 	CommunityGetExcludeSettings    CommunityGetExclude = "settings"
 	CommunityGetExcludeTokens      CommunityGetExclude = "tokens"
+	CommunityGetExcludeAssociates  CommunityGetExclude = "associates"
 	CommunityGetExcludeCollections CommunityGetExclude = "collections"
 	CommunityGetExcludeFaq         CommunityGetExclude = "faq"
 	// CommunityGetExcludeStaking     CommunityGetExclude = "staking"
@@ -38,7 +39,7 @@ const (
 func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude) (*Community, error) {
 	const op errors.Op = "GetCommunitiesByNFDID"
 	var community Community
-	buffer := (6 - len(exclude))
+	buffer := (7 - len(exclude))
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
@@ -54,7 +55,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeSettings, exclude) {
 		go func() {
 			settings, err := db.GetCommunitySettings(h, nfdID)
-			if err != nil {
+			if err != nil && !db.ErrNoRows(err) {
 				rChan <- &db.CommunitySettings{
 					ID:         nfdID,
 					DefaultTab: db.DefaultTab,
@@ -68,7 +69,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeTokens, exclude) {
 		go func() {
 			tokens, err := db.GetCommunityTokens(h, nfdID)
-			if err != nil {
+			if err != nil && !db.ErrNoRows(err) {
 				rChan <- err
 				return
 			}
@@ -76,10 +77,21 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		}()
 	}
 
+	if !misc.InSlice(CommunityGetExcludeAssociates, exclude) {
+		go func() {
+			associates, err := db.GetCommunityAssociates(h, nfdID)
+			if err != nil && !db.ErrNoRows(err) {
+				rChan <- err
+				return
+			}
+			rChan <- associates
+		}()
+	}
+
 	if !misc.InSlice(CommunityGetExcludeCollections, exclude) {
 		go func() {
 			collections, err := GetCollectionsByNFDID(h, nfdID)
-			if err != nil {
+			if err != nil && !db.ErrNoRows(err) {
 				rChan <- err
 				return
 			}
@@ -101,7 +113,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeExtras, exclude) {
 		go func() {
 			extras, err := db.GetCommunityExtras(h, nfdID)
-			if err != nil {
+			if err != nil && !db.ErrNoRows(err) {
 				rChan <- err
 				return
 			}
@@ -122,6 +134,8 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 			community.Settings = result
 		case *[]db.CommunityToken:
 			community.Tokens = *result
+		case *[]db.CommunityAssociate:
+			community.Associates = *result
 		case *[]Collection:
 			community.Collections = *result
 		case *[]db.CommunityFaq:

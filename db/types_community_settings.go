@@ -41,7 +41,7 @@ func GetCommunitySettings[H Handle](h H, id uint64) (*CommunitySettings, error) 
 	query := fmt.Sprintf("select %s from %s.community_settings where id = ?", strings.Join(CommunitySettingsTableKeys(), ","), NFDDatabase())
 
 	var settings CommunitySettings
-	err := h.Select(&settings, query, id)
+	err := h.Get(&settings, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Community Settings Not Found")

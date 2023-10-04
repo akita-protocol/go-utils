@@ -14,8 +14,8 @@ type CommunityToken struct {
 	ID        uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	AssetID   uint64  `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id"`
 	Image     *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
-	Integrity *string `structs:"integrity,omitempty" db:"integrity" json:"integrity,omitempty"`
-	Mime      *string `structs:"mime,omitempty" db:"mime" json:"mime,omitempty"`
+	Integrity *string `structs:"integrity,omitempty" db:"integrity" json:"image_integrity,omitempty"`
+	Mime      *string `structs:"mime,omitempty" db:"mime" json:"image_mimetype,omitempty"`
 }
 
 func CommunityTokenTableKeys() []string {
