@@ -32,6 +32,22 @@ func CommunityTableKeys() []string {
 	return []string{"id", "version", "akta", "tab"}
 }
 
+func IsCommunity[H Handle](h H, id uint64) (bool, error) {
+	const op errors.Op = "IsCommunity"
+	query := fmt.Sprintf("select exists(select id from %v.community where id = ?)", NFDDatabase())
+
+	var exists bool
+	err := h.Get(&exists, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, errors.E(pkg, op, err)
+	}
+
+	return exists, nil
+}
+
 func GetCommunities[H Handle](h H, start, limit uint64) (*[]Community, error) {
 	const op errors.Op = "GetCommunities"
 	query := fmt.Sprintf("select %v from %v.community order by akta desc limit ?, ?", strings.Join(CommunityTableKeys(), ","), NFDDatabase())
