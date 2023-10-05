@@ -14,12 +14,12 @@ type CommunityToken struct {
 	ID        uint64  `structs:"id,omitempty" db:"id" json:"id,omitempty"`
 	AssetID   uint64  `structs:"asset_id,omitempty" db:"asset_id" json:"asset_id"`
 	Image     *string `structs:"image,omitempty" db:"image" json:"image,omitempty"`
-	Integrity *string `structs:"integrity,omitempty" db:"integrity" json:"image_integrity,omitempty"`
-	Mime      *string `structs:"mime,omitempty" db:"mime" json:"image_mimetype,omitempty"`
+	Integrity *string `structs:"image_integrity,omitempty" db:"image_integrity" json:"image_integrity,omitempty"`
+	Mime      *string `structs:"image_mimetype,omitempty" db:"image_mimetype" json:"image_mimetype,omitempty"`
 }
 
 func CommunityTokenTableKeys() []string {
-	return []string{"id", "asset_id", "image", "integrity", "mime"}
+	return []string{"id", "asset_id", "image", "image_integrity", "image_mimetype"}
 }
 
 func GetCommunityTokens[H Handle](h H, id uint64) (*[]CommunityToken, error) {
