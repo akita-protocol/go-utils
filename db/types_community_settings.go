@@ -8,6 +8,12 @@ import (
 	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
+var DefaultUserTabList = []string{
+	"activity",
+	"gallery",
+	"links",
+}
+
 var DefaultCommunityTabsList = []string{
 	"activity",
 	"about",
@@ -25,7 +31,8 @@ var CommunityTabListWithoutCollections = []string{
 	"shuffles",
 }
 
-var DefaultTab = "collections"
+var DefaultCommunityTab = "collections"
+var DefaultUserTab = "gallery"
 
 type CommunitySettings struct {
 	ID         uint64 `structs:"id,omitempty" db:"id" json:"id,omitempty"`

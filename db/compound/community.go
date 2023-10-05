@@ -58,7 +58,7 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 			if err != nil && !db.ErrNoRows(err) {
 				rChan <- &db.CommunitySettings{
 					ID:         nfdID,
-					DefaultTab: db.DefaultTab,
+					DefaultTab: db.DefaultCommunityTab,
 				}
 				return
 			}
