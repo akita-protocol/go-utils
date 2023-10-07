@@ -121,9 +121,10 @@ create table "collection" (
 
 create table "collection_settings" (
     "id" varchar(24) not null,
-    "hide_blanks" boolean not null default 0,
+    "hide_blanks" varchar(256) default null,
 
-    primary key ("id")
+    primary key ("id"),
+    index ("hide_blanks")
 )
 
 create table "property" (

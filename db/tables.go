@@ -20,6 +20,8 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.community", NFDDatabase())
 	case CommunityJson, *CommunityJson:
 		return fmt.Sprintf("%s.community_json", NFDDatabase())
+	case CommunitySettings, *CommunitySettings:
+		return fmt.Sprintf("%s.community_settings", NFDDatabase())
 	case CommunityToken, *CommunityToken:
 		return fmt.Sprintf("%s.community_token", NFDDatabase())
 	case CommunityAssociate, *CommunityAssociate:
@@ -34,6 +36,8 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.community_extras", NFDDatabase())
 	case Collection, *Collection:
 		return fmt.Sprintf("%s.collection", NFDDatabase())
+	case CollectionSettings, *CollectionSettings:
+		return fmt.Sprintf("%s.collection_settings", NFDDatabase())
 	case CollectionPrefix, *CollectionPrefix:
 		return fmt.Sprintf("%s.collection_prefix", NFDDatabase())
 	case CollectionAddress, *CollectionAddress:

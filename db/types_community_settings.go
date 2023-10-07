@@ -60,7 +60,7 @@ func GetCommunitySettings[H Handle](h H, id uint64) (*CommunitySettings, error) 
 }
 
 func GetAllCommunitySettings[H Handle](h H) (*CommunitySettings, error) {
-	const op errors.Op = "GetCommunitySettings"
+	const op errors.Op = "GetAllCommunitySettings"
 	query := fmt.Sprintf("select %s from %s.community_settings", strings.Join(CommunitySettingsTableKeys(), ","), NFDDatabase())
 
 	var settings CommunitySettings

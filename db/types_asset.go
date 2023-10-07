@@ -170,17 +170,87 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 	return &list, nil
 }
 
-// func GetAssetsByCollectionIDAndUnitPrefix[H Handle](h H, collectionID string, prefix string, st TableKeySlice) ([]*Asset, error) {
-// 	const op errors.Op = "GetAssetsByCollectionID"
-// 	query := fmt.Sprintf("select %s from %s.asset where collection_id = ? and unit_name like ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
+func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []string, include []uint64, exclude []uint64, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanks string, st TableKeySlice) (*[]Asset, error) {
+	const op errors.Op = "GetAssetsByDetailsPaginated"
+	data := []interface{}{}
+	query := fmt.Sprintf(
+		"select %s from %s.asset where",
+		strings.Join(AssetTableKeys(st), ","),
+		NFDDatabase(),
+	)
 
-// 	var list []*Asset
-// 	err := h.Select(&list, query, collectionID, fmt.Sprintf("%v%%", prefix))
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
-// 		}
-// 		return nil, errors.E(pkg, op, err)
-// 	}
-// 	return list, nil
-// }
+	if !(len(creators) > 0) {
+		return nil, errors.E(pkg, op, errors.Database, fmt.Errorf("no creators provided"))
+	}
+
+	data = append(data, misc.ToInterfaceSlice(creators)...)
+	// data = append(data, fmt.Sprintf("%v%%", prefix))
+	creatorsQMarks := []rune(strings.Repeat("?, ", len(creators)))
+	query += fmt.Sprintf(" creator in (%s)", string(creatorsQMarks[0:len(creatorsQMarks)-2]))
+
+	if len(prefixes) > 0 || len(include) > 0 {
+
+		query += " and ("
+
+		if len(prefixes) > 0 {
+			wildcardPrefixes := []string{}
+			for i, prefix := range prefixes {
+				wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
+				if i == 0 {
+					query += " unit_name like ?"
+				} else {
+					query += " or unit_name like ?"
+				}
+			}
+			data = append(data, misc.ToInterfaceSlice(wildcardPrefixes)...)
+		}
+
+		if len(include) > 0 {
+			data = append(data, misc.ToInterfaceSlice(include)...)
+			includeQMarks := []rune(strings.Repeat("?, ", len(include)))
+			query += fmt.Sprintf(" or id in(%s)", string(includeQMarks[0:len(includeQMarks)-2]))
+		}
+
+		query += ")"
+	}
+
+	if len(exclude) > 0 {
+		data = append(data, misc.ToInterfaceSlice(exclude)...)
+		excludeQMarks := []rune(strings.Repeat("?, ", len(exclude)))
+		query += fmt.Sprintf(" and id not in(%s)", string(excludeQMarks[0:len(excludeQMarks)-2]))
+	}
+
+	if len(propFilters) > 0 {
+		for k, v := range propFilters {
+			data = append(data, k)
+			query += fmt.Sprintf(" and id in (select id from %s.asset_property where meta_key = ? and (", NFDDatabase())
+			data = append(data, misc.ToInterfaceSlice(v)...)
+			for i := range v {
+				if i == 0 {
+					query += " meta_value = ?"
+				} else {
+					query += " or meta_value = ?"
+				}
+			}
+			query += "))"
+		}
+	}
+
+	if hideBlanks != "" {
+		data = append(data, hideBlanks)
+		query += " and image_url != ?"
+	}
+
+	data = append(data, []interface{}{start, limit, order}...)
+	query += "limit ?, ? order by id ?"
+
+	var list []Asset
+	err := h.Select(&list, query, data...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Asset Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &list, nil
+}

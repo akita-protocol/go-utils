@@ -451,6 +451,92 @@ func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*
 	return assets, nil
 }
 
+func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID string, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
+	const op errors.Op = "GetCollectionAssetsPaginated"
+
+	buffer := 3
+
+	if hideBlanksOverride {
+		buffer--
+	}
+
+	rChan := make(chan interface{}, buffer)
+	defer close(rChan)
+
+	go func() {
+		wallets, err := db.GetNFDVerifiedWallets(h, nfdID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- wallets
+	}()
+
+	go func() {
+		col, err := GetCollectionCriteria(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- col
+	}()
+
+	if !hideBlanksOverride {
+		go func() {
+			settings, err := db.GetCollectionSettings(h, collectionID)
+			if err != nil && !db.ErrNoRows(err) {
+				rChan <- err
+				return
+			}
+			rChan <- settings
+		}()
+	}
+
+	creators := []string{}
+	var criteria *Collection
+	hideBlanks := ""
+	var errs []error
+
+	for i := 0; i < buffer; i++ {
+		data := <-rChan
+		switch result := data.(type) {
+		case *[]db.NFDWallet:
+			for i := range *result {
+				wallet := (*result)[i]
+				creators = append(creators, wallet.Address)
+			}
+		case *Collection:
+			criteria = result
+		case *db.CollectionSettings:
+			if result.HideBlanks != nil {
+				hideBlanks = *result.HideBlanks
+			}
+		case error:
+			errs = append(errs, result)
+		}
+	}
+
+	if len(errs) > 0 {
+		msg := ""
+		for _, err := range errs {
+			msg += err.Error() + "\n"
+		}
+
+		return nil, errors.E(op, fmt.Errorf(msg))
+	}
+
+	if len(criteria.Addresses) > 0 {
+		creators = criteria.Addresses
+	}
+
+	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, propFilters, hideBlanks, db.Tiny)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	return assets, nil
+}
+
 func GetCollectionAssetsByNFDName[H db.Handle](h H, name string, collectionID string) (*[]db.Asset, error) {
 	const op errors.Op = "GetCollectionAssetsByNFDName"
 
