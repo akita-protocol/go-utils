@@ -508,7 +508,7 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID s
 		case *Collection:
 			criteria = result
 		case *db.CollectionSettings:
-			if result.HideBlanks != nil {
+			if result != nil && result.HideBlanks != nil {
 				hideBlanks = *result.HideBlanks
 			}
 		case error:
