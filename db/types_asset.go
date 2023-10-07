@@ -134,7 +134,7 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 			for i, prefix := range prefixes {
 				wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
 				if i == 0 {
-					query += " unit_name like ?"
+					query += "unit_name like ?"
 				} else {
 					query += " or unit_name like ?"
 				}
@@ -175,7 +175,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 	data := []interface{}{}
 	query := fmt.Sprintf(
 		"select %s from %s.asset where",
-		strings.Join(AssetTableKeys(st), ","),
+		strings.Join(AssetTableKeys(st), ", "),
 		NFDDatabase(),
 	)
 
@@ -197,7 +197,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 			for i, prefix := range prefixes {
 				wildcardPrefixes = append(wildcardPrefixes, fmt.Sprintf("%v%%", prefix))
 				if i == 0 {
-					query += " unit_name like ?"
+					query += "unit_name like ?"
 				} else {
 					query += " or unit_name like ?"
 				}
@@ -244,6 +244,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 	data = append(data, []interface{}{start, limit}...)
 	query += fmt.Sprintf(" order by id %v limit ?, ?", order)
 
+	fmt.Println(data)
 	fmt.Println(query)
 
 	var list []Asset
