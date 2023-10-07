@@ -241,8 +241,8 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 		query += " and image_url != ?"
 	}
 
-	data = append(data, []interface{}{order, start, limit}...)
-	query += " order by id ? limit ?, ?"
+	data = append(data, []interface{}{start, limit}...)
+	query += fmt.Sprintf(" order by id %v limit ?, ?", order)
 
 	var list []Asset
 	err := h.Select(&list, query, data...)
