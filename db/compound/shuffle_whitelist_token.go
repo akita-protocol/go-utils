@@ -21,7 +21,7 @@ func GetShuffleWhitelistTokens[H db.Handle](h H, shuffleID string) (*[]ShuffleWh
 	var swts []ShuffleWhitelistToken
 	for i := range *tokens {
 		swt := (*tokens)[i]
-		asset, err := db.GetAsset(h, swt.AssetID, db.Tiny)
+		asset, err := db.GetAsset(h, swt.AssetID, db.TKSTiny)
 		if err != nil {
 			return nil, errors.E(pkg, op, err)
 		}

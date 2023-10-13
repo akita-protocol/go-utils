@@ -144,7 +144,7 @@ func GetShuffles[H db.Handle](h H, nfdID uint64, exclude ...ShuffleGetExclude) (
 
 		if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 			go func() {
-				nfd, err := GetNFDByAddress(h, shuf.Creator, db.Tiny)
+				nfd, err := GetNFDByAddress(h, shuf.Creator, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -300,7 +300,7 @@ func GetShuffle[H db.Handle](h H, shuffleID string, exclude ...ShuffleGetExclude
 
 	if !misc.InSlice(ShuffleGetExcludeCreator, exclude) {
 		go func() {
-			nfd, err := GetNFDByAddress(h, shuf.Creator, db.Tiny)
+			nfd, err := GetNFDByAddress(h, shuf.Creator, db.TKSTiny)
 			if err != nil && !db.ErrNoRows(err) {
 				rChan <- err
 				return

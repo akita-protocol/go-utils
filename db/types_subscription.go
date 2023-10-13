@@ -27,9 +27,9 @@ type Subscription struct {
 }
 
 var SubscriptionTableKeySlices = map[TableKeySlice][]string{
-	Tiny:  {"id", "box_index", "intervl", "subscriber", "recipient", "asa", "amount"},
-	Small: {"id", "start_date", "box_index", "intervl", "last_payment", "subscriber", "recipient", "asa", "amount", "pass_count", "lpa", "current_as_of_block"},
-	Full:  {"id", "start_date", "box_index", "intervl", "last_payment", "subscriber", "recipient", "asa", "amount", "pass_count", "lpa", "current_as_of_block", "deleted", "deleted_date"},
+	TKSTiny:  {"id", "box_index", "intervl", "subscriber", "recipient", "asa", "amount"},
+	TKSSmall: {"id", "start_date", "box_index", "intervl", "last_payment", "subscriber", "recipient", "asa", "amount", "pass_count", "lpa", "current_as_of_block"},
+	TKSFull:  {"id", "start_date", "box_index", "intervl", "last_payment", "subscriber", "recipient", "asa", "amount", "pass_count", "lpa", "current_as_of_block", "deleted", "deleted_date"},
 }
 
 func SubscriptionTableKeys(st TableKeySlice) []string {

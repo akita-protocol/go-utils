@@ -61,9 +61,9 @@ func (p *StakingPool) GetStakingPoolStatus() string {
 }
 
 var stakingPoolTableKeySlices = map[TableKeySlice][]string{
-	Tiny:  {"id", "status", "title", "avatar"},
-	Small: {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date"},
-	Full:  {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date", "creator", "created_date", "address"},
+	TKSTiny:  {"id", "status", "title", "avatar"},
+	TKSSmall: {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date"},
+	TKSFull:  {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date", "creator", "created_date", "address"},
 }
 
 func StakingPoolTableKeys(st TableKeySlice) []string {

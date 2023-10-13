@@ -58,7 +58,7 @@ func GetStakingPool[H db.Handle](h H, id string, exclude ...PoolGetExclude) (*St
 	var p StakingPool
 
 	go func() {
-		pool, err := db.GetStakingPool(h, id, db.Full)
+		pool, err := db.GetStakingPool(h, id, db.TKSFull)
 		if err != nil {
 			rChan <- err
 			return
@@ -93,7 +93,7 @@ func GetStakingPool[H db.Handle](h H, id string, exclude ...PoolGetExclude) (*St
 					return
 				}
 
-				pools, err := db.GetStakingPoolsIn(h, *poolIDs, db.Tiny)
+				pools, err := db.GetStakingPoolsIn(h, *poolIDs, db.TKSTiny)
 				if err != nil {
 					rChan <- err
 					return
@@ -161,7 +161,7 @@ func GetStakingPool[H db.Handle](h H, id string, exclude ...PoolGetExclude) (*St
 			p.Pool = result
 
 			// replace
-			usr, err := db.GetStakingUser(h, p.Pool.Creator, db.Tiny)
+			usr, err := db.GetStakingUser(h, p.Pool.Creator, db.TKSTiny)
 			if err != nil {
 				errs = append(errs, err)
 				continue

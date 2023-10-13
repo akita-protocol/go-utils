@@ -37,9 +37,9 @@ type NFD struct {
 }
 
 var NFDTableKeySlices = map[TableKeySlice][]string{
-	Tiny:  {"id", "name", "vault_locked", "username", "bio", "avatar", "avatar_id", "banner", "banner_id"},
-	Small: {"id", "name", "vault_locked", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain"},
-	Full:  {"id", "state", "current_as_of_block", "asa_id", "name", "vault_locked", "version", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain", "last_changed_block", "created_block", "purchased_block"},
+	TKSTiny:  {"id", "name", "vault_locked", "username", "bio", "avatar", "avatar_id", "banner", "banner_id"},
+	TKSSmall: {"id", "name", "vault_locked", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain"},
+	TKSFull:  {"id", "state", "current_as_of_block", "asa_id", "name", "vault_locked", "version", "username", "bio", "email", "avatar", "avatar_id", "banner", "banner_id", "discord_id", "twitter_id", "telegram_id", "github_id", "domain", "last_changed_block", "created_block", "purchased_block"},
 }
 
 func NFDTableKeys(st TableKeySlice) []string {

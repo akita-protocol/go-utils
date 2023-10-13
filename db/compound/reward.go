@@ -34,7 +34,7 @@ func GetRewardsByAddress[H db.Handle](h H, address string) (*[]Reward, error) {
 	const op errors.Op = "GetRewardByAddress"
 	rewards := []Reward{}
 
-	user, err := db.GetStakingUserByAddress(h, address, db.Tiny)
+	user, err := db.GetStakingUserByAddress(h, address, db.TKSTiny)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}

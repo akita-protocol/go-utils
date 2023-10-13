@@ -49,7 +49,7 @@ func GetNFD[H db.Handle](h H, nfdID uint64, st db.TableKeySlice, exclude ...NFDG
 	if !misc.InSlice(NFDGetExcludeBanner, exclude) {
 		if nfd.BannerID != nil {
 			go func() {
-				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.Tiny)
+				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -74,7 +74,7 @@ func GetNFD[H db.Handle](h H, nfdID uint64, st db.TableKeySlice, exclude ...NFDG
 	if !misc.InSlice(NFDGetExcludeAvatar, exclude) {
 		if nfd.AvatarID != nil {
 			go func() {
-				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.Tiny)
+				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -166,7 +166,7 @@ func GetNFDByAddress[H db.Handle](h H, address string, st db.TableKeySlice, excl
 	if !misc.InSlice(NFDGetExcludeBanner, exclude) {
 		if nfd.BannerID != nil {
 			go func() {
-				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.Tiny)
+				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -191,7 +191,7 @@ func GetNFDByAddress[H db.Handle](h H, address string, st db.TableKeySlice, excl
 	if !misc.InSlice(NFDGetExcludeAvatar, exclude) {
 		if nfd.AvatarID != nil {
 			go func() {
-				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.Tiny)
+				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -281,7 +281,7 @@ func GetNFDByName[H db.Handle](h H, name string, st db.TableKeySlice, exclude ..
 	if !misc.InSlice(NFDGetExcludeBanner, exclude) {
 		if nfd.BannerID != nil {
 			go func() {
-				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.Tiny)
+				bannerAsset, err := db.GetAsset(h, *nfd.BannerID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return
@@ -306,7 +306,7 @@ func GetNFDByName[H db.Handle](h H, name string, st db.TableKeySlice, exclude ..
 	if !misc.InSlice(NFDGetExcludeAvatar, exclude) {
 		if nfd.AvatarID != nil {
 			go func() {
-				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.Tiny)
+				avatarAsset, err := db.GetAsset(h, *nfd.AvatarID, db.TKSTiny)
 				if err != nil && !db.ErrNoRows(err) {
 					rChan <- err
 					return

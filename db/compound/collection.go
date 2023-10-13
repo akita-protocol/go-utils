@@ -79,7 +79,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeBanner, exclude) {
 			if col.Banner != nil {
 				go func() {
-					bannerAsset, err := db.GetAsset(h, *col.Banner, db.Tiny)
+					bannerAsset, err := db.GetAsset(h, *col.Banner, db.TKSTiny)
 					if err != nil && !db.ErrNoRows(err) {
 						rChan <- err
 						return
@@ -104,7 +104,7 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 		if !misc.InSlice(CollectionGetExcludeAvatar, exclude) {
 			if col.Avatar != nil {
 				go func() {
-					avatarAsset, err := db.GetAsset(h, *col.Avatar, db.Tiny)
+					avatarAsset, err := db.GetAsset(h, *col.Avatar, db.TKSTiny)
 					if err != nil && !db.ErrNoRows(err) {
 						rChan <- err
 						return
@@ -419,12 +419,44 @@ func GetCollectionAssets[H db.Handle](h H, collectionID string) (*[]db.Asset, er
 		creators = ncreators
 	}
 
-	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
+	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.TKSTiny)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}
 
 	return assets, nil
+}
+
+func GetCollectionAssetIDs[H db.Handle](h H, collectionID string) (*[]uint64, error) {
+	const op errors.Op = "GetCollectionAssets"
+
+	criteria, creators, err := GetCollectionCriteria(h, collectionID)
+	if err != nil && !db.ErrNoRows(err) {
+		return nil, errors.E(op, err)
+	}
+
+	if len(criteria.Addresses) > 0 {
+		ncreators := []string{}
+		for _, address := range criteria.Addresses {
+			if misc.InSlice(address, creators) {
+				ncreators = append(ncreators, address)
+			}
+		}
+		creators = ncreators
+	}
+
+	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.TKSID)
+	if err != nil {
+		return nil, errors.E(op, err)
+	}
+
+	ids := []uint64{}
+	for i := range *assets {
+		asset := (*assets)[i]
+		ids = append(ids, asset.ID)
+	}
+
+	return &ids, nil
 }
 
 func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
@@ -500,7 +532,7 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start u
 		creators = ncreators
 	}
 
-	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, propFilters, hideBlanks, db.Tiny)
+	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, propFilters, hideBlanks, db.TKSTiny)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}

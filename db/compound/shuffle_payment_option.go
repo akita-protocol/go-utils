@@ -21,7 +21,7 @@ func GetShufflePaymentOptions[H db.Handle](h H, shuffleID string) (*[]ShufflePay
 	var spos []ShufflePaymentOption
 	for i := range *paymentOptions {
 		spo := (*paymentOptions)[i]
-		asset, err := db.GetAsset(h, *spo.AssetID, db.Tiny)
+		asset, err := db.GetAsset(h, *spo.AssetID, db.TKSTiny)
 		if err != nil {
 			return nil, errors.E(pkg, op, err)
 		}

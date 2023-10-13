@@ -34,9 +34,9 @@ type StakingUser struct {
 }
 
 var stakingUserTableKeySlices = map[TableKeySlice][]string{
-	Tiny:  {"id", "address", "type", "name"},
-	Small: {"id", "address", "type", "name", "about", "avatar", "avatar_id", "banner", "banner_id"},
-	Full:  {"id", "address", "type", "name", "about", "avatar", "avatar_id", "banner", "banner_id", "email", "discord_id", "twitter_id", "telegram_id", "domain"},
+	TKSTiny:  {"id", "address", "type", "name"},
+	TKSSmall: {"id", "address", "type", "name", "about", "avatar", "avatar_id", "banner", "banner_id"},
+	TKSFull:  {"id", "address", "type", "name", "about", "avatar", "avatar_id", "banner", "banner_id", "email", "discord_id", "twitter_id", "telegram_id", "domain"},
 }
 
 func StakingUserTableKeys(st TableKeySlice) []string {
