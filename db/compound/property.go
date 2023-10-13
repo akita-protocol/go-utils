@@ -210,3 +210,68 @@ func GetPropertiesByTraits[H db.Handle](h H, collectionID string, traits map[str
 
 	return &properties, nil
 }
+
+func GetCumulativeProperties[H db.Handle](h H, collectionID string, exclude ...PropertyGetExclude) (*[]Property, error) {
+
+	ids, err := GetCollectionAssetIDs(h, collectionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if ids == nil || (ids != nil && !(len(*ids) > 0)) {
+		return nil, errors.E("no assets found in collection")
+	}
+
+	traits, err := db.GetAssetPropertiesInAsMap(h, *ids)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(traits) == 0 {
+		return nil, errors.E("no traits found")
+	}
+
+	declaredProperties, err := GetProperties(h, collectionID)
+	if err != nil {
+		return nil, err
+	}
+	// has declared properties
+	hdp := declaredProperties != nil && len(*declaredProperties) > 0
+
+	interumProperties := []Property{}
+
+	for key, values := range traits {
+
+		prop := Property{
+			Property: &db.Property{
+				Name: key,
+			},
+			Values: []PropertyValue{},
+		}
+
+		for _, value := range values {
+			if hdp {
+				for _, declaredProperty := range *declaredProperties {
+					if declaredProperty.Name == key {
+						for _, declaredValue := range declaredProperty.Values {
+							if declaredValue.Name == value {
+								prop.Values = append(prop.Values, declaredValue)
+							}
+						}
+					}
+				}
+			} else {
+				prop.Values = append(prop.Values, PropertyValue{
+					PropertyValue: &db.PropertyValue{
+						Name: value,
+					},
+				})
+			}
+
+		}
+
+		interumProperties = append(interumProperties, prop)
+	}
+
+	return &interumProperties, nil
+}

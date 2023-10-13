@@ -49,6 +49,38 @@ func GetAssetProperties[H Handle](h H, id uint64) (*[]AssetProperty, error) {
 	return &a, nil
 }
 
+func GetAssetPropertiesIn[H Handle](h H, ids []uint64) (*[]AssetProperty, error) {
+	const op errors.Op = "GetAssetPropertiesIn"
+	query := fmt.Sprintf("select %s from %s.asset_property where id in (%s)", strings.Join(AssetPropertyTableKeys(), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
+
+	var a []AssetProperty
+	err := h.Select(&a, query, misc.ToInterfaceSlice(ids)...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "AssetProperty Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return &a, nil
+}
+
+func GetAssetPropertiesInAsMap[H Handle](h H, ids []uint64) (map[string][]string, error) {
+	const op errors.Op = "GetAssetPropertiesInAsMap"
+
+	a, err := GetAssetPropertiesIn(h, ids)
+	if err != nil {
+		return nil, errors.E(pkg, op, err)
+	}
+
+	m := make(map[string][]string)
+	for i := range *a {
+		v := (*a)[i]
+		m[v.MetaKey] = append(m[v.MetaKey], v.MetaValue)
+	}
+
+	return m, nil
+}
+
 func DeleteAssetPropertiesNotIn[H Handle](h H, id uint64, metaKeys []string) error {
 	const op errors.Op = "DeleteAssetPropertiesNotIn"
 	query := fmt.Sprintf("delete from %s.asset_property where id = ? and meta_key not in (%s)", NFDDatabase(), strings.Repeat("?, ", len(metaKeys))[0:(len(metaKeys)*3)-2])
