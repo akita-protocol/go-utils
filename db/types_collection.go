@@ -65,6 +65,22 @@ func GetCollectionsByNFDID[H Handle](h H, nfdID uint64) (*[]Collection, error) {
 	return &collections, nil
 }
 
+func GetCollectionCreatorWallets[H Handle](h H, id string) (*[]NFDWallet, error) {
+	const op errors.Op = "GetCollectionCreatorWallets"
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select nfd_id from %s.collection where id = ?) and verified = 1 order by deposit desc", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
+
+	var wallets []NFDWallet
+	err := h.Select(&wallets, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Wallets Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
+	return &wallets, nil
+}
+
 // GetCollectionByAssetID is a query that returns a collection by asset ID, this is used for reverse lookup when someone is viewing a specific asset
 func GetCollectionByAssetID[H Handle](h H, assetID uint64, creator string, unitName string) (*Collection, error) {
 	const op errors.Op = "GetCollectionByAssetID"

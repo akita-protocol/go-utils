@@ -294,7 +294,7 @@ func GetCommunityAssetIDs[H db.Handle](h H, nfdID uint64) ([]uint64, error) {
 		for i := range *cols {
 			col := (*cols)[i]
 
-			colAssets, err := GetCollectionAssets(h, nfdID, col.ID)
+			colAssets, err := GetCollectionAssets(h, col.ID)
 			if err != nil {
 				rChan <- err
 				return

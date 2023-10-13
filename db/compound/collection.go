@@ -292,13 +292,22 @@ func GetCollectionsByNFDID[H db.Handle](h H, nfdID uint64, exclude ...Collection
 	return &collections, nil
 }
 
-func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, error) {
+func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, []string, error) {
 	const op errors.Op = "GetCollectionCriteria"
 	collection := Collection{}
 
 	buffer := 4
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
+
+	go func() {
+		wallets, err := db.GetCollectionCreatorWallets(h, collectionID)
+		if err != nil && !db.ErrNoRows(err) {
+			rChan <- err
+			return
+		}
+		rChan <- wallets
+	}()
 
 	go func() {
 		prefixes, err := db.GetCollectionPrefixes(h, collectionID)
@@ -337,10 +346,16 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 		rChan <- excludedAssets
 	}()
 
+	creators := []string{}
 	var errs []error
 	for i := 0; i < buffer; i++ {
 		data := <-rChan
 		switch result := data.(type) {
+		case *[]db.NFDWallet:
+			for i := range *result {
+				wallet := (*result)[i]
+				creators = append(creators, wallet.Address)
+			}
 		case *[]db.CollectionPrefix:
 			prefixes := []string{}
 			for i := range *result {
@@ -380,67 +395,28 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 			msg += err.Error() + "\n"
 		}
 
-		return nil, errors.E(op, fmt.Errorf(msg))
+		return nil, []string{}, errors.E(op, fmt.Errorf(msg))
 	}
 
-	return &collection, nil
+	return &collection, creators, nil
 }
 
-func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*[]db.Asset, error) {
+func GetCollectionAssets[H db.Handle](h H, collectionID string) (*[]db.Asset, error) {
 	const op errors.Op = "GetCollectionAssets"
 
-	buffer := 2
-	rChan := make(chan interface{}, buffer)
-	defer close(rChan)
-
-	go func() {
-		wallets, err := db.GetNFDVerifiedWallets(h, nfdID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- wallets
-	}()
-
-	go func() {
-		col, err := GetCollectionCriteria(h, collectionID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- col
-	}()
-
-	creators := []string{}
-	var criteria *Collection
-	var errs []error
-
-	for i := 0; i < buffer; i++ {
-		data := <-rChan
-		switch result := data.(type) {
-		case *[]db.NFDWallet:
-			for i := range *result {
-				wallet := (*result)[i]
-				creators = append(creators, wallet.Address)
-			}
-		case *Collection:
-			criteria = result
-		case error:
-			errs = append(errs, result)
-		}
-	}
-
-	if len(errs) > 0 {
-		msg := ""
-		for _, err := range errs {
-			msg += err.Error() + "\n"
-		}
-
-		return nil, errors.E(op, fmt.Errorf(msg))
+	criteria, creators, err := GetCollectionCriteria(h, collectionID)
+	if err != nil && !db.ErrNoRows(err) {
+		return nil, errors.E(op, err)
 	}
 
 	if len(criteria.Addresses) > 0 {
-		creators = criteria.Addresses
+		ncreators := []string{}
+		for _, address := range criteria.Addresses {
+			if misc.InSlice(address, creators) {
+				ncreators = append(ncreators, address)
+			}
+		}
+		creators = ncreators
 	}
 
 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
@@ -451,7 +427,7 @@ func GetCollectionAssets[H db.Handle](h H, nfdID uint64, collectionID string) (*
 	return assets, nil
 }
 
-func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID string, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
+func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
 	const op errors.Op = "GetCollectionAssetsPaginated"
 
 	buffer := 3
@@ -464,21 +440,13 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID s
 	defer close(rChan)
 
 	go func() {
-		wallets, err := db.GetNFDVerifiedWallets(h, nfdID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- wallets
-	}()
-
-	go func() {
-		col, err := GetCollectionCriteria(h, collectionID)
+		col, creators, err := GetCollectionCriteria(h, collectionID)
 		if err != nil && !db.ErrNoRows(err) {
 			rChan <- err
 			return
 		}
 		rChan <- col
+		rChan <- creators
 	}()
 
 	if !hideBlanksOverride {
@@ -500,11 +468,8 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID s
 	for i := 0; i < buffer; i++ {
 		data := <-rChan
 		switch result := data.(type) {
-		case *[]db.NFDWallet:
-			for i := range *result {
-				wallet := (*result)[i]
-				creators = append(creators, wallet.Address)
-			}
+		case []string:
+			creators = result
 		case *Collection:
 			criteria = result
 		case *db.CollectionSettings:
@@ -526,7 +491,13 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID s
 	}
 
 	if len(criteria.Addresses) > 0 {
-		creators = criteria.Addresses
+		ncreators := []string{}
+		for _, address := range criteria.Addresses {
+			if misc.InSlice(address, creators) {
+				ncreators = append(ncreators, address)
+			}
+		}
+		creators = ncreators
 	}
 
 	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, propFilters, hideBlanks, db.Tiny)
@@ -537,142 +508,137 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, nfdID uint64, collectionID s
 	return assets, nil
 }
 
-func GetCollectionAssetsByNFDName[H db.Handle](h H, name string, collectionID string) (*[]db.Asset, error) {
-	const op errors.Op = "GetCollectionAssetsByNFDName"
+// func GetCollectionAssetsByNFDName[H db.Handle](h H, name string, collectionID string) (*[]db.Asset, error) {
+// 	const op errors.Op = "GetCollectionAssetsByNFDName"
 
-	buffer := 2
-	rChan := make(chan interface{}, buffer)
-	defer close(rChan)
+// 	buffer := 2
+// 	rChan := make(chan interface{}, buffer)
+// 	defer close(rChan)
 
-	nfdData, err := db.GetNFDByName(h, name, db.Tiny)
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
+// 	nfdData, err := db.GetNFDByName(h, name, db.Tiny)
+// 	if err != nil {
+// 		return nil, errors.E(op, err)
+// 	}
 
-	go func() {
-		wallets, err := db.GetNFDVerifiedWallets(h, nfdData.ID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- wallets
-	}()
+// 	go func() {
+// 		col, creators, err := GetCollectionCriteria(h, collectionID)
+// 		if err != nil && !db.ErrNoRows(err) {
+// 			rChan <- err
+// 			return
+// 		}
+// 		rChan <- col
+// 		rChan <- creators
+// 	}()
 
-	go func() {
-		col, err := GetCollectionCriteria(h, collectionID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- col
-	}()
+// 	creators := []string{}
+// 	var criteria *Collection
+// 	var errs []error
 
-	creators := []string{}
-	var criteria *Collection
-	var errs []error
+// 	for i := 0; i < buffer; i++ {
+// 		data := <-rChan
+// 		switch result := data.(type) {
+// 		case []string:
+// 			creators = result
+// 		case *Collection:
+// 			criteria = result
+// 		case error:
+// 			errs = append(errs, result)
+// 		}
+// 	}
 
-	for i := 0; i < buffer; i++ {
-		data := <-rChan
-		switch result := data.(type) {
-		case *[]db.NFDWallet:
-			for i := range *result {
-				wallet := (*result)[i]
-				creators = append(creators, wallet.Address)
-			}
-		case *Collection:
-			criteria = result
-		case error:
-			errs = append(errs, result)
-		}
-	}
+// 	if len(errs) > 0 {
+// 		msg := ""
+// 		for _, err := range errs {
+// 			msg += err.Error() + "\n"
+// 		}
 
-	if len(errs) > 0 {
-		msg := ""
-		for _, err := range errs {
-			msg += err.Error() + "\n"
-		}
+// 		return nil, errors.E(op, fmt.Errorf(msg))
+// 	}
 
-		return nil, errors.E(op, fmt.Errorf(msg))
-	}
+// 	if len(criteria.Addresses) > 0 {
+// 		ncreators := []string{}
+// 		for _, address := range criteria.Addresses {
+// 			if misc.InSlice(address, creators) {
+// 				ncreators = append(ncreators, address)
+// 			}
+// 		}
+// 		creators = ncreators
+// 	}
 
-	if len(criteria.Addresses) > 0 {
-		creators = criteria.Addresses
-	}
+// 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
+// 	if err != nil {
+// 		return nil, errors.E(op, err)
+// 	}
 
-	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
+// 	return assets, nil
+// }
 
-	return assets, nil
-}
+// func GetCollection[H db.Handle](h H, collectionID string) (*[]db.Asset, error) {
+// 	const op errors.Op = "GetCollection"
 
-func GetCollection[H db.Handle](h H, collectionID string) (*[]db.Asset, error) {
-	const op errors.Op = "GetCollection"
+// 	buffer := 2
+// 	rChan := make(chan interface{}, buffer)
+// 	defer close(rChan)
 
-	buffer := 2
-	rChan := make(chan interface{}, buffer)
-	defer close(rChan)
+// 	col, err := db.GetCollection(h, collectionID)
+// 	if err != nil {
+// 		return nil, errors.E(op, err)
+// 	}
 
-	col, err := db.GetCollection(h, collectionID)
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
+// 	go func() {
+// 		wallets, err := db.GetNFDVerifiedWallets(h, col.NFDID)
+// 		if err != nil && !db.ErrNoRows(err) {
+// 			rChan <- err
+// 			return
+// 		}
+// 		rChan <- wallets
+// 	}()
 
-	go func() {
-		wallets, err := db.GetNFDVerifiedWallets(h, col.NFDID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- wallets
-	}()
+// 	go func() {
+// 		col, err := GetCollectionCriteria(h, collectionID)
+// 		if err != nil && !db.ErrNoRows(err) {
+// 			rChan <- err
+// 			return
+// 		}
+// 		rChan <- col
+// 	}()
 
-	go func() {
-		col, err := GetCollectionCriteria(h, collectionID)
-		if err != nil && !db.ErrNoRows(err) {
-			rChan <- err
-			return
-		}
-		rChan <- col
-	}()
+// 	creators := []string{}
+// 	var criteria *Collection
+// 	var errs []error
 
-	creators := []string{}
-	var criteria *Collection
-	var errs []error
+// 	for i := 0; i < buffer; i++ {
+// 		data := <-rChan
+// 		switch result := data.(type) {
+// 		case *[]db.NFDWallet:
+// 			for i := range *result {
+// 				wallet := (*result)[i]
+// 				creators = append(creators, wallet.Address)
+// 			}
+// 		case *Collection:
+// 			criteria = result
+// 		case error:
+// 			errs = append(errs, result)
+// 		}
+// 	}
 
-	for i := 0; i < buffer; i++ {
-		data := <-rChan
-		switch result := data.(type) {
-		case *[]db.NFDWallet:
-			for i := range *result {
-				wallet := (*result)[i]
-				creators = append(creators, wallet.Address)
-			}
-		case *Collection:
-			criteria = result
-		case error:
-			errs = append(errs, result)
-		}
-	}
+// 	if len(errs) > 0 {
+// 		msg := ""
+// 		for _, err := range errs {
+// 			msg += err.Error() + "\n"
+// 		}
 
-	if len(errs) > 0 {
-		msg := ""
-		for _, err := range errs {
-			msg += err.Error() + "\n"
-		}
+// 		return nil, errors.E(op, fmt.Errorf(msg))
+// 	}
 
-		return nil, errors.E(op, fmt.Errorf(msg))
-	}
+// 	if len(criteria.Addresses) > 0 {
+// 		creators = criteria.Addresses
+// 	}
 
-	if len(criteria.Addresses) > 0 {
-		creators = criteria.Addresses
-	}
+// 	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
+// 	if err != nil {
+// 		return nil, errors.E(op, err)
+// 	}
 
-	assets, err := db.GetAssetsByDetails(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, db.Tiny)
-	if err != nil {
-		return nil, errors.E(op, err)
-	}
-
-	return assets, nil
-}
+// 	return assets, nil
+// }
