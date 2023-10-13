@@ -296,7 +296,7 @@ func GetCollectionCriteria[H db.Handle](h H, collectionID string) (*Collection, 
 	const op errors.Op = "GetCollectionCriteria"
 	collection := Collection{}
 
-	buffer := 4
+	buffer := 5
 	rChan := make(chan interface{}, buffer)
 	defer close(rChan)
 
