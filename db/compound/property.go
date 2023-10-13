@@ -248,26 +248,28 @@ func GetCumulativeProperties[H db.Handle](h H, collectionID string, exclude ...P
 			},
 			Values: []PropertyValue{},
 		}
+		nameValues := []string{}
 
 		for _, value := range values {
 			if hdp {
 				for _, declaredProperty := range *declaredProperties {
 					if declaredProperty.Name == key {
 						for _, declaredValue := range declaredProperty.Values {
-							if declaredValue.Name == value {
+							if declaredValue.Name == value && !misc.InSlice(declaredValue.Name, nameValues) {
 								prop.Values = append(prop.Values, declaredValue)
+								nameValues = append(nameValues, declaredValue.Name)
 							}
 						}
 					}
 				}
-			} else {
+			} else if !misc.InSlice(value, nameValues) {
 				prop.Values = append(prop.Values, PropertyValue{
 					PropertyValue: &db.PropertyValue{
 						Name: value,
 					},
 				})
+				nameValues = append(nameValues, value)
 			}
-
 		}
 
 		interumProperties = append(interumProperties, prop)
