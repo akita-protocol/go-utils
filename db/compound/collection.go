@@ -459,7 +459,7 @@ func GetCollectionAssetIDs[H db.Handle](h H, collectionID string) (*[]uint64, er
 	return &ids, nil
 }
 
-func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
+func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start uint64, limit uint64, order string, search string, propFilters map[string][]string, hideBlanksOverride bool) (*[]db.Asset, error) {
 	const op errors.Op = "GetCollectionAssetsPaginated"
 
 	buffer := 3
@@ -532,7 +532,7 @@ func GetCollectionAssetsPaginated[H db.Handle](h H, collectionID string, start u
 		creators = ncreators
 	}
 
-	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, propFilters, hideBlanks, db.TKSTiny)
+	assets, err := db.GetAssetsByDetailsPaginated(h, creators, criteria.Prefixes, criteria.Assets, criteria.ExcludedAssets, start, limit, order, search, propFilters, hideBlanks, db.TKSTiny)
 	if err != nil {
 		return nil, errors.E(op, err)
 	}

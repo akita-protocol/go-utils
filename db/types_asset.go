@@ -171,7 +171,7 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 	return &list, nil
 }
 
-func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []string, include []uint64, exclude []uint64, start uint64, limit uint64, order string, propFilters map[string][]string, hideBlanks string, st TableKeySlice) (*[]Asset, error) {
+func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []string, include []uint64, exclude []uint64, start uint64, limit uint64, order string, search string, propFilters map[string][]string, hideBlanks string, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetAssetsByDetailsPaginated"
 	data := []interface{}{}
 	query := fmt.Sprintf(
@@ -235,6 +235,13 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 			}
 			query += "))"
 		}
+	}
+
+	if strings.TrimSpace(search) != "" {
+		data = append(data, search)
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		query += " and (id = ? or name like ? or unit_name like ?)"
 	}
 
 	if hideBlanks != "" {
