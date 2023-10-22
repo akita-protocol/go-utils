@@ -221,6 +221,13 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 		query += fmt.Sprintf(" and id not in(%s)", string(excludeQMarks[0:len(excludeQMarks)-2]))
 	}
 
+	if strings.TrimSpace(search) != "" {
+		data = append(data, search)
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		query += " and (id = ? or name like ? or unit_name like ?)"
+	}
+
 	if len(propFilters) > 0 {
 		for k, v := range propFilters {
 			data = append(data, k)
@@ -235,13 +242,6 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 			}
 			query += "))"
 		}
-	}
-
-	if strings.TrimSpace(search) != "" {
-		data = append(data, search)
-		data = append(data, fmt.Sprintf("%%%v%%", search))
-		data = append(data, fmt.Sprintf("%%%v%%", search))
-		query += " and (id = ? or name like ? or unit_name like ?)"
 	}
 
 	if hideBlanks != "" {
@@ -262,5 +262,45 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 		}
 		return nil, errors.E(pkg, op, err)
 	}
+	return &list, nil
+}
+
+func GetNFTAssetsByAddressesInHoldingsPaginated[H Handle](h H, addresses []string, start uint64, limit uint64, order string, search string, st TableKeySlice) (*[]Asset, error) {
+	const op errors.Op = "GetNFTAssetsByAddressesInHoldingsPaginated"
+	data := []interface{}{}
+	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
+	query := fmt.Sprintf(
+		"select %s from %s.asset where standard in (%s) and id in (select distinct(asa_id) from %s.holdings where address in (%s) and amount > 0)",
+		strings.Join(AssetTableKeys(st), ", "),
+		NFDDatabase(),
+		strings.Join([]string{
+			string(AssetStandardNFTArc19),
+			string(AssetStandardNFTArc3),
+			string(AssetStandardNFTArc69),
+			string(AssetStandardNFTNone),
+		}, ", "),
+		HoldingsDatabase(),
+		string(qMarks[0:len(qMarks)-2]),
+	)
+
+	if strings.TrimSpace(search) != "" {
+		data = append(data, search)
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		data = append(data, fmt.Sprintf("%%%v%%", search))
+		query += " and (id = ? or name like ? or unit_name like ?)"
+	}
+
+	data = append(data, []interface{}{start, limit}...)
+	query += fmt.Sprintf(" order by id %v limit ?, ?", order)
+
+	var list []Asset
+	err := h.Select(&list, query, data...)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Holdings Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+
 	return &list, nil
 }
