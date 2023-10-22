@@ -273,12 +273,12 @@ func GetNFTAssetsByAddressesInHoldingsPaginated[H Handle](h H, addresses []strin
 		"select %s from %s.asset where standard in (%s) and id in (select distinct(asa_id) from %s.holdings where address in (%s) and amount > 0)",
 		strings.Join(AssetTableKeys(st), ", "),
 		NFDDatabase(),
-		strings.Join([]string{
+		fmt.Sprintf("'%v'", strings.Join([]string{
 			string(AssetStandardNFTArc19),
 			string(AssetStandardNFTArc3),
 			string(AssetStandardNFTArc69),
 			string(AssetStandardNFTNone),
-		}, ", "),
+		}, "', '")),
 		HoldingsDatabase(),
 		string(qMarks[0:len(qMarks)-2]),
 	)
