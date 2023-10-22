@@ -268,6 +268,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 func GetNFTAssetsByAddressesInHoldingsPaginated[H Handle](h H, addresses []string, start uint64, limit uint64, order string, search string, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetNFTAssetsByAddressesInHoldingsPaginated"
 	data := []interface{}{}
+	data = append(data, misc.ToInterfaceSlice(addresses)...)
 	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
 	query := fmt.Sprintf(
 		"select %s from %s.asset where standard in (%s) and id in (select distinct(asa_id) from %s.holdings where address in (%s) and amount > 0)",
