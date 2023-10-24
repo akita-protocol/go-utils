@@ -1,7 +1,7 @@
 package subscriptions
 
-func GetFactoryAppID(env string) uint64 {
-	if env == "staging" {
+func GetFactoryAppID(isProduction bool) uint64 {
+	if isProduction {
 		return 166131287
 	}
 	return 166131287
