@@ -49,7 +49,6 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 	processKeyAndVal := func(key string, valType uint64, intVal uint64, stringVal []byte) {
 		switch valType {
 		case 1: // bytes
-			fmt.Println("bytes", key)
 			if len(stringVal) == 32 && (key == "recipient" || key == "subscriber") {
 				// 32 bytes and key name has .a [algorand address] suffix - parse accordingly - strip suffix
 				valAsStr = nfd.RawPKAsAddress(stringVal).String()
@@ -60,7 +59,6 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 				valAsStr = string(stringVal)
 			}
 		case 2: // uint
-			fmt.Println("uint", key)
 			valAsStr = strconv.FormatUint(intVal, 10)
 		default:
 			valAsStr = "unknown"
