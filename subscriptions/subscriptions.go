@@ -3,6 +3,8 @@ package subscriptions
 import (
 	"encoding/base64"
 	"encoding/binary"
+	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
@@ -20,6 +22,12 @@ type SubscriptionProperties struct {
 	State map[string]string `json:"state"`
 }
 
+func PrintProperties(properties *SubscriptionProperties) {
+	fmt.Println("Sub AppID:", properties.AppID)
+	prettyJson, _ := json.MarshalIndent(properties, "", "  ")
+	fmt.Println(string(prettyJson))
+}
+
 func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) SubscriptionProperties {
 	isStringPrintable := func(str string) bool {
 		for _, strRune := range str {
@@ -30,7 +38,9 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 		return true
 	}
 	var (
-		state    SubscriptionProperties
+		state = SubscriptionProperties{
+			State: map[string]string{},
+		}
 		valAsStr string
 		key      string
 	)
