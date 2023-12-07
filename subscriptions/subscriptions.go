@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
+	"gitlab.algotoolchain.com/keelakay/utils/nfd"
 )
 
 func GetFactoryAppID(isProduction bool) uint64 {
@@ -48,7 +50,10 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 	processKeyAndVal := func(key string, valType uint64, intVal uint64, stringVal []byte) {
 		switch valType {
 		case 1: // bytes
-			if len(stringVal) == 8 && !isStringPrintable(string(stringVal)) {
+			if len(stringVal) == 32 && strings.HasSuffix(key, ".a") {
+				// 32 bytes and key name has .a [algorand address] suffix - parse accordingly - strip suffix
+				valAsStr = nfd.RawPKAsAddress(stringVal).String()
+			} else if len(stringVal) == 8 && !isStringPrintable(string(stringVal)) {
 				// Assume it's a big-endian integer
 				valAsStr = strconv.FormatUint(binary.BigEndian.Uint64(stringVal), 10)
 			} else {
