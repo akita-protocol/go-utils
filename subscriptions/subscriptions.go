@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
 	"gitlab.algotoolchain.com/keelakay/utils/nfd"
@@ -50,7 +49,8 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 	processKeyAndVal := func(key string, valType uint64, intVal uint64, stringVal []byte) {
 		switch valType {
 		case 1: // bytes
-			if len(stringVal) == 32 && strings.HasSuffix(key, ".a") {
+			fmt.Println("bytes", key)
+			if len(stringVal) == 32 && (key == "recipient" || key == "subscriber") {
 				// 32 bytes and key name has .a [algorand address] suffix - parse accordingly - strip suffix
 				valAsStr = nfd.RawPKAsAddress(stringVal).String()
 			} else if len(stringVal) == 8 && !isStringPrintable(string(stringVal)) {
@@ -60,6 +60,7 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 				valAsStr = string(stringVal)
 			}
 		case 2: // uint
+			fmt.Println("uint", key)
 			valAsStr = strconv.FormatUint(intVal, 10)
 		default:
 			valAsStr = "unknown"
