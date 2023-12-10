@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
+	"gitlab.algotoolchain.com/keelakay/utils/db"
 	"gitlab.algotoolchain.com/keelakay/utils/nfd"
 )
 
@@ -78,4 +80,40 @@ func FetchAllStateAsSubscriptionProperties(appState []models.TealKeyValue) Subsc
 	}
 
 	return state
+}
+
+func (p *SubscriptionProperties) ToDBSubscription(round uint64) db.Subscription {
+	startDateStr := p.State["start_date"]
+	startDateInt, _ := strconv.ParseInt(startDateStr, 10, 64)
+	startDate := time.Unix(startDateInt, 0)
+
+	boxIndexStr := p.State["box_index"]
+	boxIndex, _ := strconv.ParseUint(boxIndexStr, 10, 64)
+
+	intervalStr := p.State["interval"]
+	interval, _ := strconv.ParseUint(intervalStr, 10, 64)
+
+	lastPaymentStr := p.State["last_payment"]
+	lastPaymentInt, _ := strconv.ParseInt(lastPaymentStr, 10, 64)
+	lastPayment := time.Unix(lastPaymentInt, 0)
+
+	asaID, _ := strconv.ParseUint(p.State["asa"], 10, 64)
+
+	amt, _ := strconv.ParseUint(p.State["amount"], 10, 64)
+
+	passCount, _ := strconv.ParseUint(p.State["pass_count"], 10, 64)
+
+	return db.Subscription{
+		ID:               p.AppID,
+		StartDate:        startDate,
+		BoxIndex:         &boxIndex,
+		Interval:         interval,
+		LastPayment:      lastPayment,
+		Subscriber:       p.State["subscriber"],
+		Recipient:        p.State["recipient"],
+		ASA:              &asaID,
+		Amount:           amt,
+		PassCount:        &passCount,
+		CurrentAsOfBlock: round,
+	}
 }
