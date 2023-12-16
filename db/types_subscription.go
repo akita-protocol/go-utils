@@ -51,12 +51,12 @@ func GetLeastSubscriptionUpdateBlock[H Handle](h H) (uint64, error) {
 	return block, nil
 }
 
-func GetSubscriptionByID[H Handle](h H, st TableKeySlice) (*Subscription, error) {
+func GetSubscriptionByID[H Handle](h H, id uint64, st TableKeySlice) (*Subscription, error) {
 	const op errors.Op = "GetSubscriptionByID"
 	query := fmt.Sprintf("select %s from %s.subscription where id = ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
 	var s Subscription
 
-	err := h.Get(&s, query)
+	err := h.Get(&s, query, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Subscription Pass Not Found")
