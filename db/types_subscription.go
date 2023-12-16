@@ -66,6 +66,22 @@ func GetSubscriptionByID[H Handle](h H, id uint64, st TableKeySlice) (*Subscript
 	return &s, nil
 }
 
+func GetAllSubscriptionIDs[H Handle](h H) ([]uint64, error) {
+	const op errors.Op = "GetAllSubscriptionIDs"
+
+	query := fmt.Sprintf("select id from %s.subscription", SubscriptionDatabase())
+	var list []uint64
+
+	err := h.Select(&list, query)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.E(pkg, op, errors.DatabaseResultNotFound, err, "Subscription Pass Not Found")
+		}
+		return nil, errors.E(pkg, op, err)
+	}
+	return list, nil
+}
+
 func GetSubscriptionsByRecipient[H Handle](h H, recipient string, st TableKeySlice) ([]*Subscription, error) {
 	const op errors.Op = "GetSubscriptionsByRecipient"
 	query := fmt.Sprintf("select %s from %s.subscription where recipient = ?", strings.Join(SubscriptionTableKeys(st), ","), SubscriptionDatabase())
