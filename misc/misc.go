@@ -1,7 +1,5 @@
 package misc
 
-import "golang.org/x/exp/constraints"
-
 // InSlice checks to see if a value is in a given slice
 func InSlice[T comparable](val T, list []T) bool {
 	for _, key := range list {
@@ -71,7 +69,11 @@ func ToInterfaceSlice[T any](arr []T) []interface{} {
 	return items
 }
 
-func Pointer[T constraints.Ordered](v T) *T {
+// func Pointer[T constraints.Ordered](v T) *T {
+// 	return &v
+// }
+
+func Pointer[T any](v T) *T {
 	return &v
 }
 
