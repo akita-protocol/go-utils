@@ -40,6 +40,7 @@ const (
 	ShufflePaymentOption
 	ShuffleWhitelistToken
 	ShuffleReserveAsset
+	DiscordServerRole
 )
 
 func (p Prefix) String() string {
@@ -69,6 +70,7 @@ var prefixToString = map[Prefix]string{
 	ShufflePaymentOption:    "spo",
 	ShuffleWhitelistToken:   "swl",
 	ShuffleReserveAsset:     "sra",
+	DiscordServerRole:       "rol",
 }
 
 var prefixToID = map[string]Prefix{
@@ -94,6 +96,7 @@ var prefixToID = map[string]Prefix{
 	"spo": ShufflePaymentOption,
 	"swl": ShuffleWhitelistToken,
 	"sra": ShuffleReserveAsset,
+	"rol": DiscordServerRole,
 }
 
 // UnmarshalYAML checks to see if its type is valid
