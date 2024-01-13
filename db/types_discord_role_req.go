@@ -9,11 +9,11 @@ import (
 )
 
 type DiscordRoleReq struct {
-	RoleID         string `structs:"role_id,omitempty" db:"role_id" json:"role_id,omitempty"`
-	GroupID        string `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
-	GreaterThan    int64  `structs:"greater_than,omitempty" db:"greater_than" json:"greater_than,omitempty"`
-	LessThan       uint64 `structs:"less_than,omitempty" db:"less_than" json:"less_than,omitempty"`
-	DistinctAssets *bool  `structs:"distinct_assets,omitempty" db:"distinct_assets" json:"distinct_assets,omitempty"`
+	RoleID         string  `structs:"role_id,omitempty" db:"role_id" json:"role_id,omitempty"`
+	GroupID        string  `structs:"group_id,omitempty" db:"group_id" json:"group_id,omitempty"`
+	GreaterThan    *uint64 `structs:"greater_than,omitempty" db:"greater_than" json:"greater_than,omitempty"`
+	LessThan       uint64  `structs:"less_than,omitempty" db:"less_than" json:"less_than,omitempty"`
+	DistinctAssets *bool   `structs:"distinct_assets,omitempty" db:"distinct_assets" json:"distinct_assets,omitempty"`
 }
 
 func DiscordRoleReqTableKeys() []string {
