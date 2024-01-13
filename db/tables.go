@@ -73,6 +73,8 @@ func getTable(obj interface{}) string {
 		return fmt.Sprintf("%s.role_req", DiscordBotDatabase())
 	case DiscordTransaction, *DiscordTransaction:
 		return fmt.Sprintf("%s.transaction", DiscordBotDatabase())
+	case AssetGroup, *AssetGroup:
+		return fmt.Sprintf("%s.asset_group", DiscordBotDatabase())
 
 	case Subscription, *Subscription:
 		return fmt.Sprintf("%s.subscription", SubscriptionDatabase())
