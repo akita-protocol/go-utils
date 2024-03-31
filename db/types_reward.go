@@ -27,10 +27,11 @@ const (
 type RewardRateType string
 
 const (
-	RewardRateTypePercentile RewardRateType = "percentile"
-	RewardRateTypeFlat       RewardRateType = "flat"
-	RewardRateTypeEven       RewardRateType = "even"
-	RewardRateTypeShuffle    RewardRateType = "shuffle"
+	RewardRateTypePercentile      RewardRateType = "percentile"
+	RewardRateTypeFlat            RewardRateType = "flat"
+	RewardRateTypeEven            RewardRateType = "even"
+	RewardRateTypeShuffle         RewardRateType = "shuffle"
+	RewardRateTypeSharePercentage RewardRateType = "share_percentage"
 )
 
 type Reward struct {
