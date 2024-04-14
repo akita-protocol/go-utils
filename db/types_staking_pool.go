@@ -38,6 +38,7 @@ type StakingPool struct {
 	BannerID          *uint64                `structs:"banner_id,omitempty" db:"banner_id" json:"banner_id,omitempty"`
 	Slots             *uint64                `structs:"slots,omitempty" db:"slots" json:"slots,omitempty"`
 	ScheduleType      PoolScheduleType       `structs:"schedule_type,omitempty" db:"schedule_type" json:"schedule_type,omitempty"`
+	StrictEntry       *bool                  `structs:"strict_entry,omitempty" db:"strict_entry" json:"strict_entry,omitempty"`
 	AnnouncementDate  *time.Time             `structs:"announcement_date,omitempty" db:"announcement_date" json:"announcement_date,omitempty"`
 	SignUpsOpenDate   *time.Time             `structs:"signups_open_date,omitempty" db:"signups_open_date" json:"signups_open_date,omitempty"`
 	StakingBeginsDate time.Time              `structs:"staking_begins_date,omitempty" db:"staking_begins_date" json:"staking_begins_date,omitempty"`
@@ -62,8 +63,8 @@ func (p *StakingPool) GetStakingPoolStatus() string {
 
 var stakingPoolTableKeySlices = map[TableKeySlice][]string{
 	TKSTiny:  {"id", "status", "title", "avatar"},
-	TKSSmall: {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date"},
-	TKSFull:  {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date", "creator", "created_date", "address"},
+	TKSSmall: {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "strict_entry", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date"},
+	TKSFull:  {"id", "status", "title", "about", "avatar", "avatar_id", "banner", "banner_id", "slots", "schedule_type", "strict_entry", "announcement_date", "signups_open_date", "staking_begins_date", "staking_ends_date", "creator", "created_date", "address"},
 }
 
 func StakingPoolTableKeys(st TableKeySlice) []string {
