@@ -8,7 +8,7 @@ import (
 )
 
 type Category interface {
-	AddressSubCategory | AssetSubCategory | AppSubCategory
+	AddressSubCategory | AssetSubCategory | AppSubCategory | TxnSubCategory
 }
 
 type ListType interface {
@@ -39,6 +39,12 @@ type AppSubCategory string
 const (
 	NFDAppIDs          AppSubCategory = "NFDAppIDs"
 	SubscriptionAppIDs AppSubCategory = "SubscriptionAppIDs"
+)
+
+type TxnSubCategory string
+
+const (
+	ConfirmTxn TxnSubCategory = "confirmTxn"
 )
 
 type WSList[C Category, L ListType] struct {

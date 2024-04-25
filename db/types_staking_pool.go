@@ -28,24 +28,25 @@ const (
 )
 
 type StakingPool struct {
-	ID                string                 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
-	Status            *StakingPoolStatusType `structs:"status,omitempty" db:"status" json:"status,omitempty"`
-	Title             string                 `structs:"title,omitempty" db:"title" json:"title,omitempty"`
-	About             string                 `structs:"about,omitempty" db:"about" json:"about,omitempty"`
-	Avatar            *string                `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
-	AvatarID          *uint64                `structs:"avatar_id,omitempty" db:"avatar_id" json:"avatar_id,omitempty"`
-	Banner            *string                `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
-	BannerID          *uint64                `structs:"banner_id,omitempty" db:"banner_id" json:"banner_id,omitempty"`
-	Slots             *uint64                `structs:"slots,omitempty" db:"slots" json:"slots,omitempty"`
-	ScheduleType      PoolScheduleType       `structs:"schedule_type,omitempty" db:"schedule_type" json:"schedule_type,omitempty"`
-	StrictEntry       *bool                  `structs:"strict_entry,omitempty" db:"strict_entry" json:"strict_entry,omitempty"`
-	AnnouncementDate  *time.Time             `structs:"announcement_date,omitempty" db:"announcement_date" json:"announcement_date,omitempty"`
-	SignUpsOpenDate   *time.Time             `structs:"signups_open_date,omitempty" db:"signups_open_date" json:"signups_open_date,omitempty"`
-	StakingBeginsDate time.Time              `structs:"staking_begins_date,omitempty" db:"staking_begins_date" json:"staking_begins_date,omitempty"`
-	StakingEndsDate   *time.Time             `structs:"staking_ends_date,omitempty" db:"staking_ends_date" json:"staking_ends_date,omitempty"`
-	Creator           string                 `structs:"creator,omitempty" db:"creator" json:"creator,omitempty"`
-	CreatedDate       time.Time              `structs:"created_date,omitempty" db:"created_date" json:"created_date,omitempty"`
-	Address           string                 `structs:"address,omitempty" db:"address" json:"address,omitempty"`
+	ID           string                 `structs:"id,omitempty" db:"id" json:"id,omitempty"`
+	Status       *StakingPoolStatusType `structs:"status,omitempty" db:"status" json:"status,omitempty"`
+	Title        string                 `structs:"title,omitempty" db:"title" json:"title,omitempty"`
+	About        string                 `structs:"about,omitempty" db:"about" json:"about,omitempty"`
+	Avatar       *string                `structs:"avatar,omitempty" db:"avatar" json:"avatar,omitempty"`
+	AvatarID     *uint64                `structs:"avatar_id,omitempty" db:"avatar_id" json:"avatar_id,omitempty"`
+	Banner       *string                `structs:"banner,omitempty" db:"banner" json:"banner,omitempty"`
+	BannerID     *uint64                `structs:"banner_id,omitempty" db:"banner_id" json:"banner_id,omitempty"`
+	Slots        *uint64                `structs:"slots,omitempty" db:"slots" json:"slots,omitempty"`
+	ScheduleType PoolScheduleType       `structs:"schedule_type,omitempty" db:"schedule_type" json:"schedule_type,omitempty"`
+	// Strict entries for staking pools mean that users must sign up during the signup period & if they dont they cant participate
+	StrictEntry       *bool      `structs:"strict_entry,omitempty" db:"strict_entry" json:"strict_entry,omitempty"`
+	AnnouncementDate  *time.Time `structs:"announcement_date,omitempty" db:"announcement_date" json:"announcement_date,omitempty"`
+	SignUpsOpenDate   *time.Time `structs:"signups_open_date,omitempty" db:"signups_open_date" json:"signups_open_date,omitempty"`
+	StakingBeginsDate time.Time  `structs:"staking_begins_date,omitempty" db:"staking_begins_date" json:"staking_begins_date,omitempty"`
+	StakingEndsDate   *time.Time `structs:"staking_ends_date,omitempty" db:"staking_ends_date" json:"staking_ends_date,omitempty"`
+	Creator           string     `structs:"creator,omitempty" db:"creator" json:"creator,omitempty"`
+	CreatedDate       time.Time  `structs:"created_date,omitempty" db:"created_date" json:"created_date,omitempty"`
+	Address           string     `structs:"address,omitempty" db:"address" json:"address,omitempty"`
 }
 
 func (p *StakingPool) GetStakingPoolStatus() string {
