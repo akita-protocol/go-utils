@@ -31,8 +31,6 @@ const (
 	NEW_ADDRESS_HOLDINGS_PROCESSED Events = "NEW_ADDRESS_HOLDINGS_PROCESSED"
 	NEW_COMMUNITY                  Events = "NEW_COMMUNITY"
 	NEW_USER                       Events = "NEW_USER"
-	TXN_CONFIRMATION_REQUEST       Events = "TXN_CONFIRMATION_REQUEST"
-	TXN_CONFIRMED                  Events = "TXN_CONFIRMED"
 )
 
 var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
@@ -59,13 +57,11 @@ var NamespaceActions map[Namespace][]Events = map[Namespace][]Events{
 		NEW_TRANSACTION,
 		NEW_ADDRESS,
 		NEW_ADDRESS_HOLDINGS_PROCESSED,
-		TXN_CONFIRMED,
 	},
 	NamespaceSeed: {},
 	NamespaceGateway: {
 		NEW_USER,
 		NEW_ADDRESS,
-		TXN_CONFIRMATION_REQUEST,
 	},
 }
 
