@@ -51,12 +51,23 @@ type StakingPool struct {
 
 func (p *StakingPool) GetStakingPoolStatus() string {
 	n := time.Now()
-	if p.SignUpsOpenDate != nil && p.SignUpsOpenDate.After(n) {
+	theSignUpWindowHasntOpened := p.SignUpsOpenDate != nil && p.SignUpsOpenDate.After(n)
+	theSignUpWindowIsOpen := p.SignUpsOpenDate != nil && n.After(*p.SignUpsOpenDate)
+	stakingHasntStarted := n.Before(p.StakingBeginsDate)
+	stakingIsEndless := p.StakingEndsDate == nil
+	stakingHasStarted := n.After(p.StakingBeginsDate)
+	stakingHasntEnded := p.StakingEndsDate == nil || n.Before(*p.StakingEndsDate)
+	stakingHasEnded := p.StakingEndsDate != nil && n.After(*p.StakingEndsDate)
+	allowLateJoining := p.ScheduleType == "ongoing"
+
+	if theSignUpWindowHasntOpened {
 		return "upcoming"
-	} else if p.SignUpsOpenDate != nil && n.After(*p.SignUpsOpenDate) && (n.Before(p.StakingBeginsDate) || (p.ScheduleType == "ongoing" && (p.StakingEndsDate == nil || n.Before(*p.StakingEndsDate)))) {
+	} else if theSignUpWindowIsOpen && (stakingHasntStarted || (allowLateJoining && (stakingIsEndless || stakingHasntEnded))) {
 		return "open"
-	} else if n.After(p.StakingBeginsDate) && p.ScheduleType != "ongoing" {
+	} else if stakingHasStarted && !allowLateJoining && stakingHasntEnded {
 		return "closed"
+	} else if stakingHasEnded {
+		return "ended"
 	}
 
 	return "unknown"
