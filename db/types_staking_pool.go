@@ -62,7 +62,7 @@ func (p *StakingPool) GetStakingPoolStatus() string {
 
 	if theSignUpWindowHasntOpened {
 		return "upcoming"
-	} else if theSignUpWindowIsOpen && (stakingHasntStarted || (allowLateJoining && (stakingIsEndless || stakingHasntEnded))) {
+	} else if theSignUpWindowIsOpen && stakingHasntStarted || (allowLateJoining && (stakingIsEndless || stakingHasntEnded)) {
 		return "open"
 	} else if stakingHasStarted && !allowLateJoining && stakingHasntEnded {
 		return "closed"
