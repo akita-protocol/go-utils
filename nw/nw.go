@@ -75,6 +75,7 @@ const (
 	NamespaceBlockWatcher    Namespace = "blockwatcher"
 	NamespaceSeed            Namespace = "seed"
 	NamespaceGateway         Namespace = "gateway"
+	NamespacePreBot          Namespace = "prebot"
 )
 
 type NatsWrapper struct {
