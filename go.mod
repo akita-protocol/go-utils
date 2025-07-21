@@ -1,10 +1,9 @@
 module gitlab.algotoolchain.com/keelakay/utils
 
-go 1.21
+go 1.23
 
 require (
 	github.com/1Password/connect-sdk-go v1.5.0
-	github.com/algorand/go-algorand-sdk v1.24.0
 	github.com/algorand/go-algorand-sdk/v2 v2.1.0
 	github.com/aws/aws-sdk-go v1.44.205
 	github.com/fatih/structs v1.1.0
@@ -19,7 +18,6 @@ require (
 	github.com/multiformats/go-multihash v0.2.3
 	github.com/nats-io/nats.go v1.28.0
 	github.com/rs/xid v1.4.0
-	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	gopkg.in/yaml.v3 v3.0.1
 )
 
