@@ -5,11 +5,11 @@ import "fmt"
 func getTable(obj interface{}) string {
 	switch obj.(type) {
 	case Asset, *Asset:
-		return fmt.Sprintf("%s.asset", NFDDatabase())
+		return fmt.Sprintf("%s.assets", NFDDatabase())
 	case LP, *LP:
 		return fmt.Sprintf("%s.lp", NFDDatabase())
 	case AssetProperty, *AssetProperty:
-		return fmt.Sprintf("%s.asset_property", NFDDatabase())
+		return fmt.Sprintf("%s.asset_properties", NFDDatabase())
 	case NFD, *NFD:
 		return fmt.Sprintf("%s.nfd", NFDDatabase())
 	case NFDJson, *NFDJson:
@@ -35,7 +35,7 @@ func getTable(obj interface{}) string {
 	case CommunityExtras, *CommunityExtras:
 		return fmt.Sprintf("%s.community_extras", NFDDatabase())
 	case Collection, *Collection:
-		return fmt.Sprintf("%s.collection", NFDDatabase())
+		return fmt.Sprintf("%s.collections", NFDDatabase())
 	case CollectionSettings, *CollectionSettings:
 		return fmt.Sprintf("%s.collection_settings", NFDDatabase())
 	case CollectionPrefix, *CollectionPrefix:

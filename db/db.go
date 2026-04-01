@@ -282,10 +282,11 @@ func AssetDatabase() string {
 }
 
 func NFDDatabase() string {
-	if IsProduction() {
-		return "nfd"
+	env := os.Getenv("GITLAB_ENVIRONMENT_NAME")
+	if env == "production" || env == "localnet" || env == "" {
+		return "akita"
 	}
-	return "nfd_test"
+	return "akita_test"
 }
 
 func DiscordBotDatabase() string {

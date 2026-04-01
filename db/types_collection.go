@@ -36,7 +36,7 @@ func CollectionTableKeys() []string {
 
 func GetCollection[H Handle](h H, id string) (*Collection, error) {
 	const op errors.Op = "GetCollection"
-	query := fmt.Sprintf("select %s from %s.collection where id = ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collections where id = ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
 
 	var c Collection
 	err := h.Get(&c, query, id)
@@ -51,7 +51,7 @@ func GetCollection[H Handle](h H, id string) (*Collection, error) {
 
 func GetCollectionsByNFDID[H Handle](h H, nfdID uint64) (*[]Collection, error) {
 	const op errors.Op = "GetCollectionsPaginated"
-	query := fmt.Sprintf("select %s from %s.collection where nfd_id = ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collections where nfd_id = ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
 
 	var collections []Collection
 	err := h.Select(&collections, query, nfdID)
@@ -67,7 +67,7 @@ func GetCollectionsByNFDID[H Handle](h H, nfdID uint64) (*[]Collection, error) {
 
 func GetCollectionCreatorWallets[H Handle](h H, id string) (*[]NFDWallet, error) {
 	const op errors.Op = "GetCollectionCreatorWallets"
-	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select nfd_id from %s.collection where id = ?) and verified = 1 order by deposit desc", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.nfd_wallet where id = (select nfd_id from %s.collections where id = ?) and verified = 1 order by deposit desc", strings.Join(NFDWalletTableKeys(), ","), NFDDatabase(), NFDDatabase())
 
 	var wallets []NFDWallet
 	err := h.Select(&wallets, query, id)
@@ -84,7 +84,7 @@ func GetCollectionCreatorWallets[H Handle](h H, id string) (*[]NFDWallet, error)
 // GetCollectionByAssetID is a query that returns a collection by asset ID, this is used for reverse lookup when someone is viewing a specific asset
 func GetCollectionByAssetID[H Handle](h H, assetID uint64, creator string, unitName string) (*Collection, error) {
 	const op errors.Op = "GetCollectionByAssetID"
-	query := fmt.Sprintf("select %s from %s.collection where nfd_id in(select id from %s.nfd_wallet where verified = 1 and address = ?) and ((exists(select id from %s.collection_prefix where %s.collection.id = id and left(?, char_length(prefix)) = prefix) and not exists(select id from %s.collection_excluded_asset where %s.collection.id = id and asa_id = ?)) or (exists(select id from %s.collection_asset where %s.collection.id = id and asa_id = ?)))", strings.Join(CollectionTableKeys(), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collections where nfd_id in(select id from %s.nfd_wallet where verified = 1 and address = ?) and ((exists(select id from %s.collection_prefix where %s.collections.id = id and left(?, char_length(prefix)) = prefix) and not exists(select id from %s.collection_excluded_asset where %s.collections.id = id and asa_id = ?)) or (exists(select id from %s.collection_asset where %s.collections.id = id and asa_id = ?)))", strings.Join(CollectionTableKeys(), ","), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase(), NFDDatabase())
 	var c Collection
 
 	err := h.Get(&c, query, creator, unitName, assetID, assetID)
@@ -100,7 +100,7 @@ func GetCollectionByAssetID[H Handle](h H, assetID uint64, creator string, unitN
 
 func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection, error) {
 	const op errors.Op = "GetCollectionsPaginated"
-	query := fmt.Sprintf("select %s from %s.collection limit ?, ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.collections limit ?, ?", strings.Join(CollectionTableKeys(), ","), NFDDatabase())
 
 	var collections []Collection
 	err := h.Select(&collections, query, start, limit)
@@ -116,7 +116,7 @@ func GetCollectionsPaginated[H Handle](h H, start, limit uint64) (*[]Collection,
 
 func DeleteCollectionsByNFDID[H Handle](h H, nfdID uint64) error {
 	const op errors.Op = "DeleteCollectionsByNFDID"
-	query := fmt.Sprintf("delete from %s.collection where nfd_id = ?", NFDDatabase())
+	query := fmt.Sprintf("delete from %s.collections where nfd_id = ?", NFDDatabase())
 
 	switch h := any(h).(type) {
 	case *sqlx.Tx:
@@ -144,7 +144,7 @@ func DeleteCollectionNotIn[H Handle](h H, nfdID uint64, ids ...string) error {
 	const op errors.Op = "DeleteCollectionNotIn"
 	var err error
 	data := append([]interface{}{nfdID}, misc.ToInterfaceSlice(ids)...)
-	query := fmt.Sprintf("delete from %s.collection where nfd_id = ?", NFDDatabase())
+	query := fmt.Sprintf("delete from %s.collections where nfd_id = ?", NFDDatabase())
 
 	if len(ids) > 0 {
 		qMarks := []rune(strings.Repeat("?, ", len(ids)))

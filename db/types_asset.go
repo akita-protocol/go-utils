@@ -54,7 +54,7 @@ func AssetTableKeys(st TableKeySlice) []string {
 
 func GetAsset[H Handle](h H, id uint64, st TableKeySlice) (*Asset, error) {
 	const op errors.Op = "GetAsset"
-	query := fmt.Sprintf("select %s from %s.asset where id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
+	query := fmt.Sprintf("select %s from %s.assets where id = ?", strings.Join(AssetTableKeys(st), ","), NFDDatabase())
 
 	var a Asset
 	err := h.Get(&a, query, id)
@@ -69,7 +69,7 @@ func GetAsset[H Handle](h H, id uint64, st TableKeySlice) (*Asset, error) {
 
 func GetAllAssetIDs[H Handle](h H) ([]uint64, error) {
 	const op errors.Op = "GetAllAssetIDs"
-	query := fmt.Sprintf("select id from %s.asset", NFDDatabase())
+	query := fmt.Sprintf("select id from %s.assets", NFDDatabase())
 	var list []uint64
 	err := h.Select(&list, query)
 	if err != nil {
@@ -83,7 +83,7 @@ func GetAllAssetIDs[H Handle](h H) ([]uint64, error) {
 
 func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetAssets"
-	query := fmt.Sprintf("select %s from %s.asset where id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
+	query := fmt.Sprintf("select %s from %s.assets where id in (%s)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), strings.Repeat("?, ", len(ids))[0:(len(ids)*3)-2])
 
 	var list []Asset
 	err := h.Select(&list, query, misc.ToInterfaceSlice(ids)...)
@@ -98,7 +98,7 @@ func GetAssets[H Handle](h H, ids []uint64, st TableKeySlice) (*[]Asset, error) 
 
 func GetStakingPoolAssets[H Handle](h H, poolID string, st TableKeySlice) (*[]Asset, error) {
 	const op errors.Op = "GetPoolAssetIDs"
-	query := fmt.Sprintf("select %v from %v.asset where id in(select asset_id from %s.pool_asset where pool_id = ?)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), StakingDatabase())
+	query := fmt.Sprintf("select %v from %v.assets where id in(select asset_id from %s.pool_asset where pool_id = ?)", strings.Join(AssetTableKeys(st), ","), NFDDatabase(), StakingDatabase())
 
 	var assets []Asset
 	err := h.Select(&assets, query, poolID)
@@ -112,7 +112,7 @@ func GetAssetsByDetails[H Handle](h H, creators []string, prefixes []string, inc
 	const op errors.Op = "GetAssetsByDetails"
 	data := []interface{}{}
 	query := fmt.Sprintf(
-		"select %s from %s.asset where",
+		"select %s from %s.assets where",
 		strings.Join(AssetTableKeys(st), ","),
 		NFDDatabase(),
 	)
@@ -175,7 +175,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 	const op errors.Op = "GetAssetsByDetailsPaginated"
 	data := []interface{}{}
 	query := fmt.Sprintf(
-		"select %s from %s.asset where",
+		"select %s from %s.assets where",
 		strings.Join(AssetTableKeys(st), ", "),
 		NFDDatabase(),
 	)
@@ -231,7 +231,7 @@ func GetAssetsByDetailsPaginated[H Handle](h H, creators []string, prefixes []st
 	if len(propFilters) > 0 {
 		for k, v := range propFilters {
 			data = append(data, k)
-			query += fmt.Sprintf(" and id in (select id from %s.asset_property where meta_key = ? and (", NFDDatabase())
+			query += fmt.Sprintf(" and id in (select id from %s.asset_properties where meta_key = ? and (", NFDDatabase())
 			data = append(data, misc.ToInterfaceSlice(v)...)
 			for i := range v {
 				if i == 0 {
@@ -271,7 +271,7 @@ func GetNFTAssetsByAddressesInHoldingsPaginated[H Handle](h H, addresses []strin
 	data = append(data, misc.ToInterfaceSlice(addresses)...)
 	qMarks := []rune(strings.Repeat("?, ", len(addresses)))
 	query := fmt.Sprintf(
-		"select %s from %s.asset where standard in (%s) and id in (select distinct(asa_id) from %s.holdings where address in (%s) and amount > 0)",
+		"select %s from %s.assets where standard in (%s) and id in (select distinct(asa_id) from %s.holdings where address in (%s) and amount > 0)",
 		strings.Join(AssetTableKeys(st), ", "),
 		NFDDatabase(),
 		fmt.Sprintf("'%v'", strings.Join([]string{
