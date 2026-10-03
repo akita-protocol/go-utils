@@ -55,11 +55,15 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 	if !misc.InSlice(CommunityGetExcludeSettings, exclude) {
 		go func() {
 			settings, err := db.GetCommunitySettings(h, nfdID)
-			if err != nil && !db.ErrNoRows(err) {
+			if db.ErrNoRows(err) {
 				rChan <- &db.CommunitySettings{
 					ID:         nfdID,
 					DefaultTab: db.DefaultCommunityTab,
 				}
+				return
+			}
+			if err != nil {
+				rChan <- err
 				return
 			}
 			rChan <- settings
@@ -154,7 +158,12 @@ func GetCommunity[H db.Handle](h H, nfdID uint64, exclude ...CommunityGetExclude
 		community.Tabs = db.DefaultCommunityTabsList
 	} else {
 		community.Tabs = db.CommunityTabListWithoutCollections
-		if community.Settings.DefaultTab == "collections" {
+		if community.Settings == nil {
+			community.Settings = &db.CommunitySettings{
+				ID:         nfdID,
+				DefaultTab: "about",
+			}
+		} else if community.Settings.DefaultTab == "collections" {
 			community.Settings.DefaultTab = "about"
 		}
 	}

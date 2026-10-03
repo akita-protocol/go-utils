@@ -29,7 +29,7 @@ type Community struct {
 }
 
 func CommunityTableKeys() []string {
-	return []string{"id", "version", "akta", "tab"}
+	return []string{"id", "version", "akta", "coalesce(tab, 'about') as tab"}
 }
 
 func IsCommunity[H Handle](h H, id uint64) (bool, error) {
