@@ -79,6 +79,8 @@ type EventQueue[C Category, L ListType] struct {
 }
 
 func (eq *EventQueue[C, L]) isFailure(lt L) bool {
+	eq.Failures.Lock()
+	defer eq.Failures.Unlock()
 	_, exists := eq.Failures.List[lt]
 	return exists
 }
@@ -108,11 +110,18 @@ func (eq *EventQueue[C, L]) Start() {
 				}
 
 				for _, category := range entry.Labels {
-					eq.Subs[category].Store(item, struct{}{})
+					// Labels can come from other services over NATS. A label with
+					// no map used to panic here and stop the whole process.
+					sub := eq.Subs[category]
+					if sub == nil {
+						fmt.Printf("[EventQueue] ignoring unknown label %v for %v\n", category, item)
+						continue
+					}
+					sub.Store(item, struct{}{})
 				}
 
 				for _, process := range eq.Processors {
-					err := process(item)
+					err := runProcessor(process, item)
 					if err != nil {
 						fmt.Println(err)
 						eq.LogFailure(item, err)
@@ -122,4 +131,15 @@ func (eq *EventQueue[C, L]) Start() {
 			}
 		}
 	}
+}
+
+// runProcessor turns a panic in a processor into an error. Start runs in its own
+// goroutine, so an unrecovered panic would stop the whole process.
+func runProcessor[L ListType](process Processor[L], item L) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("event queue processor panicked on %v: %v", item, r)
+		}
+	}()
+	return process(item)
 }
