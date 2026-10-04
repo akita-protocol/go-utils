@@ -1,6 +1,9 @@
 package spaces
 
 import (
+	"bytes"
+	"context"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/h2non/filetype"
 )
 
@@ -94,7 +98,7 @@ func (fm *Manager) AddFile(name string, file []byte, public bool) (string, error
 	object := s3.PutObjectInput{
 		Bucket:      &fm.spaceName,
 		Key:         &name,
-		Body:        strings.NewReader(string(file)),
+		Body:        bytes.NewReader(file),
 		ACL:         &acl,
 		ContentType: &mime,
 	}
@@ -104,6 +108,31 @@ func (fm *Manager) AddFile(name string, file []byte, public bool) (string, error
 		return "", err
 	}
 
+	return name, nil
+}
+
+// AddStream uploads body without holding it in memory: the multipart
+// uploader buffers at most Concurrency parts of PartSize bytes. A read error
+// from body (for example a size cap) aborts the upload.
+func (fm *Manager) AddStream(ctx context.Context, name string, body io.Reader, contentType string, public bool) (string, error) {
+	acl := "private"
+	if public {
+		acl = "public-read"
+	}
+	uploader := s3manager.NewUploaderWithClient(fm.S3, func(u *s3manager.Uploader) {
+		u.PartSize = 8 << 20
+		u.Concurrency = 2
+	})
+	_, err := uploader.UploadWithContext(ctx, &s3manager.UploadInput{
+		Bucket:      &fm.spaceName,
+		Key:         &name,
+		Body:        body,
+		ACL:         &acl,
+		ContentType: &contentType,
+	})
+	if err != nil {
+		return "", err
+	}
 	return name, nil
 }
 
