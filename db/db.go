@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"encoding/base64"
+	stderrors "errors"
 	"fmt"
 	"os"
 	"strings"
@@ -259,7 +260,11 @@ func Delete[H Handle, S DBObject](h H, s S) (*sql.Result, error) {
 }
 
 func ErrNoRows(err error) bool {
-	return err != nil && (err == sql.ErrNoRows || err.(*errors.Error).Kind == errors.DatabaseResultNotFound)
+	if stderrors.Is(err, sql.ErrNoRows) {
+		return true
+	}
+	var e *errors.Error
+	return stderrors.As(err, &e) && e.Kind == errors.DatabaseResultNotFound
 }
 
 // IsProduction returns a boolean for whether the request wants to use product or not
