@@ -15,12 +15,12 @@ import (
 	"sync"
 	"unicode"
 
+	"github.com/akita-protocol/go-utils/errors"
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/algod"
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
 	"github.com/algorand/go-algorand-sdk/v2/crypto"
 	"github.com/algorand/go-algorand-sdk/v2/types"
 	"github.com/mailgun/holster/v4/syncutil"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type NFDProperties struct {

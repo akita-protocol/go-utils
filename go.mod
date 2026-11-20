@@ -1,4 +1,4 @@
-module gitlab.algotoolchain.com/keelakay/utils
+module github.com/akita-protocol/go-utils
 
 go 1.23
 

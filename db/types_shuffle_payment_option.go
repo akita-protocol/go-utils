@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"github.com/akita-protocol/go-utils/errors"
 )
 
 // payment options either for the shuffle globally or a specific whitelist token

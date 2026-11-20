@@ -8,10 +8,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/akita-protocol/go-utils/errors"
 	"github.com/fatih/structs"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 const pkg errors.Pkg = "db"

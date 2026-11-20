@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"github.com/akita-protocol/go-utils/errors"
 )
 
 type Head string

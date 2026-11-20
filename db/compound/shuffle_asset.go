@@ -1,8 +1,8 @@
 package compound
 
 import (
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/errors"
 )
 
 type ShuffleAsset struct {

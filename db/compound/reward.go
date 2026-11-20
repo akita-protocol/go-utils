@@ -1,10 +1,10 @@
 package compound
 
 import (
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/misc"
-	"gitlab.algotoolchain.com/keelakay/utils/uuid"
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/errors"
+	"github.com/akita-protocol/go-utils/misc"
+	"github.com/akita-protocol/go-utils/uuid"
 )
 
 type Reward struct {
