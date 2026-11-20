@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/errors"
+	"github.com/akita-protocol/go-utils/misc"
 	"github.com/algorand/go-algorand-sdk/v2/crypto"
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type NFDWallet struct {

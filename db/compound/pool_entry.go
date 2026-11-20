@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/uuid"
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/errors"
+	"github.com/akita-protocol/go-utils/uuid"
 )
 
 type StakingPoolEntry struct {

@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/akita-protocol/go-utils/errors"
 	"github.com/jmoiron/sqlx"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 type FoundationWatchWalletType string

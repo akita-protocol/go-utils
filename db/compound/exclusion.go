@@ -1,6 +1,6 @@
 package compound
 
-import "gitlab.algotoolchain.com/keelakay/utils/db"
+import "github.com/akita-protocol/go-utils/db"
 
 type StakingExclusion struct {
 	ID    string            `json:"id,omitempty"`
