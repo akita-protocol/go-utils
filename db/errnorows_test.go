@@ -7,7 +7,7 @@ import (
 	"net"
 	"testing"
 
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"github.com/akita-protocol/go-utils/errors"
 )
 
 func TestErrNoRows(t *testing.T) {

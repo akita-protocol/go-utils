@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/akita-protocol/go-utils/errors"
 	"github.com/rs/xid"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
 	"gopkg.in/yaml.v3"
 )
 

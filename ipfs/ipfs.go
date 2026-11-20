@@ -11,11 +11,11 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/akita-protocol/go-utils/errors"
 	"github.com/algorand/go-algorand-sdk/v2/types"
 	"github.com/ipfs/go-cid"
 	"github.com/multiformats/go-multicodec"
 	"github.com/multiformats/go-multihash"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
 )
 
 var (

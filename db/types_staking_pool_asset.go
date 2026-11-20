@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
+	"github.com/akita-protocol/go-utils/errors"
 )
 
 type StakingPoolAsset struct {

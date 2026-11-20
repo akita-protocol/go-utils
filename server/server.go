@@ -4,15 +4,15 @@ import (
 	"os"
 	"time"
 
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/errors"
+	"github.com/akita-protocol/go-utils/nw"
+	"github.com/akita-protocol/go-utils/uuid"
 	"github.com/getsentry/sentry-go"
 	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
 	"github.com/nats-io/nats.go"
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/nw"
-	"gitlab.algotoolchain.com/keelakay/utils/uuid"
 )
 
 const (

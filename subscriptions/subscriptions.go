@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/akita-protocol/go-utils/db"
+	"github.com/akita-protocol/go-utils/nfd"
 	"github.com/algorand/go-algorand-sdk/v2/client/v2/common/models"
-	"gitlab.algotoolchain.com/keelakay/utils/db"
-	"gitlab.algotoolchain.com/keelakay/utils/nfd"
 )
 
 func GetFactoryAppID(isProduction bool) uint64 {

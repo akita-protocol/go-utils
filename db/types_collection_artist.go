@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/akita-protocol/go-utils/errors"
+	"github.com/akita-protocol/go-utils/misc"
 	"github.com/jmoiron/sqlx"
-	"gitlab.algotoolchain.com/keelakay/utils/errors"
-	"gitlab.algotoolchain.com/keelakay/utils/misc"
 )
 
 type CollectionArtist struct {
